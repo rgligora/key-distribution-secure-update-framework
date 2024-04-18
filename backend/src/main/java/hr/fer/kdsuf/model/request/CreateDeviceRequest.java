@@ -16,10 +16,13 @@ public class CreateDeviceRequest {
 
     private String name;
 
+    private LocalDate registrationDate;
+
+    private LocalDateTime lastUpdated;
+
     private String firmwareVersion;
 
     private String companyId;
 
     private DeviceStatus status;
-
 }

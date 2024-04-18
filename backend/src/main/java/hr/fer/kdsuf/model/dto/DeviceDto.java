@@ -16,8 +16,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class DeviceDto {
 
-    private String id;
-
     private String name;
 
     private LocalDate registrationDate;

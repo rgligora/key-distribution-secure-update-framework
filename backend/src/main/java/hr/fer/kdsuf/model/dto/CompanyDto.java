@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CompanyDto {
+
     private String companyId;
 
     private String name;

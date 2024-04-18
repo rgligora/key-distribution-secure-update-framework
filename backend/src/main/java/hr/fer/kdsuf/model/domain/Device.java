@@ -26,9 +26,9 @@ public class Device {
 
     private String firmwareVersion;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "companyId")
-    private Company companyId;
+    private Company company;
 
     @Enumerated(EnumType.STRING)
     private DeviceStatus status;
