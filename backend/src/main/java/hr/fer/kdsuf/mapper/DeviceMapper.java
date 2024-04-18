@@ -11,7 +11,7 @@ import java.util.List;
 @Mapper(componentModel = "Spring")
 public interface DeviceMapper {
 
-    @Mapping(target = "id", expression = "java(java.util.UUID.randomUUID().toString())")
+    @Mapping(target = "deviceId", expression = "java(java.util.UUID.randomUUID().toString())")
     Device requestToModel(CreateDeviceRequest request);
 
     DeviceDto modelToDto(Device device);

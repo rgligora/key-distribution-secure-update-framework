@@ -1,19 +1,17 @@
-package hr.fer.kdsuf.model.domain;
+package hr.fer.kdsuf.model.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Entity
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Software {
-    @Id
+public class SoftwareDto {
     private String softwareId;
 
     private String name;

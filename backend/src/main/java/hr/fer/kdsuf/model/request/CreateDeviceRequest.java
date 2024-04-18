@@ -1,20 +1,29 @@
 package hr.fer.kdsuf.model.request;
 
+import hr.fer.kdsuf.model.domain.DeviceStatus;
 import hr.fer.kdsuf.model.domain.Software;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateDeviceRequest {
 
-    private String model;
+    private String name;
 
-    private String manufacturer;
+    private LocalDate registrationDate;
 
-    private String currentSoftware;
+    private LocalDateTime lastUpdated;
 
-    private String fallbackSoftware;
+    private String firmwareVersion;
+
+    private String companyId;
+
+    private DeviceStatus status;
+
 }

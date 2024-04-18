@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -14,15 +16,20 @@ import java.util.List;
 
 public class Device {
     @Id
-    private String id;
+    private String deviceId;
 
-    private String model;
+    private String name;
 
-    private String manufacturer;
+    private LocalDate registrationDate;
 
-    //@OneToOne(cascade = CascadeType.DETACH)
-    private String currentSoftware;
+    private LocalDateTime lastUpdated;
 
-    //@OneToOne(cascade = CascadeType.DETACH)
-    private String fallbackSoftware;
+    private String firmwareVersion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "companyId")
+    private Company companyId;
+
+    @Enumerated(EnumType.STRING)
+    private DeviceStatus status;
 }
