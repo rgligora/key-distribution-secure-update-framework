@@ -1,17 +1,13 @@
 package hr.fer.kdsuf.controller;
 
-import hr.fer.kdsuf.model.domain.Device;
 import hr.fer.kdsuf.model.dto.DeviceDto;
 import hr.fer.kdsuf.model.request.CreateDeviceRequest;
 import hr.fer.kdsuf.repository.DeviceRepository;
 import hr.fer.kdsuf.service.Impl.DeviceServiceImpl;
-import hr.fer.kdsuf.service.Impl.VaultSecretServiceImpl;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/devices")

@@ -30,9 +30,10 @@ public class DeviceServiceImpl implements DeviceService {
         Device device = deviceMapper.requestToModel(request);
 
         device.setCompany(company);
-        deviceRepository.save(device);
+
         company.addDevice(device);
         companyRepository.save(company);
+
         return deviceMapper.modelToDto(device);
     }
 

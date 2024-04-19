@@ -8,12 +8,14 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "Spring")
+@Mapper(componentModel = "Spring", uses = DeviceMapper.class)
 public interface CompanyMapper {
 
     @Mapping(target = "companyId", expression = "java(java.util.UUID.randomUUID().toString())")
     Company requestToModel(CreateCompanyRequest request);
 
+    @Mapping(target = "devices", source = "devices")
+    @Mapping(target = "adminUsers", source = "adminUsers")
     CompanyDto modelToDto(Company company);
 
     List<CompanyDto> modelToDtos(List<Company> companies);

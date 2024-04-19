@@ -3,8 +3,6 @@ package hr.fer.kdsuf.controller;
 import hr.fer.kdsuf.model.dto.SoftwarePackageDto;
 import hr.fer.kdsuf.model.request.CreateSoftwarePackageRequest;
 import hr.fer.kdsuf.service.Impl.SoftwarePackageServiceImpl;
-import hr.fer.kdsuf.service.Impl.SoftwareServiceImpl;
-import hr.fer.kdsuf.service.SoftwarePackageService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

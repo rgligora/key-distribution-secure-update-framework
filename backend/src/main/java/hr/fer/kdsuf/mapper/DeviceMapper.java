@@ -5,16 +5,14 @@ import hr.fer.kdsuf.model.dto.DeviceDto;
 import hr.fer.kdsuf.model.request.CreateDeviceRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 
 import java.util.List;
 
 @Mapper(componentModel = "Spring")
 public interface DeviceMapper {
 
-    @Mappings({
-            @Mapping(target = "deviceId", expression = "java(java.util.UUID.randomUUID().toString())")
-    })
+
+    @Mapping(target = "deviceId", expression = "java(java.util.UUID.randomUUID().toString())")
     Device requestToModel(CreateDeviceRequest request);
 
     @Mapping(target = "companyId", source = "company.companyId")

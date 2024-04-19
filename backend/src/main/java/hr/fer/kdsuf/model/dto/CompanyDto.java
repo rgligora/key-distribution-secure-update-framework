@@ -1,6 +1,5 @@
 package hr.fer.kdsuf.model.dto;
 
-import hr.fer.kdsuf.model.domain.AdminUser;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,4 +18,6 @@ public class CompanyDto {
     private String name;
 
     private List<AdminUserDto> adminUsers;
+
+    private List<DeviceDto> devices;
 }
