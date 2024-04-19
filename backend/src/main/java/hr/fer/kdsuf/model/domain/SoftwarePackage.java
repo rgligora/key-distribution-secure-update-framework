@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
 
 @Entity
@@ -32,6 +31,6 @@ public class SoftwarePackage {
             joinColumns = @JoinColumn(name = "packageId"),
             inverseJoinColumns = @JoinColumn(name = "softwareId")
     )
-    private List<Software> softwareIncluded;
+    private List<Software> includedSoftware;
 
 }

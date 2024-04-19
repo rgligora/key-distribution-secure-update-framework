@@ -25,5 +25,5 @@ public class SoftwarePackageDto {
 
     private PackageStatus status;
 
-    private List<SoftwareDto> softwareIncluded;
+    private List<SoftwareDto> includedSoftware;
 }

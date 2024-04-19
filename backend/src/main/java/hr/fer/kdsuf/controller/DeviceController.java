@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/devices")
+@RequestMapping("/api/devices")
 @CrossOrigin
 
 public class DeviceController {

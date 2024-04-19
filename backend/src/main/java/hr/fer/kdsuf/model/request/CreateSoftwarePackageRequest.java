@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -16,4 +17,6 @@ public class CreateSoftwarePackageRequest {
     private String description;
 
     private PackageStatus status;
+
+    private List<String> includedSoftwareIds;
 }
