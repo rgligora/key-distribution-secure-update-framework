@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "Spring", uses = DeviceMapper.class)
+@Mapper(componentModel = "Spring", uses = {AdminUserMapper.class, DeviceMapper.class})
 public interface CompanyMapper {
 
     @Mapping(target = "companyId", expression = "java(java.util.UUID.randomUUID().toString())")

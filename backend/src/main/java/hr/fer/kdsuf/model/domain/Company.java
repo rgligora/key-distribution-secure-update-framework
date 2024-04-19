@@ -39,4 +39,14 @@ public class Company {
         devices.add(device);
 
     }
+
+    public void addAdminUser(AdminUser adminUser){
+        if (adminUser == null) return;
+
+        if (adminUsers == null){
+            adminUsers = new ArrayList<>();
+        }
+
+        adminUsers.add(adminUser);
+    }
 }

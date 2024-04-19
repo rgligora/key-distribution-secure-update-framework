@@ -13,6 +13,7 @@ public interface AdminUserMapper {
     @Mapping(target = "userId", expression = "java(java.util.UUID.randomUUID().toString())")
     AdminUser requestToModel(CreateAdminUserRequest request);
 
+    @Mapping(target = "companyId", source = "company.companyId")
     AdminUserDto modelToDto(AdminUser adminUser);
 
     List<AdminUserDto> modelToDtos(List<AdminUser> adminUsers);
