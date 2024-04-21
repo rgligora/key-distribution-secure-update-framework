@@ -1,9 +1,60 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
+import {FiSettings} from 'react-icons/fi';
+import { TooltipComponent } from '@syncfusion/ej2-react-popups';
+
+
 import './App.css';
 
 const App = () => {
-  return (
-    <h2 className='underline text-3x1'>App</h2>
+    const activeMenu = true;
+    return (
+    <div>
+        <BrowserRouter>
+        <div className="flex realtive dark:bg-main-dark-bg">
+            <div className="fixed right-4 bottom-4" style={{zIndex: '1000'}}>
+                <TooltipComponent content="Settings" position="Top">
+                    <button type='button' className='text-3xl p-3 
+                        hover:drop-shadow-xl
+                        hover:bg-light-gray
+                        text-white'
+                        style={{background:"teal", borderRadius:"50%"}}>
+                        <FiSettings />
+                    </button>
+                </TooltipComponent>
+            </div>
+            {activeMenu ? 
+                (<div className="w-72 fixed sidebar dark:bg-secondary-dark-bg bg-white">
+                    Sidebar
+                </div>) : 
+                (<div className='w-0 dark:bg-secondary-dark-bg'>
+                    
+                </div>)}
+            <div className={activeMenu ? 'dark:bg-main-bg bg-main-bg min-h-screen w-full md:ml-72' : 'dark:bg-main-bg bg-main-bg min-h-screen w-full flex-2'}>
+                <div className='fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full'>
+                    navbar
+                </div>
+            </div>
+            <div>
+                <Routes>
+                    {/*Dashboard*/}
+                    <Route path='/' element="Company" />
+                    <Route path='/company' element="Company" />
+
+                    {/*Pages*/}
+                    <Route path='/devices' element="Devices"/>
+                    <Route path='/software' element="Software"/>
+                    <Route path='/software-packages' element="Software Packages"/>
+
+                    {/*Charts*/}
+                    <Route path='/line' element="Line"/>
+                    <Route path='/pie' element="Pie"/>
+                    
+                </Routes>
+            </div>
+        </div>
+        </BrowserRouter>
+    </div>
   )
 }
 
