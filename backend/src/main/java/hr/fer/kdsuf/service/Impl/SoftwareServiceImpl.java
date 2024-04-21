@@ -22,6 +22,7 @@ public class SoftwareServiceImpl implements SoftwareService {
     @Override
     public SoftwareDto createSoftware(CreateSoftwareRequest request) {
         Software software = softwareMapper.requestToModel(request);
+        /*Set fileSize and checksum calculated based on the software*/
         softwareRepository.save(software);
         return softwareMapper.modelToDto(software);
     }

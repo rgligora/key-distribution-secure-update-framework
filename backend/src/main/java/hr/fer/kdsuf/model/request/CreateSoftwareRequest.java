@@ -15,6 +15,8 @@ public class CreateSoftwareRequest {
 
     private String version;
 
+    private LocalDate uploadDate;
+
     private String fileLocation;
 
 }

@@ -12,7 +12,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateSoftwarePackageRequest {
+
     private String name;
+
+    private LocalDate creationDate;
 
     private String description;
 
