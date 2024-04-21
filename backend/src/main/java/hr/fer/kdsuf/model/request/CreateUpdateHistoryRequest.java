@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class CreateUpdateHistoryRequest {
 
     private LocalDateTime updateDate;
-    
+
     private UpdateStatus status;
 
     private String deviceId;
