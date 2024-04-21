@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateHistoryDto {
+
     private String historyId;
 
     private LocalDateTime updateDate;
@@ -21,5 +22,5 @@ public class UpdateHistoryDto {
 
     private String deviceId;
 
-    private String packageId;
+    private String softwarePackageId;
 }

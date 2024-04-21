@@ -25,7 +25,7 @@ public class UpdateHistory {
     private Device device;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "packageId")
+    @JoinColumn(name = "softwarePackageId")
     private SoftwarePackage softwarePackage;
 
 }

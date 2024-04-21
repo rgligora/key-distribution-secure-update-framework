@@ -14,5 +14,5 @@ public class CreateUpdateHistoryRequest {
 
     private String deviceId;
 
-    private String packageId;
+    private String softwarePackageId;
 }

@@ -14,6 +14,8 @@ public interface UpdateHistoryMapper {
     @Mapping(target = "historyId", expression = "java(java.util.UUID.randomUUID().toString())")
     UpdateHistory requestToModel(CreateUpdateHistoryRequest request);
 
+    @Mapping(target = "deviceId", source = "device.deviceId")
+    @Mapping(target = "softwarePackageId", source = "softwarePackage.softwarePackageId")
     UpdateHistoryDto modelToDto(UpdateHistory updateHistory);
 
     List<UpdateHistoryDto> modelToDtos(List<UpdateHistory> updateHistories);
