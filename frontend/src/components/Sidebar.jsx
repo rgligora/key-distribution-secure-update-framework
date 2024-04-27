@@ -36,21 +36,25 @@ function Sidebar() {
               <p className='text-gray-400 m-3 mt-4 uppercase'>Company 1</p>
               <NavLink 
                 to="/dashboard"
+                onClick={handleCloseSideBar}
                 className={({ isActive }) => isActive ? activeLink : normalLink}>
                   <span className='capitalize'>dashboard</span>
               </NavLink>
               <NavLink 
                 to="/devices"
+                onClick={handleCloseSideBar}
                 className={({ isActive }) => isActive ? activeLink : normalLink}>
                   <span className='capitalize'>devices</span>
               </NavLink>
               <NavLink 
                 to="/software"
+                onClick={handleCloseSideBar}
                 className={({ isActive }) => isActive ? activeLink : normalLink}>
                   <span className='capitalize'>software</span>
               </NavLink>
               <NavLink 
                 to="/softwarePackages"
+                onClick={handleCloseSideBar}
                 className={({ isActive }) => isActive ? activeLink : normalLink}>
                   <span className='capitalize'>software Packages</span>
               </NavLink>
@@ -59,21 +63,25 @@ function Sidebar() {
               <p className='text-gray-400 m-3 mt-4 uppercase'>Company 2</p>
               <NavLink 
                 to="/dashboard"
+                onClick={handleCloseSideBar}
                 className={({ isActive }) => isActive ? activeLink : normalLink}>
                   <span className='capitalize'>dashboard</span>
               </NavLink>
               <NavLink 
                 to="/devices"
+                onClick={handleCloseSideBar}
                 className={({ isActive }) => isActive ? activeLink : normalLink}>
                   <span className='capitalize'>devices</span>
               </NavLink>
               <NavLink 
                 to="/software"
+                onClick={handleCloseSideBar}
                 className={({ isActive }) => isActive ? activeLink : normalLink}>
                   <span className='capitalize'>software</span>
               </NavLink>
               <NavLink 
                 to="/softwarePackages"
+                onClick={handleCloseSideBar}
                 className={({ isActive }) => isActive ? activeLink : normalLink}>
                   <span className='capitalize'>software Packages</span>
               </NavLink>
@@ -82,21 +90,25 @@ function Sidebar() {
               <p className='text-gray-400 m-3 mt-4 uppercase'>Company 3</p>
               <NavLink 
                 to="/dashboard"
+                onClick={handleCloseSideBar}
                 className={({ isActive }) => isActive ? activeLink : normalLink}>
                   <span className='capitalize'>dashboard</span>
               </NavLink>
               <NavLink 
                 to="/devices"
+                onClick={handleCloseSideBar}
                 className={({ isActive }) => isActive ? activeLink : normalLink}>
                   <span className='capitalize'>devices</span>
               </NavLink>
               <NavLink 
                 to="/software"
+                onClick={handleCloseSideBar}
                 className={({ isActive }) => isActive ? activeLink : normalLink}>
                   <span className='capitalize'>software</span>
               </NavLink>
               <NavLink 
                 to="/softwarePackages"
+                onClick={handleCloseSideBar}
                 className={({ isActive }) => isActive ? activeLink : normalLink}>
                   <span className='capitalize'>software Packages</span>
               </NavLink>
