@@ -4,7 +4,7 @@ import {FiSettings} from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 
 import {Button, ChartsHeader, Footer, Header, Navbar, Sidebar, ThemeSettings, UserProfile, LineChart, PieChart} from './components';
-import {Dashboard, Devices, Software, SoftwarePackages, Line, Pie} from './pages'
+import {MainDashboard, Dashboard, Devices, Software, SoftwarePackages, Line, Pie} from './pages'
 import './App.css';
 
 import { useStateContext } from './contexts/ContextProvider';
@@ -38,23 +38,26 @@ const App = () => {
                 <div className='fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full'>
                     <Navbar />
                 </div>
-            </div>
-            <div>
-                <Routes>
-                    {/*Dashboard*/}
-                    <Route path='/' element={<Dashboard />} />
-                    <Route path='/company' element={<Dashboard />} />
+                <div>
+                    <Routes>
+                        {/*Dashboards*/}
+                        <Route path='/' element={<MainDashboard />} />
+                        <Route path='company1/dashboard' element={<Dashboard />} />
+                        <Route path='company2/dashboard' element={<Dashboard />} />
+                        <Route path='company3/dashboard' element={<Dashboard />} />
+                        
+                        {/* TODO: add routes for all companies for all apges like in Dashboards */}
+                        {/*Pages*/}
+                        <Route path='/devices' element={<Devices />} />
+                        <Route path='/software' element={<Software />} />
+                        <Route path='/software-packages' element={<SoftwarePackages />} />
 
-                    {/*Pages*/}
-                    <Route path='/devices' element={<Devices />} />
-                    <Route path='/software' element={<Software />} />
-                    <Route path='/software-packages' element={<SoftwarePackages />} />
-
-                    {/*Charts*/}
-                    <Route path='/line' element={<Line />} />
-                    <Route path='/pie' element={<Pie />} />
-                    
-                </Routes>
+                        {/*Charts*/}
+                        <Route path='/line' element={<Line />} />
+                        <Route path='/pie' element={<Pie />} />
+                        
+                    </Routes>
+                </div>
             </div>
         </div>
         </BrowserRouter>
