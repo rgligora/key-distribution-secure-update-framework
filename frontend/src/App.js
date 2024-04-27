@@ -20,9 +20,10 @@ const App = () => {
                 <TooltipComponent content="Settings" position="Top">
                     <button type='button' className='text-3xl p-3 
                         hover:drop-shadow-xl
-                        hover:bg-light-gray
-                        text-white'
-                        style={{background:"teal", borderRadius:"50%"}}>
+                        hover:bg-orange-400
+                        text-white
+                        bg-teal-600'
+                        style={{borderRadius:"50%"}}>
                         <FiSettings />
                     </button>
                 </TooltipComponent>
