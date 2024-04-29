@@ -21,7 +21,7 @@ const Devices = ({companyId}) => {
     getDevices();
   }, []);
 
-  const gridOrderStatus = (props) => {
+  const gridDeviceStatus = (props) => {
   let statusBg = '';
   const status = props.status;  
   console.log(status)
@@ -58,7 +58,7 @@ const Devices = ({companyId}) => {
     { field: 'name', headerText: 'Name', width: 'auto', textAlign: 'Center' },
     { field: 'registrationDate', headerText: 'Registration Date', format: 'd.M.y', textAlign: 'Center', editType: 'datepicker', width: 'auto' },
     { field: 'lastUpdated', headerText: 'Last Updated', format: 'dd.MM.yyyy HH:mm', textAlign: 'Center', editType: 'datetimepicker', width: 'auto' },
-    { field: 'status', headerText: 'Status', template: gridOrderStatus, textAlign: 'Center', width: '120' }
+    { field: 'status', headerText: 'Status', template: gridDeviceStatus, textAlign: 'Center', width: '120' }
   ];
 
   return (
