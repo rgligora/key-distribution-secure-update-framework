@@ -59,7 +59,6 @@ const Devices = () => {
     { field: 'name', headerText: 'Name', width: '150', textAlign: 'Center' },
     { field: 'registrationDate', headerText: 'Registration Date', format: 'd.M.y', textAlign: 'Center', editType: 'datepicker', width: '150' },
     { field: 'lastUpdated', headerText: 'Last Updated', format: 'dd.MM.yyyy HH:mm', textAlign: 'Center', editType: 'datetimepicker', width: '150' },
-    { field: 'firmwareVersion', headerText: 'Firmware Version', textAlign: 'Center', width: '150' },
     { field: 'status', headerText: 'Status', template: gridOrderStatus, textAlign: 'Center', width: '120' }
   ];
 
