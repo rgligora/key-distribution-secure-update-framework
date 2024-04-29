@@ -43,14 +43,24 @@ const App = () => {
                     <Routes>
                         {/*Dashboards*/}
                         <Route path='/' element={<MainDashboard />} />
+                        
                         <Route path='company1/dashboard' element={<Dashboard />} />
                         <Route path='company2/dashboard' element={<Dashboard />} />
                         <Route path='company3/dashboard' element={<Dashboard />} />
                         
                         {/* TODO: add routes for all companies for all apges like in Dashboards */}
                         {/*Pages*/}
-                        <Route path='company1/devices' element={<Devices />} />
-                        <Route path='/software' element={<Software />} />
+                        
+                        <Route path='company1/devices' element={<Devices companyId="23d290c9-9023-4001-a9d5-b4b4a603428a"/>} />
+                        <Route path='company2/devices' element={<Devices companyId="a9074514-8f95-4333-b7cc-54326c143db3"/>} />
+                        <Route path='company3/devices' element={<Devices companyId="ec7a61cf-ca53-4131-9a73-6e99f889cd17"/>} />
+
+
+                        <Route path='company1/software' element={<Software companyId="23d290c9-9023-4001-a9d5-b4b4a603428a"/>} />
+                        <Route path='company1/software' element={<Software />} />
+                        <Route path='company1/software' element={<Software />} />
+
+
                         <Route path='/software-packages' element={<SoftwarePackages />} />
 
                         {/*Charts*/}

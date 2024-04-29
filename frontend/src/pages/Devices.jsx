@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import {GridComponent, ColumnsDirective, ColumnDirective, Resize, Sort, ContextMenu, Filter, Page, Edit, Inject} from '@syncfusion/ej2-react-grids'
 import { Header } from '../components'
-import { fetchData } from '../api.js';
+import { fetchData, fetchDataWithRequestParams } from '../api.js';
 
 
 
-
-const Devices = () => {
+const Devices = ({companyId}) => {
   const [deviceData, setDeviceData] = useState([]);
 
   useEffect(() => {
     const getDevices = async () => {
       try {
-        const data = await fetchData('devices');
+        const data = await fetchDataWithRequestParams('devices', { companyId });
         setDeviceData(data);
       } catch (error) {
         console.error('Failed to load devices:', error);
@@ -55,10 +54,10 @@ const Devices = () => {
 };
 
   const ordersGrid = [
-    { field: 'deviceId', headerText: 'Device ID', width: '120', textAlign: 'Center' },
-    { field: 'name', headerText: 'Name', width: '150', textAlign: 'Center' },
-    { field: 'registrationDate', headerText: 'Registration Date', format: 'd.M.y', textAlign: 'Center', editType: 'datepicker', width: '150' },
-    { field: 'lastUpdated', headerText: 'Last Updated', format: 'dd.MM.yyyy HH:mm', textAlign: 'Center', editType: 'datetimepicker', width: '150' },
+    { field: 'deviceId', headerText: 'Device ID', width: 'auto', textAlign: 'Center' },
+    { field: 'name', headerText: 'Name', width: 'auto', textAlign: 'Center' },
+    { field: 'registrationDate', headerText: 'Registration Date', format: 'd.M.y', textAlign: 'Center', editType: 'datepicker', width: 'auto' },
+    { field: 'lastUpdated', headerText: 'Last Updated', format: 'dd.MM.yyyy HH:mm', textAlign: 'Center', editType: 'datetimepicker', width: 'auto' },
     { field: 'status', headerText: 'Status', template: gridOrderStatus, textAlign: 'Center', width: '120' }
   ];
 
