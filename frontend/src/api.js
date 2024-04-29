@@ -12,6 +12,17 @@ export const fetchData = async (endpoint) => {
   }
 };
 
+export const fetchDataWithRequestParams = async (endpoint, params = {}) => {
+  try {
+    const response = await axios.get(`${API_URL}/${endpoint}`, { params });
+    return response.data;
+  } catch (error) {
+    console.error('Fetching data error:', error);
+    throw error;
+  }
+};
+
+
 export const createData = async (endpoint, data) => {
   try {
     const response = await axios.post(`${API_URL}/${endpoint}`, data);
