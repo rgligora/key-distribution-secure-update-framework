@@ -3,7 +3,9 @@ package hr.fer.kdsuf.service.Impl;
 import hr.fer.kdsuf.exception.exceptions.SoftwareNotFoundException;
 import hr.fer.kdsuf.mapper.SoftwareMapper;
 import hr.fer.kdsuf.model.domain.Company;
+import hr.fer.kdsuf.model.domain.Device;
 import hr.fer.kdsuf.model.domain.Software;
+import hr.fer.kdsuf.model.dto.DeviceDto;
 import hr.fer.kdsuf.model.dto.SoftwareDto;
 import hr.fer.kdsuf.model.request.CreateSoftwareRequest;
 import hr.fer.kdsuf.repository.CompanyRepository;
@@ -49,9 +51,13 @@ public class SoftwareServiceImpl implements SoftwareService {
     }
 
     @Override
-    public List<SoftwareDto> retrieveAllSoftware() {
+    public List<SoftwareDto> retrieveSoftwares(String companyId) {
         List<Software> softwares;
-        softwares = softwareRepository.findAll();
+        if(companyId != null){
+            softwares = softwareRepository.findSoftwaresByCompanyCompanyId(companyId);
+        }else{
+            softwares = softwareRepository.findAll();
+        }
         return softwareMapper.modelToDtos(softwares);
     }
 

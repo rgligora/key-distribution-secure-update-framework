@@ -30,8 +30,10 @@ public class SoftwareController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SoftwareDto>> retrieveDevices(){
-        return ResponseEntity.ok(service.retrieveAllSoftware());
+    public ResponseEntity<List<SoftwareDto>> retrieveSoftwares(
+            @RequestParam(required = false) String companyId
+    ){
+        return ResponseEntity.ok(service.retrieveSoftwares(companyId));
     }
 
     @DeleteMapping("/{id}")

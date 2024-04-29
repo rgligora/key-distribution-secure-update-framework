@@ -11,7 +11,7 @@ public interface SoftwareService {
 
     SoftwareDto retrieveSoftware(String id);
 
-    List<SoftwareDto> retrieveAllSoftware();
+    List<SoftwareDto> retrieveSoftwares(String companyId);
 
     void deleteSoftware(String id);
 }
