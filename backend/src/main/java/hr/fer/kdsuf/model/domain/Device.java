@@ -23,8 +23,6 @@ public class Device {
 
     private LocalDateTime lastUpdated;
 
-    private String firmwareVersion;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "companyId")
     private Company company;

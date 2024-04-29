@@ -24,8 +24,6 @@ public class DeviceDto {
 
     private LocalDateTime lastUpdated;
 
-    private String firmwareVersion;
-
     private String companyId;
 
     private DeviceStatus status;
