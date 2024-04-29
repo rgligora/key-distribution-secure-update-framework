@@ -14,6 +14,7 @@ public interface SoftwareMapper {
     @Mapping(target = "softwareId", expression = "java(java.util.UUID.randomUUID().toString())")
     Software requestToModel(CreateSoftwareRequest request);
 
+    @Mapping(target = "companyId", source = "company.companyId")
     SoftwareDto modelToDto(Software software);
 
     List<SoftwareDto> modelToDtos(List<Software> softwares);

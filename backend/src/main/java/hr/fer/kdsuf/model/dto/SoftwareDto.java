@@ -20,9 +20,6 @@ public class SoftwareDto {
 
     private LocalDate uploadDate;
 
-    private String fileLocation;
+    private String companyId;
 
-    private Long fileSize;
-
-    private String checksum;
 }

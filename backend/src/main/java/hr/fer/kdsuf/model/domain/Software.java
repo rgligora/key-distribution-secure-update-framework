@@ -1,7 +1,6 @@
 package hr.fer.kdsuf.model.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,9 +21,7 @@ public class Software {
 
     private LocalDate uploadDate;
 
-    private String fileLocation;
-
-    private Long fileSize;
-
-    private String checksum;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "companyId")
+    private Company company;
 }

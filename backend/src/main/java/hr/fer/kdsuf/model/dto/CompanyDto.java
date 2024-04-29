@@ -20,4 +20,6 @@ public class CompanyDto {
     private List<AdminUserDto> adminUsers;
 
     private List<DeviceDto> devices;
+
+    private List<SoftwareDto> softwares;
 }
