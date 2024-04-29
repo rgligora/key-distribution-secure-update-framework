@@ -49,7 +49,7 @@ const App = () => {
                         
                         {/* TODO: add routes for all companies for all apges like in Dashboards */}
                         {/*Pages*/}
-                        <Route path='/devices' element={<Devices />} />
+                        <Route path='company1/devices' element={<Devices />} />
                         <Route path='/software' element={<Software />} />
                         <Route path='/software-packages' element={<SoftwarePackages />} />
 
