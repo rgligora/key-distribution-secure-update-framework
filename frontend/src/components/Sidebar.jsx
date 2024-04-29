@@ -53,7 +53,7 @@ function Sidebar() {
                   <span className='capitalize'>software</span>
               </NavLink>
               <NavLink 
-                to="/company1/softwarePackages"
+                to="/company1/software-packages"
                 onClick={handleCloseSideBar}
                 className={({ isActive }) => isActive ? activeLink : normalLink}>
                   <span className='capitalize'>software Packages</span>
@@ -80,7 +80,7 @@ function Sidebar() {
                   <span className='capitalize'>software</span>
               </NavLink>
               <NavLink 
-                to="/company2/softwarePackages"
+                to="/company2/software-packages"
                 onClick={handleCloseSideBar}
                 className={({ isActive }) => isActive ? activeLink : normalLink}>
                   <span className='capitalize'>software Packages</span>
@@ -107,7 +107,7 @@ function Sidebar() {
                   <span className='capitalize'>software</span>
               </NavLink>
               <NavLink 
-                to="/company3/softwarePackages"
+                to="/company3/software-packages"
                 onClick={handleCloseSideBar}
                 className={({ isActive }) => isActive ? activeLink : normalLink}>
                   <span className='capitalize'>software Packages</span>

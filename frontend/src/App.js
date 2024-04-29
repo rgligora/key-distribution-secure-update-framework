@@ -49,7 +49,7 @@ const App = () => {
                         <Route path='company1/software' element={<Software />} />
 
 
-                        <Route path='/software-packages' element={<SoftwarePackages />} />
+                        <Route path='company1/software-packages' element={<SoftwarePackages companyId="23d290c9-9023-4001-a9d5-b4b4a603428a"/>} />
 
                         {/*Charts*/}
                         <Route path='/line' element={<Line />} />
