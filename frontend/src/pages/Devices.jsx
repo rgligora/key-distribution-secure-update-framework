@@ -23,8 +23,7 @@ const Devices = ({companyId}) => {
 
   const gridDeviceStatus = (props) => {
   let statusBg = '';
-  const status = props.status;  
-  console.log(status)
+  const status = props.status;
 
   switch (status) {
     case 'ACTIVE':
