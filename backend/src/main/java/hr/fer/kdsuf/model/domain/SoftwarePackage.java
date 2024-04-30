@@ -33,4 +33,7 @@ public class SoftwarePackage {
     )
     private List<Software> includedSoftware;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "companyId")
+    private Company company;
 }

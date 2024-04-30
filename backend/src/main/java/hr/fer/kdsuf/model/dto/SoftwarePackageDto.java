@@ -26,4 +26,6 @@ public class SoftwarePackageDto {
     private PackageStatus status;
 
     private List<SoftwareDto> includedSoftware;
+
+    private String companyId;
 }

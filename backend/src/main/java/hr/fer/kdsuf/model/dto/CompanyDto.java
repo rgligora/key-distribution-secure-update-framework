@@ -22,4 +22,6 @@ public class CompanyDto {
     private List<DeviceDto> devices;
 
     private List<SoftwareDto> softwares;
+
+    private List<SoftwarePackageDto> softwarePackages;
 }

@@ -33,6 +33,10 @@ public class Company {
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Software> softwares;
 
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SoftwarePackage> softwarePackages;
+
+
     public void addDevice(Device device) {
         if (device == null) return;
 
@@ -52,6 +56,17 @@ public class Company {
         }
 
         softwares.add(software);
+
+    }
+
+    public void addSoftwarePackage(SoftwarePackage softwarePackage) {
+        if (softwarePackage == null) return;
+
+        if (softwarePackages == null) {
+            softwarePackages = new ArrayList<>();
+        }
+
+        softwarePackages.add(softwarePackage);
 
     }
 

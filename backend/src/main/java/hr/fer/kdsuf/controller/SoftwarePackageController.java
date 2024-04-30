@@ -1,5 +1,6 @@
 package hr.fer.kdsuf.controller;
 
+import hr.fer.kdsuf.model.dto.DeviceDto;
 import hr.fer.kdsuf.model.dto.SoftwarePackageDto;
 import hr.fer.kdsuf.model.request.CreateSoftwarePackageRequest;
 import hr.fer.kdsuf.service.Impl.SoftwarePackageServiceImpl;
@@ -7,6 +8,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/software-packages")
@@ -25,6 +28,13 @@ public class SoftwarePackageController {
     @GetMapping("/{id}")
     public ResponseEntity<SoftwarePackageDto> retrieveSoftwarePackage(@PathVariable("id") String id){
         return  ResponseEntity.ok(service.retrieveSoftwarePackage(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<SoftwarePackageDto>> retrieveSoftwarePackages(
+            @RequestParam(required = false) String companyId
+    ){
+        return ResponseEntity.ok(service.retrieveSoftwarePackages(companyId));
     }
 
     @DeleteMapping("/{id}")

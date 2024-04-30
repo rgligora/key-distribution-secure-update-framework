@@ -22,4 +22,6 @@ public class CreateSoftwarePackageRequest {
     private PackageStatus status;
 
     private List<String> includedSoftwareIds;
+
+    private String companyId;
 }
