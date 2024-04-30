@@ -12,7 +12,7 @@ const SoftwarePackages = ({companyId}) => {
   useEffect(() => {
     const getSoftwarePackages = async () => {
       try {
-        const data = await fetchDataWithRequestParams('softwarePackages', {companyId});
+        const data = await fetchDataWithRequestParams('software-packages', {companyId});
         setsoftwarePackagesData(data);
       } catch (error) {
         console.error('Failed to load softwarePackages:', error);
@@ -53,11 +53,10 @@ const SoftwarePackages = ({companyId}) => {
 
 
   const ordersGrid = [
-    { type: 'checkbox', width: '50' },
-    { field: 'softwarePackageId', headerText: 'SoftwarePackage ID', width: '250', textAlign: 'Center' },
+    { field: 'softwarePackageId', headerText: 'SoftwarePackage ID', width: 'auto', textAlign: 'Center' },
     { field: 'name', headerText: 'Name', width: '150', textAlign: 'Center' },
     { field: 'creationDate', headerText: 'Creation Date', format: 'd.M.y', textAlign: 'Center', editType: 'datepicker', width: '120' },
-    { field: 'name', headerText: 'Name', width: '150', textAlign: 'Center' },
+    { field: 'description', headerText: 'Description', width: '150', textAlign: 'Center' },
     { field: 'status', headerText: 'Status', template: gridSWPackageStatus, textAlign: 'Center', width: '120' }
    ];
 
