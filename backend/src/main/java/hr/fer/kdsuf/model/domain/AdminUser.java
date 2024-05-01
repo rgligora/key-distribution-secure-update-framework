@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -17,7 +19,11 @@ public class AdminUser {
 
     private String email;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "companyId")
-    private Company company;
+    @ManyToMany()
+    @JoinTable(
+            name = "admin_user_companies",
+            joinColumns = @JoinColumn(name = "userId"),
+            inverseJoinColumns = @JoinColumn(name = "companyId")
+    )
+    private List<Company> companies;
 }
