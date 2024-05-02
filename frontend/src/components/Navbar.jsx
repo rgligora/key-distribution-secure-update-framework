@@ -5,6 +5,7 @@ import { TooltipComponent } from '@syncfusion/ej2-react-popups'
 import { useStateContext } from '../contexts/ContextProvider'
 import {UserProfile} from '.'
 import avatar from '../data/avatar.jpg'
+import {FiSettings} from 'react-icons/fi';
 
 const NavButton = ({title, customFunction, icon, color, dotColor}) => (
   <TooltipComponent content={title} position='BottomCenter'>
@@ -41,15 +42,28 @@ function Navbar() {
       <NavButton title="Menu" customFunction={() => setActiveMenu((prevActiveMenu) => !prevActiveMenu)} color="teal" icon={<AiOutlineMenu/>}/>
       <TooltipComponent content="Profile" position='BottomCenter'>
         <div onClick={() => handleClick('userProfile')} className='flex items-center gap-2 cursor-pointer p-1 rounded-lg'>
-          <img alt='avatar' className="rounded-full w-8 hover:bg-light-gray" src={avatar}/>
+          <img alt='avatar' className="rounded-full w-10 hover:bg-light-gray" src={avatar}/>
           <p>
             <span className='text-gray-400 text-14'>Hi, </span>
             <span className='text-gray-400 font-bold ml-1 text-14'>Admin</span>
           </p>
           <MdKeyboardArrowDown className='text-gray-400 text-14'/>
+          <p>
+              <TooltipComponent className="ml-8" content="Settings" position="BottomCenter">
+                  <button type='button' className='text-l p-3 
+                      hover:drop-shadow-xl
+                      hover:bg-orange-400
+                      text-white
+                      bg-teal-600'
+                      style={{borderRadius:"50%"}}>
+                      <FiSettings />
+                  </button>
+              </TooltipComponent>
+          </p>
         </div>
-    </TooltipComponent>
-    {isClicked.userProfile && <UserProfile />}
+      </TooltipComponent>
+      {isClicked.userProfile && <UserProfile />}
+
     </div>
     
   )
