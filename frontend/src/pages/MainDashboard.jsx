@@ -1,18 +1,40 @@
 import React from 'react'
 import {GoPrimitiveDot} from 'react-icons/go'
 import {LineChart, PieChart} from '../components'
-import { useStateContext } from '../contexts/ContextProvider'
 import {FiSmartphone, FiPackage, FiDownload} from 'react-icons/fi';
+import { useStateContext } from '../contexts/ContextProvider';
+import { fetchData } from '../api.js';
 
 
 function MainDashboard() {
+
+  const [companiesData, setCompaniesData] = useState([]);
+
+    const adminId = '60a8cbbc-d38f-4ce2-a791-5f4dbd6ad400';
+
+    useEffect(() => {
+        const getAdminsCompanies = async () => {
+            try {
+                const adminData = await fetchData(`admin-users/${adminId}`);
+                const companyDetails = await Promise.all(
+                    adminData.companies.map(companyId => fetchData(`company/${companyId}`))
+                );
+                setCompaniesData(companyDetails);
+            } catch (error) {
+                console.error('Failed to load companies:', error);
+            }
+        };
+        getAdminsCompanies();
+    }, []);
+
   return (
     <div className='mt-12'>
-      <div className='flex flex-wrap lg:flex-nowrap justify-center'>
+      {companiesData.map(company => (
+        <div className='flex flex-wrap lg:flex-nowrap justify-center'>
         <div className='bg-orange-400 dark:text-gray-200 dark:bg-secondary-dark-bg h-44 rounded-xl w-full p-8 pt-9 m-3'>
           <div className='flex justify-between items-center'>
             <div>
-              <p className='font-bold text-2xl'>Company 1</p>
+              <p className='font-bold text-2xl'>{`${company.companyId}`}</p>
             </div>
           </div>
         </div>
@@ -71,6 +93,7 @@ function MainDashboard() {
         </div>
       </div>
 
+      ))}
       <div className='flex flex-wrap lg:flex-nowrap justify-center'>
         <div className='bg-orange-400 dark:text-gray-200 dark:bg-secondary-dark-bg h-44 rounded-xl w-full p-8 pt-9 m-3'>
           <div className='flex justify-between items-center'>
