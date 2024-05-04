@@ -27,6 +27,8 @@ function MainDashboard() {
         getAdminsCompanies();
     }, []);
 
+    console.log(companiesData)
+
   return (
     <div className='mt-12'>
       {companiesData.map(company => (
@@ -51,7 +53,7 @@ function MainDashboard() {
             </button>
             <p className='mt-3'>
               <span className='text-2xl font-semibold'>
-                1000
+                {company.devices.length}
               </span>
             </p>
             <p className='md:text-s text-xs text-gray-400 mt-1'>Devices</p>
@@ -68,7 +70,7 @@ function MainDashboard() {
             </button>
             <p className='mt-3'>
               <span className='text-2xl font-semibold'>
-                1000
+              {company.softwares.length}
               </span>
             </p>
             <p className='md:text-s text-xs text-gray-400 mt-1'>Software</p>
@@ -85,7 +87,7 @@ function MainDashboard() {
             </button>
             <p className='mt-3'>
               <span className='text-2xl font-semibold'>
-                1000
+              {company.softwarePackages.length}
               </span>
             </p>
             <p className='md:text-s w-20 text-xs text-gray-400 mt-1'>SW Packages</p>
