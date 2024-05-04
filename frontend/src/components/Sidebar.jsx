@@ -18,7 +18,7 @@ function Sidebar() {
 
     const [companiesData, setCompaniesData] = useState([]);
 
-    const adminId = '60a8cbbc-d38f-4ce2-a791-5f4dbd6ad400';
+    const adminId = '81541d35-b894-4f6f-8d90-333912fba62a';
 
     useEffect(() => {
         const getAdminsCompanies = async () => {

@@ -12,7 +12,7 @@ const App = () => {
     const { activeMenu } = useStateContext();
     const [AdminData, setAdminData] = useState({ companies: [] });
 
-    const adminId = '60a8cbbc-d38f-4ce2-a791-5f4dbd6ad400';
+    const adminId = '81541d35-b894-4f6f-8d90-333912fba62a';
 
     useEffect(() => {
         const getAdmins = async () => {
@@ -50,7 +50,7 @@ const App = () => {
 
                                 {AdminData.companies.map((companyId) => (
                                     <React.Fragment key={companyId}>
-                                        <Route path={`${companyId}/dashboard`} element={<Dashboard />} />
+                                        <Route path={`${companyId}/dashboard`} element={<Dashboard companyId={companyId}/>} />
                                         <Route path={`${companyId}/devices`} element={<Devices companyId={companyId} />} />
                                         <Route path={`${companyId}/software`} element={<Software companyId={companyId} />} />
                                         <Route path={`${companyId}/software-packages`} element={<SoftwarePackages companyId={companyId} />} />
