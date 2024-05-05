@@ -23,7 +23,7 @@ const Software = ({companyId}) => {
   }, [companyId]);
 
 
-  const ordersGrid = [
+  const softwareGrid = [
     { type: 'checkbox', width: '50' },
     { field: 'softwareId', headerText: 'Software ID', width: '250', textAlign: 'Center' },
     { field: 'name', headerText: 'Name', width: '150', textAlign: 'Center' },
@@ -36,7 +36,7 @@ const Software = ({companyId}) => {
       <Header category="Page" title="Software"/>
       <GridComponent dataSource={softwareData} allowPaging allowSorting toolbar={['Create SW Package']}>
         <ColumnsDirective>
-          {ordersGrid.map((item, index) => (
+          {softwareGrid.map((item, index) => (
             <ColumnDirective key={index} {...item} />
           ))}
         </ColumnsDirective>

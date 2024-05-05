@@ -6,3 +6,5 @@ export { default as LineChart } from './Charts/LineChart';
 export { default as Pie } from './Charts/PieChart';
 export { default as ChartsHeader } from './ChartsHeader';
 export { default as Header } from './Header';
+export { default as Modal } from './Modal';
+export { default as NewDeviceForm } from './NewDeviceForm';

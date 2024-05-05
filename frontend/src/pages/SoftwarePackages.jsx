@@ -52,7 +52,7 @@ const SoftwarePackages = ({companyId}) => {
   };
 
 
-  const ordersGrid = [
+  const softwarePackagesGrid = [
     { field: 'softwarePackageId', headerText: 'SoftwarePackage ID', width: 'auto', textAlign: 'Center' },
     { field: 'name', headerText: 'Name', width: '150', textAlign: 'Center' },
     { field: 'creationDate', headerText: 'Creation Date', format: 'd.M.y', textAlign: 'Center', editType: 'datepicker', width: '120' },
@@ -65,7 +65,7 @@ const SoftwarePackages = ({companyId}) => {
       <Header category="Page" title="Software Packages"/>
       <GridComponent dataSource={softwarePackagesData} allowPaging allowSorting toolbar={['Roll out SW Package']}>
         <ColumnsDirective>
-          {ordersGrid.map((item, index) => (
+          {softwarePackagesGrid.map((item, index) => (
             <ColumnDirective key={index} {...item} />
           ))}
         </ColumnsDirective>
