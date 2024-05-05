@@ -36,8 +36,6 @@ const App = () => {
                     <Route path={`${company.companyId}/software-packages`} element={<SoftwarePackages companyId={company.companyId} />} />
                   </React.Fragment>
                 ))}
-                <Route path="/line" element={<Line />} />
-                <Route path="/pie" element={<Pie />} />
               </Routes>
             </div>
           </div>
