@@ -20,7 +20,7 @@ const SoftwarePackages = ({companyId}) => {
     };
 
     getSoftwarePackages();
-  }, []);
+  }, [companyId]);
 
   const gridSWPackageStatus = (props) => {
     let statusBg = '';

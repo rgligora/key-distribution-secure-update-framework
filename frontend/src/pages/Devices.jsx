@@ -19,7 +19,7 @@ const Devices = ({companyId}) => {
     };
 
     getDevices();
-  }, []);
+  }, [companyId]);
 
   const gridDeviceStatus = (props) => {
   let statusBg = '';

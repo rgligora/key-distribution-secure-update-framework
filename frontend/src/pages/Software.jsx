@@ -20,7 +20,7 @@ const Software = ({companyId}) => {
     };
 
     getSoftware();
-  }, []);
+  }, [companyId]);
 
 
   const ordersGrid = [
