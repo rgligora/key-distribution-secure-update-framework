@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { GridComponent, ColumnsDirective, ColumnDirective, Selection, Inject } from '@syncfusion/ej2-react-grids';
 import Button from './Button.jsx';
 import { fetchDataWithRequestParams } from '../api.js';
@@ -12,7 +12,7 @@ const NewSoftwarePackageForm = ({ onSubmit, onClose, companyId }) => {
   });
 
   const [softwareData, setSoftwareData] = useState([]);
-  const [selectedSoftwareIds, setSelectedSoftwareIds] = useState([]);
+  const gridRef = useRef(null);
 
   useEffect(() => {
     const getSoftware = async () => {
@@ -37,7 +37,10 @@ const NewSoftwarePackageForm = ({ onSubmit, onClose, companyId }) => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ ...formData, includedSoftwareIds: selectedSoftwareIds });
+    const selectedRecords = gridRef.current?.getSelectedRecords() || [];
+    const selectedIds = selectedRecords.map((record) => record.softwareId);
+
+    onSubmit({ ...formData, includedSoftwareIds: selectedIds });
     onClose();
     setFormData({
       name: '',
@@ -47,14 +50,9 @@ const NewSoftwarePackageForm = ({ onSubmit, onClose, companyId }) => {
     });
   };
 
-  const handleSelectionChange = ({ selectedRecords }) => {
-    const ids = selectedRecords.map((record) => record.softwareId);
-    setSelectedSoftwareIds(ids);
-  };
-
   const softwareGrid = [
     { type: 'checkbox', width: '50' },
-    { field: 'softwareId', headerText: 'Software ID', width: '250', textAlign: 'Center' },
+    { field: 'softwareId', headerText: 'Software ID', width: '250', textAlign: 'Center', isPrimaryKey: true },
     { field: 'name', headerText: 'Name', width: '150', textAlign: 'Center' },
     { field: 'version', headerText: 'Version', width: '150', textAlign: 'Center' },
     { field: 'uploadDate', headerText: 'Upload Date', format: 'd.M.y', textAlign: 'Center', width: '120' },
@@ -88,7 +86,8 @@ const NewSoftwarePackageForm = ({ onSubmit, onClose, companyId }) => {
         <GridComponent
           dataSource={softwareData}
           selectionSettings={{ type: 'Multiple', persistSelection: true }}
-          change={handleSelectionChange}
+          ref={gridRef}
+          allowSelection={true}
         >
           <ColumnsDirective>
             {softwareGrid.map((item, index) => (
