@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import {GridComponent, ColumnsDirective, ColumnDirective, Selection, Toolbar, Resize, Sort, ContextMenu, Filter, Page, Edit, Inject} from '@syncfusion/ej2-react-grids'
-import { Header } from '../components'
-import { fetchData, fetchDataWithRequestParams } from '../api.js';
+import { Header, Button, Modal, NewSoftwareForm } from '../components';
+import { fetchData, createData, fetchDataWithRequestParams } from '../api.js';
 
 
 
 
 const Software = ({companyId}) => {
-  const [softwareData, setsoftwareData] = useState([]);
+  const [softwareData, setSoftwareData] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   useEffect(() => {
     const getSoftware = async () => {
       try {
         const data = await fetchDataWithRequestParams('software', {companyId});
-        setsoftwareData(data);
+        setSoftwareData(data);
       } catch (error) {
         console.error('Failed to load software:', error);
       }
@@ -21,6 +23,15 @@ const Software = ({companyId}) => {
 
     getSoftware();
   }, [companyId]);
+
+  const handleNewSoftwareSubmit = async (formData) => {
+    try {
+      const createdSoftware = await createData('software', { ...formData, companyId });
+      setSoftwareData([...softwareData, createdSoftware]);
+    } catch (error) {
+      console.error('Failed to create new software:', error);
+    }
+  };
 
 
   const softwareGrid = [
@@ -33,7 +44,17 @@ const Software = ({companyId}) => {
 
   return (
     <div className='m-2 md:m-10 p-2 md:p-10 bg-white rounded-3xl'>
-      <Header category="Page" title="Software"/>
+      <Header category="Page" title="Software" />
+      <Button
+        className="mb-5 p-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
+        onClick={() => setIsModalOpen(true)}
+      >
+        Add New Software
+      </Button>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add New Software">
+        <NewSoftwareForm onSubmit={handleNewSoftwareSubmit} onClose={() => setIsModalOpen(false)} companyId={companyId}/>
+      </Modal>
       <GridComponent dataSource={softwareData} allowPaging allowSorting toolbar={['Create SW Package']}>
         <ColumnsDirective>
           {softwareGrid.map((item, index) => (
