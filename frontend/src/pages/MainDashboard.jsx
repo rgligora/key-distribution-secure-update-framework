@@ -27,8 +27,6 @@ function MainDashboard() {
         getAdminsCompanies();
     }, []);
 
-    console.log(companiesData)
-
   return (
     <div className='mt-12'>
       {companiesData.map(company => (
