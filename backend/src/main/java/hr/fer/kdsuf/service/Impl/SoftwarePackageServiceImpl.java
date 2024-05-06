@@ -44,6 +44,7 @@ public class SoftwarePackageServiceImpl implements SoftwarePackageService{
                 .map(id -> softwareRepository.findById(id).orElse(null))
                 .collect(Collectors.toList());
 
+        softwarePackage.setCreationDate(LocalDate.now());
         softwarePackage.setCompany(company);
         softwarePackage.setIncludedSoftware(includedSoftware);
         company.addSoftwarePackage(softwarePackage);

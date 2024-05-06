@@ -14,9 +14,7 @@ import java.util.List;
 public class CreateSoftwarePackageRequest {
 
     private String name;
-
-    private LocalDate creationDate;
-
+    
     private String description;
 
     private PackageStatus status;
