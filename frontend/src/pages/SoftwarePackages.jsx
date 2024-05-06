@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import {GridComponent, ColumnsDirective, ColumnDirective, Selection, Toolbar, Resize, Sort, ContextMenu, Filter, Page, Edit, Inject} from '@syncfusion/ej2-react-grids'
-import { Header } from '../components'
-import { fetchData, fetchDataWithRequestParams } from '../api.js';
-
+import { Header, Button, Modal, NewSoftwarePackageForm } from '../components';
+import { fetchDataWithRequestParams, createData } from '../api.js';
 
 
 
 const SoftwarePackages = ({companyId}) => {
   const [softwarePackagesData, setsoftwarePackagesData] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   useEffect(() => {
     const getSoftwarePackages = async () => {
@@ -21,6 +22,16 @@ const SoftwarePackages = ({companyId}) => {
 
     getSoftwarePackages();
   }, [companyId]);
+
+  const handleNewSoftwarePackageSubmit = async (formData) => {
+    try {
+      const createdSoftwarePackage = await createData('software-packages', { ...formData, companyId });
+      setsoftwarePackagesData([...softwarePackagesData, createdSoftwarePackage]);
+    } catch (error) {
+      console.error('Failed to create new software package:', error);
+    }
+  };
+
 
   const gridSWPackageStatus = (props) => {
     let statusBg = '';
@@ -62,7 +73,17 @@ const SoftwarePackages = ({companyId}) => {
 
   return (
     <div className='m-2 md:m-10 p-2 md:p-10 bg-white rounded-3xl'>
-      <Header category="Page" title="Software Packages"/>
+      <Header category="Page" title="Software Packages" />
+      <Button
+        className="mb-5 p-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
+        onClick={() => setIsModalOpen(true)}
+      >
+        Create SW Package
+      </Button>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Create Software Package">
+        <NewSoftwarePackageForm onSubmit={handleNewSoftwarePackageSubmit} onClose={() => setIsModalOpen(false)} companyId={companyId} />
+      </Modal>
       <GridComponent dataSource={softwarePackagesData} allowPaging allowSorting toolbar={['Roll out SW Package']}>
         <ColumnsDirective>
           {softwarePackagesGrid.map((item, index) => (

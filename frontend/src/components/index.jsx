@@ -9,3 +9,4 @@ export { default as Header } from './Header';
 export { default as Modal } from './Modal';
 export { default as NewDeviceForm } from './NewDeviceForm';
 export { default as NewSoftwareForm } from './NewSoftwareForm';
+export { default as NewSoftwarePackageForm } from './NewSoftwarePackageForm';
