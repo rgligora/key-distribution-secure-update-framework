@@ -23,6 +23,16 @@ public class DeviceController {
     @Autowired
     private DeviceServiceImpl service;
 
+    @PostMapping("/register")
+    public ResponseEntity<DeviceDto> registerDevice(@RequestBody CreateDeviceRequest request) {
+        return ResponseEntity.ok(service.registerDevice(request));
+    }
+
+    @PutMapping("/{id}/confirm")
+    public ResponseEntity<DeviceDto> confirmDevice(@PathVariable String id) {
+        return ResponseEntity.ok(service.confirmDevice(id));
+    }
+
     @PostMapping
     public ResponseEntity<DeviceDto> createDevice(@RequestBody CreateDeviceRequest request) {
         return ResponseEntity.ok(service.createDevice(request));
