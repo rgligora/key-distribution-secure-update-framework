@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {GridComponent, ColumnsDirective, ColumnDirective, Selection, Toolbar, Resize, Sort, ContextMenu, Filter, Page, Edit, Inject} from '@syncfusion/ej2-react-grids'
+import {GridComponent, ColumnsDirective, ColumnDirective, Resize, Sort, ContextMenu, Filter, Page, Edit, Inject} from '@syncfusion/ej2-react-grids'
 import { Header, Button, Modal, NewSoftwareForm } from '../components';
 import { fetchData, createData, fetchDataWithRequestParams } from '../api.js';
 
@@ -35,7 +35,6 @@ const Software = ({companyId}) => {
 
 
   const softwareGrid = [
-    { type: 'checkbox', width: '50' },
     { field: 'softwareId', headerText: 'Software ID', width: '250', textAlign: 'Center' },
     { field: 'name', headerText: 'Name', width: '150', textAlign: 'Center' },
     { field: 'version', headerText: 'Version', width: '150', textAlign: 'Center' },
@@ -55,13 +54,13 @@ const Software = ({companyId}) => {
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add New Software">
         <NewSoftwareForm onSubmit={handleNewSoftwareSubmit} onClose={() => setIsModalOpen(false)} companyId={companyId}/>
       </Modal>
-      <GridComponent dataSource={softwareData} allowPaging allowSorting toolbar={['Create SW Package']}>
+      <GridComponent dataSource={softwareData} allowPaging allowSorting>
         <ColumnsDirective>
           {softwareGrid.map((item, index) => (
             <ColumnDirective key={index} {...item} />
           ))}
         </ColumnsDirective>
-        <Inject services={[Resize, Sort, ContextMenu, Filter, Page, Edit, Selection, Toolbar]} />
+        <Inject services={[Resize, Sort, ContextMenu, Filter, Page, Edit]} />
       </GridComponent>
     </div>
   );
