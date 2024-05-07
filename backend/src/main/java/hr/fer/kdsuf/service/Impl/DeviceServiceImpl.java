@@ -4,6 +4,7 @@ import hr.fer.kdsuf.exception.exceptions.DeviceNotFoundException;
 import hr.fer.kdsuf.mapper.DeviceMapper;
 import hr.fer.kdsuf.model.domain.Company;
 import hr.fer.kdsuf.model.domain.Device;
+import hr.fer.kdsuf.model.domain.DeviceStatus;
 import hr.fer.kdsuf.model.domain.UpdateHistory;
 import hr.fer.kdsuf.model.dto.DeviceDto;
 import hr.fer.kdsuf.model.request.CreateDeviceRequest;
@@ -25,6 +26,26 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Autowired
     private DeviceMapper deviceMapper;
+
+    @Override
+    public DeviceDto registerDevice(CreateDeviceRequest request) {
+        Company company = companyRepository.findById(request.getCompanyId())
+                .orElseThrow(() -> new IllegalArgumentException("Company with id: '" + request.getCompanyId() + "' does not exist!"));
+        Device device = deviceMapper.requestToModel(request);
+        device.setStatus(DeviceStatus.REGISTERED); // Initially set status to REGISTERED
+        device.setCompany(company);
+        company.addDevice(device);
+        companyRepository.save(company);
+        return deviceMapper.modelToDto(device);
+    }
+
+    @Override
+    public DeviceDto confirmDevice(String deviceId) {
+        Device device = deviceRepository.findById(deviceId)
+                .orElseThrow(() -> new DeviceNotFoundException(deviceId));
+        device.setStatus(DeviceStatus.ACTIVE);
+        return deviceMapper.modelToDto(deviceRepository.save(device));
+    }
 
     @Override
     public DeviceDto createDevice(CreateDeviceRequest request) {
