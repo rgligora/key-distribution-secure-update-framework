@@ -17,7 +17,7 @@ export const ContextProvider = ({ children }) => {
 
   useEffect(() => {
     const getAdminData = async () => {
-      const adminId = "81541d35-b894-4f6f-8d90-333912fba62a"; // Update as needed
+      const adminId = "b668dead-1c36-44df-852d-a6f0ae4986eb"; // Update as needed
       try {
         const data = await fetchData(`admin-users/${adminId}`);
         const companyDetails = await Promise.all(

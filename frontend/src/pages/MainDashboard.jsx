@@ -10,7 +10,7 @@ function MainDashboard() {
 
   const [companiesData, setCompaniesData] = useState([]);
 
-    const adminId = '81541d35-b894-4f6f-8d90-333912fba62a';
+    const adminId = 'b668dead-1c36-44df-852d-a6f0ae4986eb';
 
     useEffect(() => {
         const getAdminsCompanies = async () => {
