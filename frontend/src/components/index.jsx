@@ -7,6 +7,5 @@ export { default as Pie } from './Charts/PieChart';
 export { default as ChartsHeader } from './ChartsHeader';
 export { default as Header } from './Header';
 export { default as Modal } from './Modal';
-export { default as NewDeviceForm } from './NewDeviceForm';
 export { default as NewSoftwareForm } from './NewSoftwareForm';
 export { default as NewSoftwarePackageForm } from './NewSoftwarePackageForm';
