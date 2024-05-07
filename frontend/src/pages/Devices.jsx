@@ -1,32 +1,57 @@
-import React, { useEffect, useState } from 'react';
-import { GridComponent, ColumnsDirective, ColumnDirective, Resize, Sort, ContextMenu, Filter, Page, Edit, Inject } from '@syncfusion/ej2-react-grids';
-import { Header, Button, Modal, NewDeviceForm } from '../components';
-import { fetchData, createData, fetchDataWithRequestParams } from '../api.js';
-
+import React, { useEffect, useState, useRef } from 'react';
+import { GridComponent, ColumnsDirective, ColumnDirective, Resize, Sort, ContextMenu, Filter, Page, Edit, Selection, Inject } from '@syncfusion/ej2-react-grids';
+import { Header, Button } from '../components';
+import { fetchDataWithRequestParams, updateData } from '../api.js';
 
 const Devices = ({ companyId }) => {
-  const [deviceData, setDeviceData] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const fetchDevices = async () => {
-    try {
-      const data = await fetchDataWithRequestParams('devices', { companyId });
-      setDeviceData(data);
-    } catch (error) {
-      console.error('Failed to load devices:', error);
-    }
-  };
+  const [confirmedDevices, setConfirmedDevices] = useState([]);
+  const [pendingDevices, setPendingDevices] = useState([]);
+  const confirmedGridRef = useRef(null);
+  const pendingGridRef = useRef(null);
 
   useEffect(() => {
-    fetchDevices();
+    const getDevices = async () => {
+      try {
+        const data = await fetchDataWithRequestParams('devices', { companyId });
+        const confirmed = data.filter((device) => device.status !== 'REGISTERED');
+        const pending = data.filter((device) => device.status === 'REGISTERED');
+        setConfirmedDevices(confirmed);
+        setPendingDevices(pending);
+
+        if (confirmedGridRef.current) {
+          confirmedGridRef.current.dataSource = confirmed;
+        }
+        if (pendingGridRef.current) {
+          pendingGridRef.current.dataSource = pending;
+        }
+      } catch (error) {
+        console.error('Failed to load devices:', error);
+      }
+    };
+
+    getDevices();
   }, [companyId]);
 
-  const handleNewDeviceSubmit = async (formData) => {
+  const confirmDevice = async (deviceId) => {
     try {
-      const createdDevice = await createData('devices', { ...formData, companyId });
-      setDeviceData([...deviceData, createdDevice]);
+      await updateData(`devices/${deviceId}/confirm`, {});
+      const updatedPendingDevices = pendingDevices.filter((device) => device.deviceId !== deviceId);
+      const updatedConfirmedDevices = pendingDevices.filter((device) => device.deviceId === deviceId).map((device) => ({
+        ...device,
+        status: 'ACTIVE',
+      }));
+
+      setPendingDevices(updatedPendingDevices);
+      setConfirmedDevices((prevConfirmed) => [...prevConfirmed, ...updatedConfirmedDevices]);
+
+      if (pendingGridRef.current) {
+        pendingGridRef.current.refresh();
+      }
+      if (confirmedGridRef.current) {
+        confirmedGridRef.current.refresh();
+      }
     } catch (error) {
-      console.error('Failed to create new device:', error);
+      console.error('Failed to confirm device:', error);
     }
   };
 
@@ -62,35 +87,62 @@ const Devices = ({ companyId }) => {
     );
   };
 
-  const devicesGrid = [
-    { field: 'deviceId', headerText: 'Device ID', width: 'auto', textAlign: 'Center' },
-    { field: 'name', headerText: 'Name', width: 'auto', textAlign: 'Center' },
-    { field: 'registrationDate', headerText: 'Registration Date', format: 'd.M.y', textAlign: 'Center', editType: 'datepicker', width: 'auto' },
-    { field: 'lastUpdated', headerText: 'Last Updated', format: 'dd.MM.yyyy HH:mm', textAlign: 'Center', editType: 'datetimepicker', width: 'auto' },
+  const deviceColumns = [
+    { field: 'deviceId', headerText: 'Device ID', width: '150', textAlign: 'Center' },
+    { field: 'name', headerText: 'Name', width: '120', textAlign: 'Center' },
+    { field: 'registrationDate', headerText: 'Registration Date', width: '120', textAlign: 'Center', format: 'd.M.y', editType: 'datepicker' },
+    { field: 'lastUpdated', headerText: 'Last Updated', width: '150', textAlign: 'Center', format: 'dd.MM.yyyy HH:mm', editType: 'datetimepicker' },
     { field: 'status', headerText: 'Status', template: gridOrderStatus, textAlign: 'Center', width: '120' }
+  ];
+
+  const pendingDeviceColumns = [
+    ...deviceColumns,
+    {
+      headerText: 'Actions',
+      template: (props) => (
+        <Button onClick={() => confirmDevice(props.deviceId)} className="bg-teal-600 text-white p-2 rounded-lg hover:bg-teal-700">
+          Confirm
+        </Button>
+      ),
+      width: '150',
+      textAlign: 'Center',
+    },
   ];
 
   return (
     <div className='m-2 md:m-10 p-2 md:p-10 bg-white rounded-3xl'>
       <Header category="Page" title="Devices" />
-      <Button
-        className="mb-5 p-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
-        onClick={() => setIsModalOpen(true)}
+
+      <h2 className="text-2xl font-semibold mb-4">Devices Waiting for Confirmation</h2>
+      <GridComponent
+        ref={pendingGridRef}
+        key={`pending-devices-${pendingDevices.length}`}
+        dataSource={pendingDevices}
+        allowPaging
+        allowSorting
       >
-        Add New Device
-      </Button>
-
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add New Device">
-        <NewDeviceForm onSubmit={handleNewDeviceSubmit} onClose={() => setIsModalOpen(false)} />
-      </Modal>
-
-      <GridComponent id='gridcomp' dataSource={deviceData} allowPaging allowSorting>
         <ColumnsDirective>
-          {devicesGrid.map((item, index) => (
-            <ColumnDirective key={index} {...item} />
+          {pendingDeviceColumns.map((col, index) => (
+            <ColumnDirective key={index} {...col} />
           ))}
         </ColumnsDirective>
-        <Inject services={[Resize, Sort, ContextMenu, Filter, Page, Edit]} />
+        <Inject services={[Resize, Sort, ContextMenu, Filter, Page, Edit, Selection]} />
+      </GridComponent>
+
+      <h2 className="text-2xl font-semibold mt-8 mb-4">Confirmed Devices</h2>
+      <GridComponent
+        ref={confirmedGridRef}
+        key={`confirmed-devices-${confirmedDevices.length}`}
+        dataSource={confirmedDevices}
+        allowPaging
+        allowSorting
+      >
+        <ColumnsDirective>
+          {deviceColumns.map((col, index) => (
+            <ColumnDirective key={index} {...col} />
+          ))}
+        </ColumnsDirective>
+        <Inject services={[Resize, Sort, ContextMenu, Filter, Page, Edit, Selection]} />
       </GridComponent>
     </div>
   );
