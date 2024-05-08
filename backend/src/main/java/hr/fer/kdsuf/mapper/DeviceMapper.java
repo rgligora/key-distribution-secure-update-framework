@@ -11,11 +11,10 @@ import java.util.List;
 @Mapper(componentModel = "Spring")
 public interface DeviceMapper {
 
-
-    @Mapping(target = "deviceId", expression = "java(java.util.UUID.randomUUID().toString())")
     Device requestToModel(CreateDeviceRequest request);
 
     @Mapping(target = "companyId", source = "company.companyId")
+    @Mapping(target = "modelId", source = "model.modelId")
     DeviceDto modelToDto(Device device);
 
     List<DeviceDto> modelToDtos(List<Device> devices);

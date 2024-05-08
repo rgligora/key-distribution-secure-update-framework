@@ -11,8 +11,15 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterDeviceRequest {
+public class CreateDeviceRequest {
 
-    private String deviceId;
+    private String name;
 
+    private LocalDate registrationDate;
+
+    private LocalDateTime lastUpdated;
+
+    private String companyId;
+
+    private DeviceStatus status;
 }

@@ -1,8 +1,8 @@
 package hr.fer.kdsuf.controller;
 
 import hr.fer.kdsuf.model.dto.DeviceDto;
-import hr.fer.kdsuf.model.dto.UpdateHistoryDto;
 import hr.fer.kdsuf.model.request.CreateDeviceRequest;
+import hr.fer.kdsuf.model.request.RegisterDeviceRequest;
 import hr.fer.kdsuf.repository.DeviceRepository;
 import hr.fer.kdsuf.service.Impl.DeviceServiceImpl;
 import jakarta.transaction.Transactional;
@@ -24,7 +24,7 @@ public class DeviceController {
     private DeviceServiceImpl service;
 
     @PostMapping("/register")
-    public ResponseEntity<DeviceDto> registerDevice(@RequestBody CreateDeviceRequest request) {
+    public ResponseEntity<DeviceDto> registerDevice(@RequestBody RegisterDeviceRequest request) {
         return ResponseEntity.ok(service.registerDevice(request));
     }
 

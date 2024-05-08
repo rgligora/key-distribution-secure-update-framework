@@ -1,19 +1,24 @@
 package hr.fer.kdsuf.service.Impl;
 
 import hr.fer.kdsuf.exception.exceptions.DeviceNotFoundException;
+import hr.fer.kdsuf.exception.exceptions.ModelNotFoundException;
 import hr.fer.kdsuf.mapper.DeviceMapper;
 import hr.fer.kdsuf.model.domain.Company;
 import hr.fer.kdsuf.model.domain.Device;
 import hr.fer.kdsuf.model.domain.DeviceStatus;
-import hr.fer.kdsuf.model.domain.UpdateHistory;
+import hr.fer.kdsuf.model.domain.Model;
 import hr.fer.kdsuf.model.dto.DeviceDto;
 import hr.fer.kdsuf.model.request.CreateDeviceRequest;
+import hr.fer.kdsuf.model.request.RegisterDeviceRequest;
 import hr.fer.kdsuf.repository.CompanyRepository;
 import hr.fer.kdsuf.repository.DeviceRepository;
+import hr.fer.kdsuf.repository.ModelRepository;
 import hr.fer.kdsuf.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -27,12 +32,24 @@ public class DeviceServiceImpl implements DeviceService {
     @Autowired
     private DeviceMapper deviceMapper;
 
+    @Autowired
+    private ModelRepository modelRepository;
+
     @Override
-    public DeviceDto registerDevice(CreateDeviceRequest request) {
-        Company company = companyRepository.findById(request.getCompanyId())
-                .orElseThrow(() -> new IllegalArgumentException("Company with id: '" + request.getCompanyId() + "' does not exist!"));
-        Device device = deviceMapper.requestToModel(request);
-        device.setStatus(DeviceStatus.REGISTERED); // Initially set status to REGISTERED
+    public DeviceDto registerDevice(RegisterDeviceRequest request) {
+        Model model = modelRepository.findModelByDeviceIdsContaining(request.getDeviceId());
+
+        Device device = new Device();
+        device.setDeviceId(request.getDeviceId());
+        device.setName(model.getName());
+        device.setStatus(DeviceStatus.REGISTERED);
+        device.setRegistrationDate(LocalDate.now());
+        device.setLastUpdated(LocalDateTime.now());
+        device.setModel(model);
+
+        Company company = companyRepository.findById(model.getCompany().getCompanyId())
+                .orElseThrow(() -> new IllegalArgumentException("Company with id: '" + model.getCompany().getCompanyId() + "' does not exist!"));
+
         device.setCompany(company);
         company.addDevice(device);
         companyRepository.save(company);

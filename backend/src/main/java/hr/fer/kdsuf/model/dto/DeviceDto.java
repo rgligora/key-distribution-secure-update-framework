@@ -26,6 +26,8 @@ public class DeviceDto {
 
     private String companyId;
 
+    private String modelId;
+
     private DeviceStatus status;
 
 }

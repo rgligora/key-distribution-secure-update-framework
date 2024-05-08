@@ -27,6 +27,10 @@ public class Device {
     @JoinColumn(name = "companyId")
     private Company company;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "modelId")
+    private Model model;
+
     @Enumerated(EnumType.STRING)
     private DeviceStatus status;
 }
