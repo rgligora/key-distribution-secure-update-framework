@@ -61,16 +61,16 @@ const Devices = ({ companyId }) => {
 
     switch (status) {
       case 'ACTIVE':
-        statusBg = '#03C9D7';
+        statusBg = '#b3e87d';
         break;
       case 'INACTIVE':
-        statusBg = '#FF5C8E';
+        statusBg = '#ff6b6b';
         break;
       case 'UPDATE_PENDING':
-        statusBg = 'orange';
+        statusBg = '#f0ad4e';
         break;
       case 'UPDATING':
-        statusBg = 'green';
+        statusBg = '#5bc0de';
         break;
       default:
         statusBg = 'gray';
@@ -100,12 +100,9 @@ const Devices = ({ companyId }) => {
     {
       headerText: 'Actions',
       template: (props) => (
-        <button
-          onClick={() => confirmDevice(props.deviceId)}
-          className="bg-orange-400 text-white p-2 rounded-lg hover:bg-orange-500"
-        >
+        <Button onClick={() => confirmDevice(props.deviceId)} className="bg-teal-600 text-white p-2 rounded-lg hover:bg-teal-700">
           Confirm
-        </button>
+        </Button>
       ),
       width: '150',
       textAlign: 'Center',
