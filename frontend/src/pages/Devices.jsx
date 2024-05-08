@@ -100,9 +100,12 @@ const Devices = ({ companyId }) => {
     {
       headerText: 'Actions',
       template: (props) => (
-        <Button onClick={() => confirmDevice(props.deviceId)} className="bg-teal-600 text-white p-2 rounded-lg hover:bg-teal-700">
+        <button
+          onClick={() => confirmDevice(props.deviceId)}
+          className="bg-orange-400 text-white p-2 rounded-lg hover:bg-orange-500"
+        >
           Confirm
-        </Button>
+        </button>
       ),
       width: '150',
       textAlign: 'Center',
