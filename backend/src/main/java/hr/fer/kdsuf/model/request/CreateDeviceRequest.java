@@ -1,7 +1,6 @@
 package hr.fer.kdsuf.model.request;
 
 import hr.fer.kdsuf.model.domain.DeviceStatus;
-import hr.fer.kdsuf.model.domain.Software;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,15 +11,8 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateDeviceRequest {
+public class RegisterDeviceRequest {
 
-    private String name;
+    private String deviceId;
 
-    private LocalDate registrationDate;
-
-    private LocalDateTime lastUpdated;
-
-    private String companyId;
-
-    private DeviceStatus status;
 }
