@@ -22,7 +22,8 @@ const NavButton = ({ title, customFunction, icon, color, dotColor }) => (
 );
 
 function Navbar() {
-  const { activeMenu, setActiveMenu, isClicked, handleClick, screenSize, setScreenSize } = useStateContext();
+  const { activeMenu, setActiveMenu, isClicked, handleClick, screenSize, setScreenSize, adminData } = useStateContext();
+  console.log(adminData.username)
 
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
@@ -48,7 +49,7 @@ function Navbar() {
           <img alt="avatar" className="rounded-full w-10 hover:bg-light-gray" src={avatar} />
           <p>
             <span className="text-gray-400 text-14">Hi, </span>
-            <span className="text-gray-400 font-bold ml-1 text-14">Admin</span>
+            <span className="text-gray-400 font-bold ml-1 text-14">{adminData.username}</span>
           </p>
           <MdKeyboardArrowDown className="text-gray-400 text-14" />
           <p>
