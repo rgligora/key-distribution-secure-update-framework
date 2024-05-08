@@ -9,6 +9,7 @@ import Models from './pages/Models';
 const App = () => {
   const { activeMenu, adminData } = useStateContext();
 
+  const navbarHeight = '64px';
   return (
     <div>
       <BrowserRouter>
@@ -23,10 +24,10 @@ const App = () => {
             </div>
           )}
           <div className={activeMenu ? "dark:bg-main-bg bg-main-bg min-h-screen w-full md:ml-72" : "dark:bg-main-bg bg-main-bg min-h-screen w-full flex-2"}>
-            <div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full">
+            <div className={`fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full`} style={{ height: navbarHeight }}>
               <Navbar />
             </div>
-            <div>
+            <div style={{ marginTop: navbarHeight }}>
               <Routes>
                 <Route path="/" element={<MainDashboard />} />
                 {adminData.companies.map((company) => (
