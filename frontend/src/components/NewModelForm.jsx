@@ -105,20 +105,25 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium mb-1">Current Device IDs:</label>
-        <ul className="list-disc pl-5">
-          {formData.deviceIds.map((deviceId, index) => (
-            <li key={index} className="flex items-center mb-1">
-              <span className="mr-2">{deviceId}</span>
-              <Button
-                type="button"
-                onClick={() => handleRemoveDeviceId(index)}
-                className="text-white-500 bg-red-600 p-1"
-              >
-                Remove
-              </Button>
-            </li>
-          ))}
-        </ul>
+        <div
+          className="w-full p-2 border rounded-md"
+          style={{ maxHeight: '150px', overflowY: 'auto' }}
+        >
+          <ul className="list-disc pl-5">
+            {formData.deviceIds.map((deviceId, index) => (
+              <li key={index} className="flex items-center mb-1">
+                <span className="mr-2">{deviceId}</span>
+                <Button
+                  type="button"
+                  onClick={() => handleRemoveDeviceId(index)}
+                  className="text-white-500 bg-red-600 p-1"
+                >
+                  Remove
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
       <Button type="submit">Add Model</Button>
     </form>
