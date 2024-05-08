@@ -4,6 +4,7 @@ import { Button, ChartsHeader, Footer, Header, Navbar, Sidebar, ThemeSettings, U
 import { MainDashboard, Dashboard, Devices, Software, SoftwarePackages, Line, Pie } from './pages';
 import { useStateContext } from "./contexts/ContextProvider";
 import './App.css';
+import Models from './pages/Models';
 
 const App = () => {
   const { activeMenu, adminData } = useStateContext();
@@ -31,6 +32,7 @@ const App = () => {
                 {adminData.companies.map((company) => (
                   <React.Fragment key={company.companyId}>
                     <Route path={`${company.companyId}/dashboard`} element={<Dashboard companyId={company.companyId} />} />
+                    <Route path={`${company.companyId}/models`} element={<Models companyId={company.companyId} />} />
                     <Route path={`${company.companyId}/devices`} element={<Devices companyId={company.companyId} />} />
                     <Route path={`${company.companyId}/software`} element={<Software companyId={company.companyId} />} />
                     <Route path={`${company.companyId}/software-packages`} element={<SoftwarePackages companyId={company.companyId} />} />

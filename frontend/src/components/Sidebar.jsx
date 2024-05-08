@@ -50,6 +50,13 @@ const Sidebar = () => {
                   <span className="capitalize">dashboard</span>
                 </NavLink>
                 <NavLink
+                  to={`/${company.companyId}/models`}
+                  onClick={handleCloseSideBar}
+                  className={({ isActive }) => (isActive ? activeLink : normalLink)}
+                >
+                  <span className="capitalize">models</span>
+                </NavLink>
+                <NavLink
                   to={`/${company.companyId}/devices`}
                   onClick={handleCloseSideBar}
                   className={({ isActive }) => (isActive ? activeLink : normalLink)}
