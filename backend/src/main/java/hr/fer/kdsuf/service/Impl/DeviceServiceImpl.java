@@ -37,7 +37,14 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public DeviceDto registerDevice(RegisterDeviceRequest request) {
-        Model model = modelRepository.findModelByDeviceIdsContaining(request.getDeviceId());
+        boolean deviceExists = deviceRepository.existsById(request.getDeviceId());
+        if(deviceExists){
+            throw new IllegalArgumentException("Device with id: '" + request.getDeviceId() + "' is already registered!");
+        }
+
+        Model model = modelRepository.findModelByDeviceIdsContaining(request.getDeviceId())
+                .orElseThrow(() -> new IllegalArgumentException("Device with id: '" + request.getDeviceId() + "' can not be registered!"));
+
 
         Device device = new Device();
         device.setDeviceId(request.getDeviceId());

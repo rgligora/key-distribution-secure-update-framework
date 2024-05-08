@@ -6,10 +6,11 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ModelRepository extends JpaRepository<Model, String>, QuerydslPredicateExecutor<Model> {
-    Model findModelByDeviceIdsContaining(String deviceId);
+    Optional<Model> findModelByDeviceIdsContaining(String deviceId);
 
     List<Model> findModelsByCompanyCompanyId(String id);
 }
