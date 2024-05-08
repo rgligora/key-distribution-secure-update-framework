@@ -7,29 +7,11 @@ import { fetchData } from '../api.js';
 
 
 function MainDashboard() {
-
-  const [companiesData, setCompaniesData] = useState([]);
-
-    const adminId = 'b668dead-1c36-44df-852d-a6f0ae4986eb';
-
-    useEffect(() => {
-        const getAdminsCompanies = async () => {
-            try {
-                const adminData = await fetchData(`admin-users/${adminId}`);
-                const companyDetails = await Promise.all(
-                    adminData.companies.map(companyId => fetchData(`company/${companyId}`))
-                );
-                setCompaniesData(companyDetails);
-            } catch (error) {
-                console.error('Failed to load companies:', error);
-            }
-        };
-        getAdminsCompanies();
-    }, []);
+  const {adminData } = useStateContext();
 
   return (
     <div className='mt-12'>
-      {companiesData.map(company => (
+      {adminData.companies.map(company => (
         <div className='flex flex-wrap lg:flex-nowrap justify-center'>
         <div className='bg-orange-400 dark:text-gray-200 dark:bg-secondary-dark-bg h-44 rounded-xl w-full p-8 pt-9 m-3'>
           <div className='flex justify-between items-center'>
