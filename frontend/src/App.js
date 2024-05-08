@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Button, ChartsHeader, Footer, Header, Navbar, Sidebar, ThemeSettings, UserProfile, LineChart, PieChart } from './components';
+import { Button, ChartsHeader, Footer, Header, Navbar, Sidebar, LineChart, PieChart } from './components';
 import { MainDashboard, Dashboard, Devices, Software, SoftwarePackages, Line, Pie } from './pages';
 import { useStateContext } from "./contexts/ContextProvider";
 import './App.css';
