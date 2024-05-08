@@ -5,7 +5,7 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
   const [formData, setFormData] = useState({
     name: '',
     companyId: companyId,
-    deviceIds: [] // New field to input device IDs as an array
+    deviceIds: []
   });
   const [deviceIdInput, setDeviceIdInput] = useState('');
 
@@ -27,7 +27,7 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
         ...formData,
         deviceIds: [...formData.deviceIds, deviceIdInput.trim()]
       });
-      setDeviceIdInput(''); // Clear the input field
+      setDeviceIdInput('');
     }
   };
 
@@ -36,6 +36,24 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
       ...formData,
       deviceIds: formData.deviceIds.filter((_, i) => i !== index)
     });
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type === 'text/plain') {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const text = event.target.result;
+        const deviceIdsFromFile = text.split(',').map(id => id.trim()).filter(Boolean);
+        setFormData({
+          ...formData,
+          deviceIds: [...formData.deviceIds, ...deviceIdsFromFile]
+        });
+      };
+      reader.readAsText(file);
+    } else {
+      alert('Please upload a valid .txt file containing comma-separated device IDs.');
+    }
   };
 
   const handleFormSubmit = (e) => {
@@ -63,7 +81,7 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">Device IDs:</label>
+        <label className="block text-sm font-medium mb-1">Device IDs (manually):</label>
         <div className="flex items-center mb-2">
           <input
             type="text"
@@ -75,6 +93,18 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
             Add
           </Button>
         </div>
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-1">Upload Device IDs (.txt):</label>
+        <input
+          type="file"
+          accept=".txt"
+          onChange={handleFileUpload}
+          className="w-full p-2 border rounded-md"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-1">Current Device IDs:</label>
         <ul className="list-disc pl-5">
           {formData.deviceIds.map((deviceId, index) => (
             <li key={index} className="flex items-center mb-1">
