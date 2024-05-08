@@ -5,7 +5,6 @@ const NewSoftwareForm = ({ onSubmit, onClose, companyId }) => {
   const [formData, setFormData] = useState({
     name: '',
     version: '',
-    releaseDate: '',
     companyId: {companyId},
   });
 
@@ -24,7 +23,6 @@ const NewSoftwareForm = ({ onSubmit, onClose, companyId }) => {
     setFormData({
       name: '',
       version: '',
-      releaseDate: '',
       companyId: {companyId}
     });
   };
@@ -48,17 +46,6 @@ const NewSoftwareForm = ({ onSubmit, onClose, companyId }) => {
           type="text"
           name="version"
           value={formData.version}
-          onChange={handleInputChange}
-          className="w-full p-2 border rounded-md"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">Release Date:</label>
-        <input
-          type="date"
-          name="releaseDate"
-          value={formData.releaseDate}
           onChange={handleInputChange}
           className="w-full p-2 border rounded-md"
           required
