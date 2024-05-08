@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { fetchData } from '../api.js';
-import { FiSmartphone, FiPackage, FiDownload } from 'react-icons/fi';
+import { FiSmartphone, FiPackage, FiDownload, FiClock } from 'react-icons/fi';
 
 const Dashboard = ({ companyId }) => {
     const [companyData, setCompanyData] = useState({
         devices: [],
         softwares: [],
-        softwarePackages: []
+        softwarePackages: [],
+        registeredDevicesCount: 0
     });
 
     useEffect(() => {
         const getCompany = async () => {
             try {
                 const data = await fetchData(`company/${companyId}`);
-                setCompanyData(data);
+                const registeredDevicesCount = data.devices.filter(device => device.status === 'REGISTERED').length;
+                setCompanyData({ ...data, registeredDevicesCount });
             } catch (error) {
                 console.error('Failed to load company data:', error);
-                setCompanyData({ devices: [], softwares: [], softwarePackages: [] });
+                setCompanyData({ devices: [], softwares: [], softwarePackages: [], registeredDevicesCount: 0 });
             }
         };
 
@@ -35,6 +37,7 @@ const Dashboard = ({ companyId }) => {
                 </div>
                 <div className='flex mt-3 mb-3 lg:flex-nowrap flex-wrap justify-center gap-2 items-center w-full'>
                     <StatisticsBlock icon={<FiSmartphone />} count={companyData.devices.length} title="Devices" />
+                    <StatisticsBlock icon={<FiClock />} count={companyData.registeredDevicesCount} title="Devices Awaiting Confirmation" />
                     <StatisticsBlock icon={<FiDownload />} count={companyData.softwares.length} title="Software" />
                     <StatisticsBlock icon={<FiPackage />} count={companyData.softwarePackages.length} title="SW Packages" />
                 </div>
@@ -44,7 +47,7 @@ const Dashboard = ({ companyId }) => {
 };
 
 const StatisticsBlock = ({ icon, count, title }) => (
-    <div className='bg-white dark:text-gray-200 dark:bg-secondary-dark-bg w-1/4 md:w-56 p-4 pt-9 rounded-2xl'>
+    <div className='bg-white dark:text-gray-200 dark:bg-secondary-dark-bg w-1/3 md:w-56 p-4 pt-9 rounded-2xl'>
         <button type='button' className='text-2xl opacity-0.9 p-4 hover:drop-shadow-xl hover:bg-orange-400 text-white bg-teal-600' style={{ borderRadius: "50%" }}>
             {icon}
         </button>
