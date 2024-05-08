@@ -29,7 +29,7 @@ const Dashboard = ({ companyId }) => {
                 <div className='bg-teal-600 dark:text-gray-200 dark:bg-secondary-dark-bg h-44 rounded-xl w-full p-8 pt-9 m-3'>
                     <div className='flex justify-between items-center'>
                         <div>
-                            <p className='font-bold text-2xl'>Company</p>
+                            <p className='font-bold text-2xl'>{companyData.name}</p>
                         </div>
                     </div>
                 </div>
