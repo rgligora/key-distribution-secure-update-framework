@@ -33,6 +33,14 @@ public class SoftwarePackage {
     )
     private List<Software> includedSoftware;
 
+    @ManyToMany
+    @JoinTable(
+            name = "models_in_package",
+            joinColumns = @JoinColumn(name = "packageId"),
+            inverseJoinColumns = @JoinColumn(name = "modelId")
+    )
+    private List<Model> models;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "companyId")
     private Company company;
