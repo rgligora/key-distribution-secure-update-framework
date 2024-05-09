@@ -21,5 +21,7 @@ public class CreateSoftwarePackageRequest {
 
     private List<String> includedSoftwareIds;
 
+    private List<String> modelIds;
+
     private String companyId;
 }
