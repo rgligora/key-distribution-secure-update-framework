@@ -3,13 +3,11 @@ package hr.fer.kdsuf.service.Impl;
 import hr.fer.kdsuf.exception.exceptions.SoftwareNotFoundException;
 import hr.fer.kdsuf.exception.exceptions.SoftwarePackageNotFoundException;
 import hr.fer.kdsuf.mapper.SoftwarePackageMapper;
-import hr.fer.kdsuf.model.domain.Company;
-import hr.fer.kdsuf.model.domain.Device;
-import hr.fer.kdsuf.model.domain.Software;
-import hr.fer.kdsuf.model.domain.SoftwarePackage;
+import hr.fer.kdsuf.model.domain.*;
 import hr.fer.kdsuf.model.dto.SoftwarePackageDto;
 import hr.fer.kdsuf.model.request.CreateSoftwarePackageRequest;
 import hr.fer.kdsuf.repository.CompanyRepository;
+import hr.fer.kdsuf.repository.ModelRepository;
 import hr.fer.kdsuf.repository.SoftwarePackageRepository;
 import hr.fer.kdsuf.repository.SoftwareRepository;
 import hr.fer.kdsuf.service.SoftwarePackageService;
@@ -34,6 +32,9 @@ public class SoftwarePackageServiceImpl implements SoftwarePackageService{
     @Autowired
     private CompanyRepository companyRepository;
 
+    @Autowired
+    private ModelRepository modelRepository;
+
     @Override
     public SoftwarePackageDto createSoftwarePackage(CreateSoftwarePackageRequest request) {
         Company company = companyRepository.findById(request.getCompanyId())
@@ -44,9 +45,14 @@ public class SoftwarePackageServiceImpl implements SoftwarePackageService{
                 .map(id -> softwareRepository.findById(id).orElse(null))
                 .collect(Collectors.toList());
 
+        List<Model> models = request.getModelIds().stream()
+                .map(id -> modelRepository.findById(id).orElse(null))
+                .collect(Collectors.toList());
+
         softwarePackage.setCreationDate(LocalDate.now());
         softwarePackage.setCompany(company);
         softwarePackage.setIncludedSoftware(includedSoftware);
+        softwarePackage.setModels(models);
         company.addSoftwarePackage(softwarePackage);
         companyRepository.save(company);
         softwarePackageRepository.save(softwarePackage);
