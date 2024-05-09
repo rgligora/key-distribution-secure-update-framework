@@ -9,10 +9,13 @@ const NewSoftwarePackageForm = ({ onSubmit, onClose, companyId }) => {
     description: '',
     status: 'CREATED',
     includedSoftwareIds: [],
+    modelIds: []
   });
 
   const [softwareData, setSoftwareData] = useState([]);
-  const gridRef = useRef(null);
+  const [modelData, setModelData] = useState([]);
+  const softwareGridRef = useRef(null);
+  const modelGridRef = useRef(null);
 
   useEffect(() => {
     const getSoftware = async () => {
@@ -24,7 +27,17 @@ const NewSoftwarePackageForm = ({ onSubmit, onClose, companyId }) => {
       }
     };
 
+    const getModels = async () => {
+      try {
+        const data = await fetchDataWithRequestParams('models', { companyId });
+        setModelData(data);
+      } catch (error) {
+        console.error('Failed to load models:', error);
+      }
+    };
+
     getSoftware();
+    getModels();
   }, [companyId]);
 
   const handleInputChange = (e) => {
@@ -37,16 +50,24 @@ const NewSoftwarePackageForm = ({ onSubmit, onClose, companyId }) => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    const selectedRecords = gridRef.current?.getSelectedRecords() || [];
-    const selectedIds = selectedRecords.map((record) => record.softwareId);
+    const selectedSoftwareRecords = softwareGridRef.current?.getSelectedRecords() || [];
+    const selectedModelRecords = modelGridRef.current?.getSelectedRecords() || [];
 
-    onSubmit({ ...formData, includedSoftwareIds: selectedIds });
+    const selectedSoftwareIds = selectedSoftwareRecords.map((record) => record.softwareId);
+    const selectedModelIds = selectedModelRecords.map((record) => record.modelId);
+
+    onSubmit({
+      ...formData,
+      includedSoftwareIds: selectedSoftwareIds,
+      modelIds: selectedModelIds,
+    });
     onClose();
     setFormData({
       name: '',
       description: '',
       status: 'CREATED',
       includedSoftwareIds: [],
+      modelIds: [],
     });
   };
 
@@ -56,6 +77,12 @@ const NewSoftwarePackageForm = ({ onSubmit, onClose, companyId }) => {
     { field: 'name', headerText: 'Name', width: '150', textAlign: 'Center' },
     { field: 'version', headerText: 'Version', width: '150', textAlign: 'Center' },
     { field: 'uploadDate', headerText: 'Upload Date', format: 'd.M.y', textAlign: 'Center', width: '120' },
+  ];
+
+  const modelGrid = [
+    { type: 'checkbox', width: '50' },
+    { field: 'modelId', headerText: 'Model ID', width: '250', textAlign: 'Center', isPrimaryKey: true },
+    { field: 'name', headerText: 'Name', width: '150', textAlign: 'Center' },
   ];
 
   return (
@@ -86,11 +113,27 @@ const NewSoftwarePackageForm = ({ onSubmit, onClose, companyId }) => {
         <GridComponent
           dataSource={softwareData}
           selectionSettings={{ type: 'Multiple', persistSelection: true }}
-          ref={gridRef}
+          ref={softwareGridRef}
           allowSelection={true}
         >
           <ColumnsDirective>
             {softwareGrid.map((item, index) => (
+              <ColumnDirective key={index} {...item} />
+            ))}
+          </ColumnsDirective>
+          <Inject services={[Selection]} />
+        </GridComponent>
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-1">Select Models:</label>
+        <GridComponent
+          dataSource={modelData}
+          selectionSettings={{ type: 'Multiple', persistSelection: true }}
+          ref={modelGridRef}
+          allowSelection={true}
+        >
+          <ColumnsDirective>
+            {modelGrid.map((item, index) => (
               <ColumnDirective key={index} {...item} />
             ))}
           </ColumnsDirective>
