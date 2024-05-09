@@ -27,5 +27,7 @@ public class SoftwarePackageDto {
 
     private List<SoftwareDto> includedSoftware;
 
+    private List<String> modelIds;
+
     private String companyId;
 }
