@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DeviceServiceImpl implements DeviceService {
@@ -37,17 +38,18 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public DeviceDto registerDevice(RegisterDeviceRequest request) {
-        boolean deviceExists = deviceRepository.existsById(request.getSerialNo());
-        if(deviceExists){
-            throw new IllegalArgumentException("Device with id: '" + request.getSerialNo() + "' is already registered!");
+        Optional<Device> existingDevice = deviceRepository.findDeviceBySerialNo(request.getSerialNo());
+        if (existingDevice.isPresent()) {
+            throw new IllegalArgumentException("Device with serial number: '" + request.getSerialNo() + "' is already registered!");
         }
 
-        Model model = modelRepository.findModelByDeviceIdsContaining(request.getSerialNo())
-                .orElseThrow(() -> new IllegalArgumentException("Device with id: '" + request.getSerialNo() + "' can not be registered!"));
+        Model model = modelRepository.findModelBySerialNosContaining(request.getSerialNo())
+                .orElseThrow(() -> new IllegalArgumentException("Device with serial number: '" + request.getSerialNo() + "' can not be registered!"));
 
 
         Device device = new Device();
-        device.setDeviceId(request.getSerialNo());
+        device.setDeviceId(java.util.UUID.randomUUID().toString());
+        device.setSerialNo(request.getSerialNo());
         device.setName(model.getName());
         device.setStatus(DeviceStatus.REGISTERED);
         device.setRegistrationDate(LocalDate.now());

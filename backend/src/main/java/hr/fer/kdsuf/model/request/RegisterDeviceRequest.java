@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RegisterDeviceRequest {
 
-    private String deviceId;
+    private String serialNo;
 }

@@ -17,6 +17,8 @@ public class Device {
     @Id
     private String deviceId;
 
+    private String serialNo;
+
     private String name;
 
     private LocalDate registrationDate;

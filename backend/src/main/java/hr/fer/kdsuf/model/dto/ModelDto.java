@@ -19,6 +19,6 @@ public class ModelDto {
 
     private String companyId;
 
-    private List<String> deviceIds;
+    private List<String> serialNos;
 
 }

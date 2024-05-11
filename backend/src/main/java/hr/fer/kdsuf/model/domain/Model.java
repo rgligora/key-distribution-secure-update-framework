@@ -24,7 +24,7 @@ public class Model {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "device_model_ids", joinColumns = @JoinColumn(name = "modelId"))
     @Column(name = "deviceId")
-    private List<String> deviceIds;
+    private List<String> serialNos;
 
     @OneToMany(mappedBy = "model", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Device> devices;
