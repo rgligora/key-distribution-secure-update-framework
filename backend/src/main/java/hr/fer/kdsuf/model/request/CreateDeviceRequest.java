@@ -21,5 +21,7 @@ public class CreateDeviceRequest {
 
     private String companyId;
 
+    private String modelId;
+
     private DeviceStatus status;
 }
