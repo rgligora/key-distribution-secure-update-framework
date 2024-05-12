@@ -52,7 +52,7 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
       };
       reader.readAsText(file);
     } else {
-      alert('Please upload a valid .txt file containing comma-separated device IDs.');
+      alert('Please upload a valid .txt file containing comma-separated Serial numbers.');
     }
   };
 
@@ -81,7 +81,7 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">Device IDs (manually):</label>
+        <label className="block text-sm font-medium mb-1">Serial numbers (manually):</label>
         <div className="flex items-center mb-2">
           <input
             type="text"
@@ -95,7 +95,7 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
         </div>
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">Upload Device IDs (.txt):</label>
+        <label className="block text-sm font-medium mb-1">Upload Serial numbers (.txt):</label>
         <input
           type="file"
           accept=".txt"
@@ -104,7 +104,7 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">Current Device IDs:</label>
+        <label className="block text-sm font-medium mb-1">Current Serial numbers:</label>
         <div
           className="w-full p-2 border rounded-md"
           style={{ maxHeight: '150px', overflowY: 'auto' }}
