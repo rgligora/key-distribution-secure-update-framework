@@ -5,7 +5,7 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
   const [formData, setFormData] = useState({
     name: '',
     companyId: companyId,
-    deviceIds: []
+    serialNos: []
   });
   const [deviceIdInput, setDeviceIdInput] = useState('');
 
@@ -25,7 +25,7 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
     if (deviceIdInput.trim()) {
       setFormData({
         ...formData,
-        deviceIds: [...formData.deviceIds, deviceIdInput.trim()]
+        serialNos: [...formData.serialNos, deviceIdInput.trim()]
       });
       setDeviceIdInput('');
     }
@@ -34,7 +34,7 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
   const handleRemoveDeviceId = (index) => {
     setFormData({
       ...formData,
-      deviceIds: formData.deviceIds.filter((_, i) => i !== index)
+      serialNos: formData.serialNos.filter((_, i) => i !== index)
     });
   };
 
@@ -44,10 +44,10 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
       const reader = new FileReader();
       reader.onload = (event) => {
         const text = event.target.result;
-        const deviceIdsFromFile = text.split(',').map(id => id.trim()).filter(Boolean);
+        const serialNosFromFile = text.split(',').map(id => id.trim()).filter(Boolean);
         setFormData({
           ...formData,
-          deviceIds: [...formData.deviceIds, ...deviceIdsFromFile]
+          serialNos: [...formData.serialNos, ...serialNosFromFile]
         });
       };
       reader.readAsText(file);
@@ -63,7 +63,7 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
     setFormData({
       name: '',
       companyId: companyId,
-      deviceIds: []
+      serialNos: []
     });
   };
 
@@ -110,7 +110,7 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
           style={{ maxHeight: '150px', overflowY: 'auto' }}
         >
           <ul className="list-disc pl-5">
-            {formData.deviceIds.map((deviceId, index) => (
+            {formData.serialNos.map((deviceId, index) => (
               <li key={index} className="flex items-center mb-1">
                 <span className="mr-2">{deviceId}</span>
                 <Button
