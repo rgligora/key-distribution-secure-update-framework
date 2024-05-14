@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GridComponent, ColumnsDirective, ColumnDirective, Resize, Sort, ContextMenu, Filter, Page, Edit, Inject } from '@syncfusion/ej2-react-grids';
-import { Header, Button, Modal } from '../components';
-import { fetchDataWithRequestParams } from '../api.js';
+import { Header, Button, Modal, NewModelForm } from '../components';
+import { fetchDataWithRequestParams, createData } from '../api.js';
 
 const Models = ({ companyId }) => {
   const [ModelData, setModelData] = useState([]);
@@ -23,6 +23,14 @@ const Models = ({ companyId }) => {
     fetchModels();
   }, [companyId]);
 
+  const handleNewModelsubmit = async (formData) => {
+    try {
+      const createdModel = await createData('models', { ...formData, companyId });
+      setModelData([...ModelData, createdModel]);
+    } catch (error) {
+      console.error('Failed to create new Model:', error);
+    }
+  };
   const handleRowSelected = (args) => {
     const selectedData = args.data;
     const serialNumbers = selectedData.serialNos.map(serialNo => ({ serialNo }));
@@ -43,7 +51,9 @@ const Models = ({ companyId }) => {
         Add New Model
       </Button>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add New Model">
+        <NewModelForm onSubmit={handleNewModelsubmit} onClose={() => setIsModalOpen(false)} companyId={companyId} />
       </Modal>
+
       <Modal isOpen={isDetailModalOpen} onClose={() => setIsDetailModalOpen(false)} title={`Serial Numbers for: ${selectedModel?.name}`}>
         <GridComponent dataSource={selectedModel?.serialNos} allowPaging={true} pageSettings={{ pageSize: 10 }}>
           <ColumnsDirective>

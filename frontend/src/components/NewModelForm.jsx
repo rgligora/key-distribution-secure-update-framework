@@ -116,7 +116,7 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
                 <Button
                   type="button"
                   onClick={() => handleRemoveDeviceId(index)}
-                  className="text-white-500 bg-red-600 p-1"
+                  className="text-white bg-red-600 p-1"
                 >
                   Remove
                 </Button>
