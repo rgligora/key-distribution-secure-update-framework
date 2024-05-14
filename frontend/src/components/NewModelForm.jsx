@@ -113,13 +113,13 @@ const NewModelForm = ({ onSubmit, onClose, companyId }) => {
             {formData.serialNos.map((deviceId, index) => (
               <li key={index} className="flex items-center mb-1">
                 <span className="mr-2">{deviceId}</span>
-                <Button
+                <button
                   type="button"
                   onClick={() => handleRemoveDeviceId(index)}
-                  className="text-white bg-red-600 p-1"
+                  className="text-white bg-red-600 hover:bg-red-500 p-1 rounded-md"
                 >
                   Remove
-                </Button>
+                </button>
               </li>
             ))}
           </ul>
