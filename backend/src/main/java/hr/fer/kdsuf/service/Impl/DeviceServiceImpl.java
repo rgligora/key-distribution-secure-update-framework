@@ -14,6 +14,7 @@ import hr.fer.kdsuf.repository.CompanyRepository;
 import hr.fer.kdsuf.repository.DeviceRepository;
 import hr.fer.kdsuf.repository.ModelRepository;
 import hr.fer.kdsuf.service.DeviceService;
+import hr.fer.kdsuf.service.VaultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ import java.util.Optional;
 
 @Service
 public class DeviceServiceImpl implements DeviceService {
+
     @Autowired
     private DeviceRepository deviceRepository;
 
@@ -36,6 +38,9 @@ public class DeviceServiceImpl implements DeviceService {
     @Autowired
     private ModelRepository modelRepository;
 
+    @Autowired
+    private VaultService vaultService;
+
     @Override
     public DeviceDto registerDevice(RegisterDeviceRequest request) {
         Optional<Device> existingDevice = deviceRepository.findDeviceBySerialNo(request.getSerialNo());
@@ -43,9 +48,10 @@ public class DeviceServiceImpl implements DeviceService {
             throw new IllegalArgumentException("Device with serial number: '" + request.getSerialNo() + "' is already registered!");
         }
 
-        Model model = modelRepository.findModelBySerialNosContaining(request.getSerialNo())
-                .orElseThrow(() -> new IllegalArgumentException("Device with serial number: '" + request.getSerialNo() + "' can not be registered!"));
+        String modelId = vaultService.retrieveModelId(request.getSerialNo());
 
+        Model model = modelRepository.findById(modelId)
+                .orElseThrow(() -> new IllegalArgumentException("Device with serial number: '" + request.getSerialNo() + "' cannot be registered!"));
 
         Device device = new Device();
         device.setDeviceId(java.util.UUID.randomUUID().toString());
@@ -96,9 +102,9 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public List<DeviceDto> retrieveDevices(String companyId) {
         List<Device> devices;
-        if(companyId != null){
+        if (companyId != null) {
             devices = deviceRepository.findDevicesByCompanyCompanyId(companyId);
-        }else{
+        } else {
             devices = deviceRepository.findAll();
         }
         return deviceMapper.modelToDtos(devices);
@@ -107,7 +113,7 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public void deleteDevice(String id) {
         boolean deviceExists = deviceRepository.existsById(id);
-        if(!deviceExists){
+        if (!deviceExists) {
             throw new DeviceNotFoundException(id);
         }
         deviceRepository.deleteById(id);
