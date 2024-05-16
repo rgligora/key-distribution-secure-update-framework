@@ -1,32 +1,30 @@
 package hr.fer.kdsuf.service.Impl;
 
-import hr.fer.kdsuf.service.VaultSecretService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.vault.core.VaultOperations;
-import org.springframework.vault.support.VaultResponseSupport;
+import org.springframework.vault.core.VaultTemplate;
+import org.springframework.vault.support.VaultResponse;
 
 import java.util.Collections;
 import java.util.Map;
 
 @Service
-public class VaultSecretServiceImpl implements VaultSecretService {
+public class VaultSecretServiceImpl {
 
     @Autowired
-    private VaultOperations vaultOperations;
-    @Override
-    public void createSecretForDevice(String deviceId) {
-        vaultOperations.write("secret/data/device/" + deviceId);
+    private VaultTemplate vaultTemplate;
 
+    public void storeModelId(String modelId) {
+        Map<String, String> data = Collections.singletonMap("modelId", modelId);
+        vaultTemplate.write("secret/data/model/" + modelId, data);
     }
 
-    @Override
-    public String getSecretForDevice(String deviceId) {
-        VaultResponseSupport<Map> response = vaultOperations.read("secret/data/device/" + deviceId, Map.class);
+    public String retrieveModelId(String modelId) {
+        VaultResponse response = vaultTemplate.read("secret/data/model/" + modelId);
         if (response != null && response.getData() != null) {
-            return response.getData().get("data").toString();
+            Map<String, Object> data = (Map<String, Object>) response.getData().get("data");
+            return (String) data.get("modelId");
         }
-        return null;
-
+        throw new IllegalArgumentException("ModelId not found in Vault: " + modelId);
     }
 }
