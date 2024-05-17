@@ -17,6 +17,7 @@ import java.util.List;
 
 @Service
 public class ModelServiceImpl implements ModelService {
+
     @Autowired
     private ModelRepository modelRepository;
 
@@ -26,6 +27,9 @@ public class ModelServiceImpl implements ModelService {
     @Autowired
     private CompanyRepository companyRepository;
 
+    @Autowired
+    private VaultSecretServiceImpl vaultService;
+
     @Override
     public ModelDto createModel(CreateModelRequest request) {
         Company company = companyRepository.findById(request.getCompanyId())
@@ -33,8 +37,8 @@ public class ModelServiceImpl implements ModelService {
         Model model = modelMapper.requestToModel(request);
 
         model.setCompany(company);
-
         modelRepository.save(model);
+        vaultService.storeSerialNos(model.getModelId(), model.getSerialNos());
 
         return modelMapper.modelToDto(model);
     }
@@ -42,15 +46,19 @@ public class ModelServiceImpl implements ModelService {
     @Override
     public ModelDto retrieveModel(String id) {
         Model model = modelRepository.findById(id).orElseThrow(() -> new ModelNotFoundException(id));
+
+        List<String> serialNos = vaultService.retrieveSerialNos(model.getModelId());
+        model.setSerialNos(serialNos);
+
         return modelMapper.modelToDto(model);
     }
 
     @Override
     public List<ModelDto> retrieveModels(String companyId) {
         List<Model> models;
-        if(companyId != null){
+        if (companyId != null) {
             models = modelRepository.findModelsByCompanyCompanyId(companyId);
-        }else{
+        } else {
             models = modelRepository.findAll();
         }
         return modelMapper.modelToDtos(models);
@@ -59,7 +67,7 @@ public class ModelServiceImpl implements ModelService {
     @Override
     public void deleteModel(String id) {
         boolean modelExists = modelRepository.existsById(id);
-        if(!modelExists){
+        if (!modelExists) {
             throw new ModelNotFoundException(id);
         }
         modelRepository.deleteById(id);

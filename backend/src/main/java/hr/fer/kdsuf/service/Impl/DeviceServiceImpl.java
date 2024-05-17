@@ -14,7 +14,6 @@ import hr.fer.kdsuf.repository.CompanyRepository;
 import hr.fer.kdsuf.repository.DeviceRepository;
 import hr.fer.kdsuf.repository.ModelRepository;
 import hr.fer.kdsuf.service.DeviceService;
-import hr.fer.kdsuf.service.VaultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +38,7 @@ public class DeviceServiceImpl implements DeviceService {
     private ModelRepository modelRepository;
 
     @Autowired
-    private VaultService vaultService;
+    private VaultSecretServiceImpl vaultService;
 
     @Override
     public DeviceDto registerDevice(RegisterDeviceRequest request) {
@@ -48,10 +47,14 @@ public class DeviceServiceImpl implements DeviceService {
             throw new IllegalArgumentException("Device with serial number: '" + request.getSerialNo() + "' is already registered!");
         }
 
-        String modelId = vaultService.retrieveModelId(request.getSerialNo());
-
-        Model model = modelRepository.findById(modelId)
+        Model model = modelRepository.findModelBySerialNosContaining(request.getSerialNo())
                 .orElseThrow(() -> new IllegalArgumentException("Device with serial number: '" + request.getSerialNo() + "' cannot be registered!"));
+
+        List<String> serialNos = vaultService.retrieveSerialNos(model.getModelId());
+
+        if (!serialNos.contains(request.getSerialNo())) {
+            throw new IllegalArgumentException("Device with serial number: '" + request.getSerialNo() + "' not found in serial numbers for modelId: " + model.getModelId());
+        }
 
         Device device = new Device();
         device.setDeviceId(java.util.UUID.randomUUID().toString());
