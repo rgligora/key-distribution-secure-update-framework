@@ -47,26 +47,33 @@ public class DeviceServiceImpl implements DeviceService {
             throw new IllegalArgumentException("Device with serial number: '" + request.getSerialNo() + "' is already registered!");
         }
 
-        Model model = modelRepository.findModelBySerialNosContaining(request.getSerialNo())
-                .orElseThrow(() -> new IllegalArgumentException("Device with serial number: '" + request.getSerialNo() + "' cannot be registered!"));
+        Model foundModel = null;
+        List<Model> allModels = modelRepository.findAll();
+        for (Model model : allModels) {
+            List<String> serialNos = vaultService.retrieveSerialNos(model.getModelId());
+            if (serialNos.contains(request.getSerialNo())) {
+                foundModel = model;
+                break;
+            }
+        }
 
-        List<String> serialNos = vaultService.retrieveSerialNos(model.getModelId());
-
-        if (!serialNos.contains(request.getSerialNo())) {
-            throw new IllegalArgumentException("Device with serial number: '" + request.getSerialNo() + "' not found in serial numbers for modelId: " + model.getModelId());
+        if (foundModel == null) {
+            throw new IllegalArgumentException("Device with serial number: '" + request.getSerialNo() + "' cannot be registered!");
         }
 
         Device device = new Device();
         device.setDeviceId(java.util.UUID.randomUUID().toString());
         device.setSerialNo(request.getSerialNo());
-        device.setName(model.getName());
+        device.setName(foundModel.getName());
         device.setStatus(DeviceStatus.REGISTERED);
         device.setRegistrationDate(LocalDate.now());
         device.setLastUpdated(LocalDateTime.now());
-        device.setModel(model);
+        device.setModel(foundModel);
 
-        Company company = companyRepository.findById(model.getCompany().getCompanyId())
-                .orElseThrow(() -> new IllegalArgumentException("Company with id: '" + model.getCompany().getCompanyId() + "' does not exist!"));
+        Model finalFoundModel = foundModel;
+        Company company = companyRepository.findById(foundModel.getCompany().getCompanyId())
+                .orElseThrow(() -> new IllegalArgumentException("Company with id: '" + finalFoundModel.getCompany().getCompanyId() + "' does not exist!"));
+
 
         device.setCompany(company);
         company.addDevice(device);
