@@ -1,7 +1,9 @@
 package hr.fer.kdsuf.service;
 
-public interface VaultSecretService {
-    void createSecretForDevice(String deviceId);
+import java.util.List;
 
-    String getSecretForDevice(String deviceId);
+public interface VaultSecretService {
+    void storeSerialNos(String modelId, List<String> serialNos);
+
+    public List<String> retrieveSerialNos(String modelId);
 }
