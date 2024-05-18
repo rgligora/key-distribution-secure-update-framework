@@ -10,8 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface ModelRepository extends JpaRepository<Model, String>, QuerydslPredicateExecutor<Model> {
-    Optional<Model> findModelBySerialNosContaining(String deviceId);
-
     List<Model> findModelsByCompanyCompanyId(String id);
 }
 
