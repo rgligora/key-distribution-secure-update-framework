@@ -38,7 +38,8 @@ public class ModelServiceImpl implements ModelService {
 
         model.setCompany(company);
         modelRepository.save(model);
-        vaultService.storeSerialNos(model.getModelId(), model.getSerialNos());
+
+        vaultService.storeSerialNos(model.getModelId(), request.getSerialNos());
 
         return modelMapper.modelToDto(model);
     }
@@ -48,9 +49,11 @@ public class ModelServiceImpl implements ModelService {
         Model model = modelRepository.findById(id).orElseThrow(() -> new ModelNotFoundException(id));
 
         List<String> serialNos = vaultService.retrieveSerialNos(model.getModelId());
-        model.setSerialNos(serialNos);
 
-        return modelMapper.modelToDto(model);
+        ModelDto modelDto = modelMapper.modelToDto(model);
+        modelDto.setSerialNos(serialNos);
+
+        return modelDto;
     }
 
     @Override
