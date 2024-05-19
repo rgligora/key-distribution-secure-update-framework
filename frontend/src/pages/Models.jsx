@@ -12,7 +12,6 @@ const Models = ({ companyId }) => {
   const fetchModels = async () => {
     try {
       const data = await fetchDataWithRequestParams('models', { companyId });
-      console.log(data)
       setModelData(data);
     } catch (error) {
       console.error('Failed to load Models:', error);
@@ -33,10 +32,9 @@ const Models = ({ companyId }) => {
   };
   const handleRowSelected = (args) => {
     const selectedData = args.data;
-    const serialNumbers = selectedData.serialNos.map(serialNo => ({ serialNo }));
+    const serialNumbers = (selectedData.serialNos || []).map(serialNo => ({ serialNo }));
     setSelectedModel({ ...selectedData, serialNos: serialNumbers });
     setIsDetailModalOpen(true);
-
   };
 
   const ModelsGrid = [
