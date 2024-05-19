@@ -27,9 +27,7 @@ public class VaultSecretServiceImpl implements VaultSecretService {
         VaultResponse response = vaultTemplate.read("secret/data/model/" + modelId);
         if (response != null && response.getData() != null) {
             Map<String, Object> data = (Map<String, Object>) response.getData().get("data");
-            if (data != null) {
-                return (List<String>) data.get("serialNos");
-            }
+            return (List<String>) data.get("serialNos");
         }
         throw new IllegalArgumentException("Serial numbers not found in Vault for modelId: " + modelId);
     }
