@@ -19,15 +19,18 @@ public class VaultSecretServiceImpl implements VaultSecretService {
 
     public void storeSerialNos(String modelId, List<String> serialNos) {
         Map<String, Object> data = new HashMap<>();
-        data.put("data", Collections.singletonMap("serialNos", serialNos));
-        vaultTemplate.write("secret/data/model/" + modelId, data);
+        data.put("serialNos", serialNos);
+        Map<String, Object> payload = Collections.singletonMap("data", data);
+        vaultTemplate.write("secret/data/model/" + modelId, payload);
     }
 
     public List<String> retrieveSerialNos(String modelId) {
         VaultResponse response = vaultTemplate.read("secret/data/model/" + modelId);
         if (response != null && response.getData() != null) {
             Map<String, Object> data = (Map<String, Object>) response.getData().get("data");
-            return (List<String>) data.get("serialNos");
+            if (data != null) {
+                return (List<String>) data.get("serialNos");
+            }
         }
         throw new IllegalArgumentException("Serial numbers not found in Vault for modelId: " + modelId);
     }

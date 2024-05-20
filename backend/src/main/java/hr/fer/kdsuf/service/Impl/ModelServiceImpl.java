@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ModelServiceImpl implements ModelService {
@@ -49,7 +50,6 @@ public class ModelServiceImpl implements ModelService {
         Model model = modelRepository.findById(id).orElseThrow(() -> new ModelNotFoundException(id));
 
         List<String> serialNos = vaultService.retrieveSerialNos(model.getModelId());
-
         ModelDto modelDto = modelMapper.modelToDto(model);
         modelDto.setSerialNos(serialNos);
 
@@ -64,7 +64,13 @@ public class ModelServiceImpl implements ModelService {
         } else {
             models = modelRepository.findAll();
         }
-        return modelMapper.modelToDtos(models);
+
+        return models.stream().map(model -> {
+            List<String> serialNos = vaultService.retrieveSerialNos(model.getModelId());
+            ModelDto modelDto = modelMapper.modelToDto(model);
+            modelDto.setSerialNos(serialNos);
+            return modelDto;
+        }).collect(Collectors.toList());
     }
 
     @Override
