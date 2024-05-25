@@ -3,6 +3,7 @@ import time
 import psutil
 from collections import deque
 
+backend = "http://localhost:8080"
 client_cert = ("path/to/client.crt", "path/to/client.key")
 ca_cert = "path/to/CA_cert.pem"
 SERIAL_NO = "7c3ef80b-9ea0-4d67-b494-67a18bb22a27"
@@ -23,12 +24,12 @@ def deviceLoadSnaphot():
     cpuLoadHistory.append(cpuUsage)
     memoryLoadHistory.append(memoryUsage)
 
-def isOptimaldeviceLoad(cpuThreshold=CPU_THRESHOLD, memoryThreshold=MEMORY_THRESHOLD):
-    predictedCpuUsage, predictedMemoryUsage = predictdeviceLoad()
+def isOptimalDeviceLoad(cpuThreshold=CPU_THRESHOLD, memoryThreshold=MEMORY_THRESHOLD):
+    predictedCpuUsage, predictedMemoryUsage = predictDeviceLoad()
     print(f"Predicted CPU Usage: {predictedCpuUsage}%, Predicted Memory Usage: {predictedMemoryUsage}%")
     return predictedCpuUsage < cpuThreshold and predictedMemoryUsage < memoryThreshold
 
-def predictdeviceLoad(predictWindow=PREDICT_WINDOW):
+def predictDeviceLoad(predictWindow=PREDICT_WINDOW):
     cpuLoadList = list(cpuLoadHistory)
     memoryLoadList = list(memoryLoadHistory)
     predictedCpuUsage = sum(cpuLoadList[-predictWindow:]) / len(cpuLoadList[-predictWindow:])
@@ -36,26 +37,28 @@ def predictdeviceLoad(predictWindow=PREDICT_WINDOW):
     return predictedCpuUsage, predictedMemoryUsage
 
 
-
-def register_device():
-    url = "/api/register"
+def registerDevice():
+    url = f"{backend}/api/devices/register"
     payload = {
         "serialNo": SERIAL_NO
     }
-    response = requests.post(url, json=payload, cert=client_cert, verify=ca_cert)
+    response = requests.post(url, json=payload)
     if response.status_code == 200:
         return response.json()
     else:
-        raise Exception("Device registration failed: " + response.text)
+        print("Device registration failed: " + response.text)
+        exit()
 
 
 def checkForUpdates(deviceId):
-    url = f"https://api/updates/check/{deviceId}"
+    url = f"http://api/updates/check/{deviceId}"
 
 def downloadUpdate(deviceId):
-    url = f"https://api/updates/check/{deviceId}"
+    url = f"http://api/updates/check/{deviceId}"
 
 def main():
+    deviceInfo = registerDevice()
+
     for snapshot in range(LOAD_HISTORY_WINDOW):
             deviceLoadSnaphot()
             time.sleep(SNAPSHOT_INTERVAL)
@@ -63,7 +66,7 @@ def main():
     while True:
         deviceLoadSnaphot()
 
-        if isOptimaldeviceLoad():
+        if isOptimalDeviceLoad():
             print("INIT")
         else:
             print("Waiting for optimal sytem load")
