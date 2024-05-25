@@ -16,19 +16,19 @@ MEMORY_THRESHOLD = 80.0
 cpuLoadHistory = deque(maxlen=LOAD_HISTORY_WINDOW)
 memoryLoadHistory = deque(maxlen=LOAD_HISTORY_WINDOW)
 
-def systemLoadSnaphot():
+def deviceLoadSnaphot():
     cpuUsage = psutil.cpu_percent(interval=1)
     memoryUsage = psutil.virtual_memory().percent
     print(f"CPU usage: {cpuUsage}, MEMORY usage: {memoryUsage}")
     cpuLoadHistory.append(cpuUsage)
     memoryLoadHistory.append(memoryUsage)
 
-def isOptimalSystemLoad(cpuThreshold=CPU_THRESHOLD, memoryThreshold=MEMORY_THRESHOLD):
-    predictedCpuUsage, predictedMemoryUsage = predictSystemLoad()
+def isOptimaldeviceLoad(cpuThreshold=CPU_THRESHOLD, memoryThreshold=MEMORY_THRESHOLD):
+    predictedCpuUsage, predictedMemoryUsage = predictdeviceLoad()
     print(f"Predicted CPU Usage: {predictedCpuUsage}%, Predicted Memory Usage: {predictedMemoryUsage}%")
     return predictedCpuUsage < cpuThreshold and predictedMemoryUsage < memoryThreshold
 
-def predictSystemLoad(predictWindow=PREDICT_WINDOW):
+def predictdeviceLoad(predictWindow=PREDICT_WINDOW):
     cpuLoadList = list(cpuLoadHistory)
     memoryLoadList = list(memoryLoadHistory)
     predictedCpuUsage = sum(cpuLoadList[-predictWindow:]) / len(cpuLoadList[-predictWindow:])
@@ -57,13 +57,13 @@ def downloadUpdate(deviceId):
 
 def main():
     for snapshot in range(LOAD_HISTORY_WINDOW):
-            systemLoadSnaphot()
+            deviceLoadSnaphot()
             time.sleep(SNAPSHOT_INTERVAL)
 
     while True:
-        systemLoadSnaphot()
+        deviceLoadSnaphot()
 
-        if isOptimalSystemLoad():
+        if isOptimaldeviceLoad():
             print("INIT")
         else:
             print("Waiting for optimal sytem load")
