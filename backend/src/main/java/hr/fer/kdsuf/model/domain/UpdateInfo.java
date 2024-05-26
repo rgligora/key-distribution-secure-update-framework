@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 @Data
 @NoArgsConstructor
@@ -14,5 +16,5 @@ public class UpdateInfo {
 
     boolean available;
 
-    String softwarePackageId;
+    List<String> softwarePackageId;
 }

@@ -16,13 +16,11 @@ public class UpdateController {
 
     @GetMapping("/check/{deviceId}")
     public ResponseEntity<UpdateInfo> checkForUpdates(@PathVariable String deviceId) {
-        UpdateInfo updateInfo = updateService.checkForUpdates(deviceId);
-        return ResponseEntity.ok(updateInfo);
+        return ResponseEntity.ok(updateService.checkForUpdates(deviceId));
     }
 
     @GetMapping("/download/{updateId}")
-    public ResponseEntity<SoftwarePackageDto> downloadUpdate(@PathVariable String updateId) {
-        SoftwarePackageDto update = updateService.downloadUpdate(updateId);
-        return ResponseEntity.ok(update);
+    public ResponseEntity<SoftwarePackageDto> downloadUpdate(@PathVariable String softwarePackageId) {
+        return ResponseEntity.ok(updateService.downloadUpdate(softwarePackageId));
     }
 }
