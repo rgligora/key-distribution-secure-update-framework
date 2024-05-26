@@ -1,5 +1,6 @@
 package hr.fer.kdsuf.repository;
 
+import hr.fer.kdsuf.model.domain.Model;
 import hr.fer.kdsuf.model.domain.SoftwarePackage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -10,4 +11,8 @@ import java.util.List;
 @Repository
 public interface SoftwarePackageRepository extends JpaRepository<SoftwarePackage, String>, QuerydslPredicateExecutor<SoftwarePackage> {
     List<SoftwarePackage> findSoftwarePackageByCompanyCompanyId(String id);
+
+    List<SoftwarePackage> findSoftwarePackageByModelsContaining(String modelId);
+
+    boolean existsByModelsContaining(Model model);
 }

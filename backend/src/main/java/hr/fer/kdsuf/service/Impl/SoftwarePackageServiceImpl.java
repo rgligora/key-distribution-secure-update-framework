@@ -6,10 +6,7 @@ import hr.fer.kdsuf.mapper.SoftwarePackageMapper;
 import hr.fer.kdsuf.model.domain.*;
 import hr.fer.kdsuf.model.dto.SoftwarePackageDto;
 import hr.fer.kdsuf.model.request.CreateSoftwarePackageRequest;
-import hr.fer.kdsuf.repository.CompanyRepository;
-import hr.fer.kdsuf.repository.ModelRepository;
-import hr.fer.kdsuf.repository.SoftwarePackageRepository;
-import hr.fer.kdsuf.repository.SoftwareRepository;
+import hr.fer.kdsuf.repository.*;
 import hr.fer.kdsuf.service.SoftwarePackageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +32,9 @@ public class SoftwarePackageServiceImpl implements SoftwarePackageService{
     @Autowired
     private ModelRepository modelRepository;
 
+    @Autowired
+    private DeviceRepository deviceRepository;
+
     @Override
     public SoftwarePackageDto createSoftwarePackage(CreateSoftwarePackageRequest request) {
         Company company = companyRepository.findById(request.getCompanyId())
@@ -56,6 +56,16 @@ public class SoftwarePackageServiceImpl implements SoftwarePackageService{
         company.addSoftwarePackage(softwarePackage);
         companyRepository.save(company);
         softwarePackageRepository.save(softwarePackage);
+
+        for (Model model : models) {
+            if (model != null) {
+                List<Device> devices = model.getDevices();
+                for (Device device : devices) {
+                    device.setStatus(DeviceStatus.UPDATE_PENDING);
+                    deviceRepository.save(device);
+                }
+            }
+        }
         return softwarePackageMapper.modelToDto(softwarePackage);
     }
 
