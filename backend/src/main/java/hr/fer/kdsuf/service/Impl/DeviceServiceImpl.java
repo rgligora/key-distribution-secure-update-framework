@@ -13,6 +13,7 @@ import hr.fer.kdsuf.model.request.RegisterDeviceRequest;
 import hr.fer.kdsuf.repository.CompanyRepository;
 import hr.fer.kdsuf.repository.DeviceRepository;
 import hr.fer.kdsuf.repository.ModelRepository;
+import hr.fer.kdsuf.repository.SoftwarePackageRepository;
 import hr.fer.kdsuf.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,9 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Autowired
     private CompanyRepository companyRepository;
+
+    @Autowired
+    private SoftwarePackageRepository softwarePackageRepository;
 
     @Autowired
     private DeviceMapper deviceMapper;
@@ -85,7 +89,13 @@ public class DeviceServiceImpl implements DeviceService {
     public DeviceDto confirmDevice(String deviceId) {
         Device device = deviceRepository.findById(deviceId)
                 .orElseThrow(() -> new DeviceNotFoundException(deviceId));
-        device.setStatus(DeviceStatus.ACTIVE);
+        Model model = device.getModel();
+        boolean hasSoftwarePackagePending = softwarePackageRepository.existsByModelsContaining(model);
+        if(hasSoftwarePackagePending) {
+            device.setStatus(DeviceStatus.UPDATE_PENDING);
+        }else{
+            device.setStatus(DeviceStatus.ACTIVE);
+        }
         return deviceMapper.modelToDto(deviceRepository.save(device));
     }
 
