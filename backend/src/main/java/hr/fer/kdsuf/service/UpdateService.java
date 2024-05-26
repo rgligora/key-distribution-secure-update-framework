@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 
 public interface UpdateService {
-    UpdateInfo checkForUpdates(String serialNo);
+    UpdateInfo checkForUpdates(String deviceId);
 
-    SoftwarePackageDto downloadUpdate(String serialNo);
+    SoftwarePackageDto downloadUpdate(String softwarePackageId);
 }
