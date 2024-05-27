@@ -12,7 +12,7 @@ import java.util.List;
 public interface SoftwarePackageRepository extends JpaRepository<SoftwarePackage, String>, QuerydslPredicateExecutor<SoftwarePackage> {
     List<SoftwarePackage> findSoftwarePackageByCompanyCompanyId(String id);
 
-    List<SoftwarePackage> findSoftwarePackageByModelsContaining(String modelId);
+    List<SoftwarePackage> findSoftwarePackageByModelsContaining(Model model);
 
     boolean existsByModelsContaining(Model model);
 }

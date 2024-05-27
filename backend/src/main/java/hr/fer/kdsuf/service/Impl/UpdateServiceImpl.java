@@ -27,7 +27,7 @@ public class UpdateServiceImpl implements UpdateService {
         if(device.getStatus() != DeviceStatus.UPDATE_PENDING){
             throw new IllegalArgumentException("Device with device id: '" + deviceId + "' does not have an update pending!");
         }
-        List<SoftwarePackage> softwarePackages = softwarePackageRepository.findSoftwarePackageByModelsContaining(device.getModel().getModelId());
+        List<SoftwarePackage> softwarePackages = softwarePackageRepository.findSoftwarePackageByModelsContaining(device.getModel());
 
         List<String> availableSoftwarePackageIds = softwarePackages.stream()
                 .filter(softwarePackage -> softwarePackage.getStatus() == PackageStatus.AVAILABLE)
