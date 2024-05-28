@@ -5,6 +5,7 @@ import hr.fer.kdsuf.exception.exceptions.SoftwarePackageNotFoundException;
 import hr.fer.kdsuf.mapper.SoftwarePackageMapper;
 import hr.fer.kdsuf.model.domain.*;
 import hr.fer.kdsuf.model.dto.SoftwarePackageDto;
+import hr.fer.kdsuf.model.request.CreateUpdateHistoryRequest;
 import hr.fer.kdsuf.model.request.FlashingSuccess;
 import hr.fer.kdsuf.model.request.UpdateDeviceRequest;
 import hr.fer.kdsuf.repository.DeviceRepository;
@@ -28,6 +29,9 @@ public class UpdateServiceImpl implements UpdateService {
 
     @Autowired
     private SoftwarePackageMapper softwarePackageMapper;
+
+    @Autowired
+    private UpdateHistoryServiceImpl updateHistoryService;
 
     @Override
     public UpdateInfo checkForUpdates(String deviceId) {
@@ -62,14 +66,26 @@ public class UpdateServiceImpl implements UpdateService {
     @Override
     public String flashing(FlashingSuccess flashingSuccess) {
         Device device = deviceRepository.findById(flashingSuccess.getDeviceId()).orElseThrow(() -> new DeviceNotFoundException(flashingSuccess.getDeviceId()));
+
         String status;
+        UpdateStatus updateStatus;
+
         if(flashingSuccess.isSuccess()){
             device.setStatus(DeviceStatus.ACTIVE);
             status = DeviceStatus.ACTIVE.toString();
+            updateStatus = UpdateStatus.SUCCESS;
         }else {
             device.setStatus(DeviceStatus.INACTIVE);
             status = DeviceStatus.INACTIVE.toString();
+            updateStatus = UpdateStatus.FAILED;
         }
+
+        flashingSuccess.getSoftwarePackageIds().forEach(softwarePackageId ->
+                updateHistoryService.createUpdateHistory(
+                        new CreateUpdateHistoryRequest(updateStatus, flashingSuccess.getDeviceId(), softwarePackageId)
+                )
+        );
+
         deviceRepository.save(device);
         return status;
     }

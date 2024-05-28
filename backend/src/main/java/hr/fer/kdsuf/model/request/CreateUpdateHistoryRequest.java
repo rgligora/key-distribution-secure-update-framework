@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CreateUpdateHistoryRequest {
 
-    private LocalDateTime updateDate;
-
     private UpdateStatus status;
 
     private String deviceId;

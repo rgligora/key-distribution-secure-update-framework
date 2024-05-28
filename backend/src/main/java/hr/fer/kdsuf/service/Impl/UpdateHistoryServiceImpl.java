@@ -15,6 +15,7 @@ import hr.fer.kdsuf.service.UpdateHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -42,6 +43,7 @@ public class UpdateHistoryServiceImpl implements UpdateHistoryService {
         UpdateHistory updateHistory = updateHistoryMapper.requestToModel(request);
         updateHistory.setDevice(device);
         updateHistory.setSoftwarePackage(softwarePackage);
+        updateHistory.setUpdateDate(LocalDateTime.now());
 
         updateHistoryRepository.save(updateHistory);
         return updateHistoryMapper.modelToDto(updateHistory);
