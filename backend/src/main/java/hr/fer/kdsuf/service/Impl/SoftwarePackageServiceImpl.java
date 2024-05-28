@@ -53,6 +53,7 @@ public class SoftwarePackageServiceImpl implements SoftwarePackageService{
         softwarePackage.setCompany(company);
         softwarePackage.setIncludedSoftware(includedSoftware);
         softwarePackage.setModels(models);
+        softwarePackage.setStatus(PackageStatus.AVAILABLE);
         company.addSoftwarePackage(softwarePackage);
         companyRepository.save(company);
         softwarePackageRepository.save(softwarePackage);

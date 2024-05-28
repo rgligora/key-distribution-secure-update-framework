@@ -16,5 +16,5 @@ public class UpdateInfo {
 
     boolean available;
 
-    List<String> softwarePackageId;
+    List<String> softwarePackageIds;
 }

@@ -25,7 +25,7 @@ public class UpdateServiceImpl implements UpdateService {
     public UpdateInfo checkForUpdates(String deviceId) {
         Device device = deviceRepository.findById(deviceId).orElseThrow(() -> new DeviceNotFoundException(deviceId));
         if(device.getStatus() != DeviceStatus.UPDATE_PENDING){
-            throw new IllegalArgumentException("Device with device id: '" + deviceId + "' does not have an update pending!");
+            return new UpdateInfo(false, null);
         }
         List<SoftwarePackage> softwarePackages = softwarePackageRepository.findSoftwarePackageByModelsContaining(device.getModel());
 
@@ -34,7 +34,9 @@ public class UpdateServiceImpl implements UpdateService {
                 .map(SoftwarePackage::getSoftwarePackageId)
                 .collect(Collectors.toList());
 
-
+        if (availableSoftwarePackageIds.isEmpty()) {
+            return new UpdateInfo(false, null);
+        }
         return new UpdateInfo(true, availableSoftwarePackageIds);
     }
 
