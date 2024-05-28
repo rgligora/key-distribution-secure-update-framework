@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { GridComponent, ColumnsDirective, ColumnDirective, Resize, Sort, ContextMenu, Filter, Page, Edit, Selection, Inject } from '@syncfusion/ej2-react-grids';
-import { Header, Button } from '../components';
+import { Header, Button, Modal} from '../components';
 import { fetchDataWithRequestParams, updateData } from '../api.js';
 
 const Devices = ({ companyId }) => {
@@ -8,6 +8,10 @@ const Devices = ({ companyId }) => {
   const [pendingDevices, setPendingDevices] = useState([]);
   const confirmedGridRef = useRef(null);
   const pendingGridRef = useRef(null);
+  const [selectedDevice, setSelectedDevice] = useState(null);
+  const [updateHistory, setUpdateHistory] = useState([]);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+
 
   useEffect(() => {
     const getDevices = async () => {
@@ -55,6 +59,22 @@ const Devices = ({ companyId }) => {
     }
   };
 
+  const fetchUpdateHistory = async (deviceId) => {
+    try {
+      const response = await fetchDataWithRequestParams(`update-history`, { deviceId });
+      setUpdateHistory(response);
+      setIsHistoryModalOpen(true);
+    } catch (error) {
+      console.error('Failed to load update history:', error);
+    }
+  };
+
+  const handleDeviceRowSelected = (args) => {
+    const selectedData = args.data;
+    setSelectedDevice(selectedData);
+    fetchUpdateHistory(selectedData.deviceId);
+  };
+    
   const gridOrderStatus = (props) => {
     let statusBg = '';
     const status = props.status;
@@ -71,6 +91,12 @@ const Devices = ({ companyId }) => {
         break;
       case 'UPDATING':
         statusBg = '#5bc0de';
+        break;
+      case 'SUCCESS':
+        statusBg = '#80de21';
+        break;
+      case 'FAILED':
+        statusBg = '#ff2414';
         break;
       default:
         statusBg = 'gray';
@@ -130,12 +156,29 @@ const Devices = ({ companyId }) => {
       </GridComponent>
 
       <h2 className="text-2xl font-semibold mt-8 mb-4">Confirmed Devices</h2>
+      <Modal isOpen={isHistoryModalOpen} onClose={() => setIsHistoryModalOpen(false)} title={`Update History for device: ${selectedDevice?.deviceId}`}>
+        <GridComponent dataSource={updateHistory} allowPaging={true} pageSettings={{ pageSize: 10 }}>
+          <ColumnsDirective>
+            <ColumnDirective field="updateDate" headerText="Update Date" textAlign="Center" format="dd.MM.yyyy HH:mm" />
+            <ColumnDirective 
+              field="softwarePackageId" 
+              headerText="Software Package" 
+              width="200" 
+              textAlign="Center" 
+              template={props => <span title={props.softwarePackageId}>{props.softwarePackageId}</span>} 
+            />
+            <ColumnDirective field="status" headerText="Status" textAlign="Center" template={gridOrderStatus} />
+          </ColumnsDirective>
+          <Inject services={[Page]} />
+        </GridComponent>
+      </Modal>
       <GridComponent
         ref={confirmedGridRef}
         key={`confirmed-devices-${confirmedDevices.length}`}
         dataSource={confirmedDevices}
         allowPaging
         allowSorting
+        rowSelected={handleDeviceRowSelected}
       >
         <ColumnsDirective>
           {deviceColumns.map((col, index) => (
