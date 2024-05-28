@@ -5,6 +5,7 @@ import hr.fer.kdsuf.exception.exceptions.SoftwarePackageNotFoundException;
 import hr.fer.kdsuf.mapper.SoftwarePackageMapper;
 import hr.fer.kdsuf.model.domain.*;
 import hr.fer.kdsuf.model.dto.SoftwarePackageDto;
+import hr.fer.kdsuf.model.dto.UpdateHistoryDto;
 import hr.fer.kdsuf.model.request.CreateUpdateHistoryRequest;
 import hr.fer.kdsuf.model.request.FlashingSuccess;
 import hr.fer.kdsuf.model.request.UpdateDeviceRequest;
@@ -43,8 +44,13 @@ public class UpdateServiceImpl implements UpdateService {
 
         List<String> availableSoftwarePackageIds = softwarePackages.stream()
                 .filter(softwarePackage -> softwarePackage.getStatus() == PackageStatus.AVAILABLE)
+                .filter(softwarePackage -> {
+                    List<UpdateHistoryDto> updateHistories = updateHistoryService.retrieveUpdateHistories(deviceId, softwarePackage.getSoftwarePackageId());
+                    return updateHistories.stream().noneMatch(updateHistory -> updateHistory.getStatus() == UpdateStatus.SUCCESS);
+                })
                 .map(SoftwarePackage::getSoftwarePackageId)
                 .collect(Collectors.toList());
+
 
         if (availableSoftwarePackageIds.isEmpty()) {
             return new UpdateInfo(false, null);
