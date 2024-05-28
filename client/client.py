@@ -139,7 +139,7 @@ def downloadUpdate(deviceId, softwarePackageId):
         print("Software Package download failed: " + response.text)
         exit()
 
-def flashSoftwarePackages(deviceId, flashingSoftwarePackages):
+def flashSoftwarePackages(deviceId, flashingSoftwarePackages, softwarePackageIds):
     print(f"Flashing device: {deviceId}...")
     for softwarePackage in flashingSoftwarePackages:
         print(f"Software package ID: {softwarePackage['softwarePackageId']}")
@@ -156,6 +156,7 @@ def flashSoftwarePackages(deviceId, flashingSoftwarePackages):
     url = f"{backend}/api/updates/flashing"
     payload = {
         "deviceId": deviceId,
+        "softwarePackageIds": softwarePackageIds,
         "success": success
     }
     response = requests.post(url, json=payload)
@@ -200,9 +201,9 @@ def main():
                     softwarePackage = downloadUpdate(deviceId, softwarePackageId)
                     flashingSoftwarePackages.append(softwarePackage)
                 
-                success = flashSoftwarePackages(deviceId, flashingSoftwarePackages)
+                success = flashSoftwarePackages(deviceId, flashingSoftwarePackages, updateInfo["softwarePackageIds"])
                 while not success:
-                    success = flashSoftwarePackages(deviceId, flashingSoftwarePackages)
+                    success = flashSoftwarePackages(deviceId, flashingSoftwarePackages, updateInfo["softwarePackageIds"])
                 
             else:
                 print(f"No updates found for device: {deviceId}...")
