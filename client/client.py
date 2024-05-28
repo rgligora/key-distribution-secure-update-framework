@@ -2,17 +2,81 @@ import requests
 import time
 import psutil
 from collections import deque
+import os
+import json
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives import padding
+from cryptography.hazmat.backends import default_backend
+import base64
 
 backend = "http://localhost:8080"
 client_cert = ("path/to/client.crt", "path/to/client.key")
 ca_cert = "path/to/CA_cert.pem"
-SERIAL_NO = "7c3ef80b-9ea0-4d67-b494-67a18bb22a27"
 
-LOAD_HISTORY_WINDOW = 30
+SERIAL_NO = "a966d08b-7f3e-4ece-9d31-b4e08251d2e1"
+
+HSM_DEVICE_ID_FILE = 'hsm_deviceId.json'
+HSM_KEY_FILE = 'hsm_key.key'
+HSM_SALT_FILE = 'hsm_salt.key'
+
+
+LOAD_HISTORY_WINDOW = 20
 PREDICT_WINDOW = 10
 SNAPSHOT_INTERVAL = 0.2
-CPU_THRESHOLD = 30.0
-MEMORY_THRESHOLD = 80.0
+CPU_THRESHOLD = 40.0
+MEMORY_THRESHOLD = 90.0
+
+class MockHSM:
+    def __init__(self):
+        self.key = self.startUpHSM()
+        self.deviceId = self.deviceIdHSM()
+
+    def startUpHSM(self):
+        if os.path.exists(HSM_KEY_FILE):
+            with open(HSM_KEY_FILE, 'rb') as keyFile:
+                return keyFile.read()
+        else:
+            key = os.urandom(32)  # 256-bit key for AES
+            with open(HSM_KEY_FILE, 'wb') as keyFile:
+                keyFile.write(key)
+            return key
+
+    def encrypt(self, plaintext):
+        iv = os.urandom(12)  # 96-bit IV for GCM
+        cipher = Cipher(algorithms.AES(self.key), modes.GCM(iv), backend=default_backend())
+        encryptor = cipher.encryptor()
+        encrypted = encryptor.update(plaintext.encode()) + encryptor.finalize()
+        return base64.urlsafe_b64encode(iv + encryptor.tag + encrypted).decode()
+
+    def decrypt(self, ciphertext):
+        raw = base64.urlsafe_b64decode(ciphertext)
+        iv = raw[:12]
+        tag = raw[12:28]
+        encrypted_data = raw[28:]
+        cipher = Cipher(algorithms.AES(self.key), modes.GCM(iv, tag), backend=default_backend())
+        decryptor = cipher.decryptor()
+        decrypted = decryptor.update(encrypted_data) + decryptor.finalize()
+        return decrypted.decode()
+
+    def deviceIdHSM(self):
+        if os.path.exists(HSM_DEVICE_ID_FILE):
+            with open(HSM_DEVICE_ID_FILE, 'r') as f:
+                data = json.load(f)
+                encrypted_device_id = data.get('deviceId')
+                if encrypted_device_id:
+                    return encrypted_device_id
+        return None
+
+    def storeDeviceId(self, deviceId):
+        self.deviceId = self.encrypt(deviceId)
+        with open(HSM_DEVICE_ID_FILE, 'w') as f:
+            json.dump({'deviceId': self.deviceId}, f)
+    
+    def retrieveDeviceId(self):
+        if self.deviceId:
+            return self.decrypt(self.deviceId)
+        return None
+
 
 cpuLoadHistory = deque(maxlen=LOAD_HISTORY_WINDOW)
 memoryLoadHistory = deque(maxlen=LOAD_HISTORY_WINDOW)
@@ -51,13 +115,39 @@ def registerDevice():
 
 
 def checkForUpdates(deviceId):
-    url = f"http://api/updates/check/{deviceId}"
+    url = f"{backend}/api/updates/check/{deviceId}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        updateInfo = response.json()
+        return updateInfo
+    else:
+        print("Update check failed: " + response.text)
+        exit()
+
 
 def downloadUpdate(deviceId):
     url = f"http://api/updates/check/{deviceId}"
 
+
+hsm = MockHSM()
+
+def loadDeviceIdHSM():
+    return hsm.retrieveDeviceId()
+
+def saveDeviceIdHSM(device_id):
+    hsm.storeDeviceId(device_id)
+
 def main():
-    deviceInfo = registerDevice()
+
+    deviceId = loadDeviceIdHSM()
+    
+    if deviceId is None:
+        deviceInfo = registerDevice()
+        saveDeviceIdHSM(deviceInfo["deviceId"])
+        print(f'Registered new device with deviceId: {deviceInfo["deviceId"]}')
+    else:
+        print(f'Device already registered with deviceId: {deviceId}')
+
 
     for snapshot in range(LOAD_HISTORY_WINDOW):
             deviceLoadSnaphot()
@@ -67,7 +157,8 @@ def main():
         deviceLoadSnaphot()
 
         if isOptimalDeviceLoad():
-            print("INIT")
+            updateInfo = checkForUpdates(deviceInfo["deviceId"])
+            print(updateInfo)
         else:
             print("Waiting for optimal sytem load")
         time.sleep(SNAPSHOT_INTERVAL)
