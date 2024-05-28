@@ -5,12 +5,14 @@ import hr.fer.kdsuf.exception.exceptions.SoftwarePackageNotFoundException;
 import hr.fer.kdsuf.mapper.SoftwarePackageMapper;
 import hr.fer.kdsuf.model.domain.*;
 import hr.fer.kdsuf.model.dto.SoftwarePackageDto;
+import hr.fer.kdsuf.model.request.FlashingSuccess;
 import hr.fer.kdsuf.model.request.UpdateDeviceRequest;
 import hr.fer.kdsuf.repository.DeviceRepository;
 import hr.fer.kdsuf.repository.ModelRepository;
 import hr.fer.kdsuf.repository.SoftwarePackageRepository;
 import hr.fer.kdsuf.service.UpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -55,5 +57,20 @@ public class UpdateServiceImpl implements UpdateService {
         String softwarePackageId = updateDeviceRequest.getSoftwarePackageId();
         SoftwarePackage softwarePackage = softwarePackageRepository.findById(softwarePackageId).orElseThrow(() -> new SoftwarePackageNotFoundException(softwarePackageId));
         return softwarePackageMapper.modelToDto(softwarePackage);
+    }
+
+    @Override
+    public String flashing(FlashingSuccess flashingSuccess) {
+        Device device = deviceRepository.findById(flashingSuccess.getDeviceId()).orElseThrow(() -> new DeviceNotFoundException(flashingSuccess.getDeviceId()));
+        String status;
+        if(flashingSuccess.isSuccess()){
+            device.setStatus(DeviceStatus.ACTIVE);
+            status = DeviceStatus.ACTIVE.toString();
+        }else {
+            device.setStatus(DeviceStatus.INACTIVE);
+            status = DeviceStatus.INACTIVE.toString();
+        }
+        deviceRepository.save(device);
+        return status;
     }
 }

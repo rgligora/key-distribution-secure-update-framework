@@ -2,6 +2,7 @@ package hr.fer.kdsuf.controller;
 
 import hr.fer.kdsuf.model.domain.UpdateInfo;
 import hr.fer.kdsuf.model.dto.SoftwarePackageDto;
+import hr.fer.kdsuf.model.request.FlashingSuccess;
 import hr.fer.kdsuf.model.request.UpdateDeviceRequest;
 import hr.fer.kdsuf.service.Impl.UpdateServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +24,10 @@ public class UpdateController {
     @PostMapping("/download")
     public ResponseEntity<SoftwarePackageDto> downloadUpdate(@RequestBody UpdateDeviceRequest updateDeviceRequest) {
         return ResponseEntity.ok(updateService.downloadUpdate(updateDeviceRequest));
+    }
+
+    @PostMapping("/flashing")
+    public ResponseEntity flashing(@RequestBody FlashingSuccess flashingSuccess) {
+        return ResponseEntity.ok(updateService.flashing(flashingSuccess));
     }
 }
