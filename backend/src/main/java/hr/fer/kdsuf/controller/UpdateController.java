@@ -2,6 +2,7 @@ package hr.fer.kdsuf.controller;
 
 import hr.fer.kdsuf.model.domain.UpdateInfo;
 import hr.fer.kdsuf.model.dto.SoftwarePackageDto;
+import hr.fer.kdsuf.model.request.UpdateDeviceRequest;
 import hr.fer.kdsuf.service.Impl.UpdateServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,8 @@ public class UpdateController {
         return ResponseEntity.ok(updateService.checkForUpdates(deviceId));
     }
 
-    @GetMapping("/download/{updateId}")
-    public ResponseEntity<SoftwarePackageDto> downloadUpdate(@PathVariable String softwarePackageId) {
-        return ResponseEntity.ok(updateService.downloadUpdate(softwarePackageId));
+    @PostMapping("/download")
+    public ResponseEntity<SoftwarePackageDto> downloadUpdate(@RequestBody UpdateDeviceRequest updateDeviceRequest) {
+        return ResponseEntity.ok(updateService.downloadUpdate(updateDeviceRequest));
     }
 }

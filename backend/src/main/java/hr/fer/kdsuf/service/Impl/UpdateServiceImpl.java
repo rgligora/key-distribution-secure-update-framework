@@ -1,8 +1,11 @@
 package hr.fer.kdsuf.service.Impl;
 
 import hr.fer.kdsuf.exception.exceptions.DeviceNotFoundException;
+import hr.fer.kdsuf.exception.exceptions.SoftwarePackageNotFoundException;
+import hr.fer.kdsuf.mapper.SoftwarePackageMapper;
 import hr.fer.kdsuf.model.domain.*;
 import hr.fer.kdsuf.model.dto.SoftwarePackageDto;
+import hr.fer.kdsuf.model.request.UpdateDeviceRequest;
 import hr.fer.kdsuf.repository.DeviceRepository;
 import hr.fer.kdsuf.repository.ModelRepository;
 import hr.fer.kdsuf.repository.SoftwarePackageRepository;
@@ -20,6 +23,9 @@ public class UpdateServiceImpl implements UpdateService {
 
     @Autowired
     private SoftwarePackageRepository softwarePackageRepository;
+
+    @Autowired
+    private SoftwarePackageMapper softwarePackageMapper;
 
     @Override
     public UpdateInfo checkForUpdates(String deviceId) {
@@ -41,7 +47,13 @@ public class UpdateServiceImpl implements UpdateService {
     }
 
     @Override
-    public SoftwarePackageDto downloadUpdate(String softwarePackageId) {
-        return null;
+    public SoftwarePackageDto downloadUpdate(UpdateDeviceRequest updateDeviceRequest) {
+        String deviceId = updateDeviceRequest.getDeviceId();
+        Device device = deviceRepository.findById(deviceId).orElseThrow(() -> new DeviceNotFoundException(deviceId));
+        device.setStatus(DeviceStatus.UPDATING);
+        deviceRepository.save(device);
+        String softwarePackageId = updateDeviceRequest.getSoftwarePackageId();
+        SoftwarePackage softwarePackage = softwarePackageRepository.findById(softwarePackageId).orElseThrow(() -> new SoftwarePackageNotFoundException(softwarePackageId));
+        return softwarePackageMapper.modelToDto(softwarePackage);
     }
 }
