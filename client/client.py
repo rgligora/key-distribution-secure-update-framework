@@ -4,6 +4,7 @@ import psutil
 from collections import deque
 import os
 import json
+import random
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.backends import default_backend
@@ -141,9 +142,25 @@ def downloadUpdate(deviceId, softwarePackageId):
 def flashSoftwarePackages(deviceId, flashingSoftwarePackages):
     print(f"Flashing device: {deviceId}...")
     for softwarePackage in flashingSoftwarePackages:
-        print(softwarePackage["includedSoftware"])
+        print(f"Software package ID: {softwarePackage['softwarePackageId']}")
+        for sw in softwarePackage['includedSoftware']:
+            print(f"Included software: {sw}")
+
     time.sleep(15)
-    print(f"Flashing done!")
+    success = random.choice([True, False])
+    if success:
+        print("Flashing successful!")
+    else:
+        print("Flashing failed!")
+
+    url = f"{backend}/api/updates/flashing"
+    payload = {
+        "deviceId": deviceId,
+        "success": success
+    }
+    response = requests.post(url, json=payload)
+    
+    return success
 
 
 
@@ -182,10 +199,11 @@ def main():
                 for softwarePackageId in updateInfo["softwarePackageIds"]:
                     softwarePackage = downloadUpdate(deviceId, softwarePackageId)
                     flashingSoftwarePackages.append(softwarePackage)
-
-                flashSoftwarePackages(deviceId, flashingSoftwarePackages)      
                 
-
+                success = flashSoftwarePackages(deviceId, flashingSoftwarePackages)
+                while not success:
+                    success = flashSoftwarePackages(deviceId, flashingSoftwarePackages)
+                
             else:
                 print(f"No updates found for device: {deviceId}...")
         else:
