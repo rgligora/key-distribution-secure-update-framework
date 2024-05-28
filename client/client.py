@@ -17,7 +17,6 @@ SERIAL_NO = "a966d08b-7f3e-4ece-9d31-b4e08251d2e1"
 
 HSM_DEVICE_ID_FILE = 'hsm_deviceId.json'
 HSM_KEY_FILE = 'hsm_key.key'
-HSM_SALT_FILE = 'hsm_salt.key'
 
 
 LOAD_HISTORY_WINDOW = 20
@@ -36,13 +35,13 @@ class MockHSM:
             with open(HSM_KEY_FILE, 'rb') as keyFile:
                 return keyFile.read()
         else:
-            key = os.urandom(32)  # 256-bit key for AES
+            key = os.urandom(32)
             with open(HSM_KEY_FILE, 'wb') as keyFile:
                 keyFile.write(key)
             return key
 
     def encrypt(self, plaintext):
-        iv = os.urandom(12)  # 96-bit IV for GCM
+        iv = os.urandom(12)
         cipher = Cipher(algorithms.AES(self.key), modes.GCM(iv), backend=default_backend())
         encryptor = cipher.encryptor()
         encrypted = encryptor.update(plaintext.encode()) + encryptor.finalize()
@@ -125,8 +124,27 @@ def checkForUpdates(deviceId):
         exit()
 
 
-def downloadUpdate(deviceId):
-    url = f"http://api/updates/check/{deviceId}"
+def downloadUpdate(deviceId, softwarePackageId):
+    url = f"{backend}/api/updates/download"
+    payload = {
+        "deviceId": deviceId,
+        "softwarePackageId": softwarePackageId
+    }
+    response = requests.post(url, json=payload)
+    if response.status_code == 200:
+        softwarePackageDto = response.json()
+        return softwarePackageDto
+    else:
+        print("Software Package download failed: " + response.text)
+        exit()
+
+def flashSoftwarePackages(deviceId, flashingSoftwarePackages):
+    print(f"Flashing device: {deviceId}...")
+    for softwarePackage in flashingSoftwarePackages:
+        print(softwarePackage["includedSoftware"])
+    time.sleep(15)
+    print(f"Flashing done!")
+
 
 
 hsm = MockHSM()
@@ -143,8 +161,9 @@ def main():
     
     if deviceId is None:
         deviceInfo = registerDevice()
-        saveDeviceIdHSM(deviceInfo["deviceId"])
-        print(f'Registered new device with deviceId: {deviceInfo["deviceId"]}')
+        deviceId = deviceInfo["deviceId"]
+        saveDeviceIdHSM(deviceId)
+        print(f'Registered new device with deviceId: {deviceId}')
     else:
         print(f'Device already registered with deviceId: {deviceId}')
 
@@ -157,8 +176,18 @@ def main():
         deviceLoadSnaphot()
 
         if isOptimalDeviceLoad():
-            updateInfo = checkForUpdates(deviceInfo["deviceId"])
-            print(updateInfo)
+            updateInfo = checkForUpdates(deviceId)
+            if updateInfo["available"]:
+                flashingSoftwarePackages = []
+                for softwarePackageId in updateInfo["softwarePackageIds"]:
+                    softwarePackage = downloadUpdate(deviceId, softwarePackageId)
+                    flashingSoftwarePackages.append(softwarePackage)
+
+                flashSoftwarePackages(deviceId, flashingSoftwarePackages)      
+                
+
+            else:
+                print(f"No updates found for device: {deviceId}...")
         else:
             print("Waiting for optimal sytem load")
         time.sleep(SNAPSHOT_INTERVAL)
