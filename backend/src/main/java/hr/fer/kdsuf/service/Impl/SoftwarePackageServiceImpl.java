@@ -104,6 +104,7 @@ public class SoftwarePackageServiceImpl implements SoftwarePackageService{
         if (!softwarePackageExists){
             throw new SoftwareNotFoundException(id);
         }
+        vaultSecretService.deleteSignature(id);
         softwarePackageRepository.deleteById(id);
     }
 }

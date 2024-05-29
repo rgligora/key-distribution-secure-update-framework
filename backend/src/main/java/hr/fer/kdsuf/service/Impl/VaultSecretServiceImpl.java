@@ -74,4 +74,9 @@ public class VaultSecretServiceImpl implements VaultSecretService {
         }
         throw new IllegalArgumentException("Signature not found in Vault for packageId: " + packageId);
     }
+
+    public void deleteSignature(String packageId) {
+        vaultTemplate.delete("secret/data/signatures/" + packageId);
+    }
+
 }
