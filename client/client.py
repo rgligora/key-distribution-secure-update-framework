@@ -14,7 +14,7 @@ backend = "http://localhost:8080"
 client_cert = ("path/to/client.crt", "path/to/client.key")
 ca_cert = "path/to/CA_cert.pem"
 
-SERIAL_NO = "a966d08b-7f3e-4ece-9d31-b4e08251d2e1"
+SERIAL_NO = "dbf92a61-6f7c-41b9-9a1a-cbf3c19f3b62"
 
 HSM_DEVICE_ID_FILE = 'hsm_deviceId.json'
 HSM_KEY_FILE = 'hsm_key.key'
@@ -139,6 +139,21 @@ def downloadUpdate(deviceId, softwarePackageId):
         print("Software Package download failed: " + response.text)
         exit()
 
+def verifySignature(softwarePackage, signature):
+    print(softwarePackage)
+    url = f"{backend}/api/updates/verify"
+    payload = {
+        "softwarePackageDto": softwarePackage,
+        "signature": signature
+    }
+    response = requests.post(url, json=payload)
+    print(response.json())
+    if response.status_code == 200:
+        return response.json()["valid"]
+    else:
+        print("Signature verification failed: " + response.text)
+        exit()
+
 def flashSoftwarePackages(deviceId, flashingSoftwarePackages, softwarePackageIds):
     print(f"Flashing device: {deviceId}...")
     for softwarePackage in flashingSoftwarePackages:
@@ -199,6 +214,11 @@ def main():
                 flashingSoftwarePackages = []
                 for softwarePackageId in updateInfo["softwarePackageIds"]:
                     softwarePackage = downloadUpdate(deviceId, softwarePackageId)
+
+                    if not verifySignature(softwarePackage, softwarePackage["signature"]):
+                        print(f"Signature verification failed for package: {softwarePackageId}")
+                        exit()
+
                     flashingSoftwarePackages.append(softwarePackage)
                 
                 success = flashSoftwarePackages(deviceId, flashingSoftwarePackages, updateInfo["softwarePackageIds"])
