@@ -45,9 +45,19 @@ export const updateData = async (endpoint, data) => {
 
 export const deleteData = async (endpoint) => {
   try {
-    await axios.delete(`${API_URL}/${endpoint}`);
+    const response = await fetch(`${API_URL}/${endpoint}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    const data = await response.text();
+    if (!response.ok) {
+      throw new Error(data || "Unknown error occurred");
+    }
+    return data;
   } catch (error) {
-    console.error('Deleting data error:', error);
+    console.error('Error during API request:', error);
     throw error;
   }
 };

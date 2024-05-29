@@ -34,6 +34,9 @@ public class SoftwarePackageServiceImpl implements SoftwarePackageService{
     private ModelRepository modelRepository;
 
     @Autowired
+    private UpdateHistoryRepository updateHistoryRepository;
+
+    @Autowired
     private DeviceRepository deviceRepository;
 
     @Autowired
@@ -104,6 +107,11 @@ public class SoftwarePackageServiceImpl implements SoftwarePackageService{
         if (!softwarePackageExists){
             throw new SoftwareNotFoundException(id);
         }
+        List<UpdateHistory> updateHistories = updateHistoryRepository.findUpdateHistoriesBySoftwarePackageSoftwarePackageId(id);
+        if (!updateHistories.isEmpty()) {
+            throw new IllegalStateException("Cannot delete software package because it is referenced in update history records.");
+        }
+
         vaultSecretService.deleteSignature(id);
         softwarePackageRepository.deleteById(id);
     }

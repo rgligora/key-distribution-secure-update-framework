@@ -40,7 +40,13 @@ public class SoftwarePackageController {
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<?> deleteSoftwarePackage(@PathVariable("id") String id){
-        service.deleteSoftwarePackage(id);
-        return ResponseEntity.ok("Successfully deleted!");
+        try {
+            service.deleteSoftwarePackage(id);
+            return ResponseEntity.ok("Software package deleted successfully.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body("Cannot delete software package because it is referenced in update history records.");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("An error occurred while deleting the software package.");
+        }
     }
 }
