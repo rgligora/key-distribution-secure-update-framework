@@ -25,6 +25,8 @@ public class SoftwarePackageDto {
 
     private PackageStatus status;
 
+    private String signature;
+
     private List<SoftwareDto> includedSoftware;
 
     private List<String> modelIds;
