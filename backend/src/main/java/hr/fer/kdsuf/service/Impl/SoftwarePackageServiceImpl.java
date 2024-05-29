@@ -11,6 +11,7 @@ import hr.fer.kdsuf.service.SoftwarePackageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +36,9 @@ public class SoftwarePackageServiceImpl implements SoftwarePackageService{
     @Autowired
     private DeviceRepository deviceRepository;
 
+    @Autowired
+    private VaultSecretServiceImpl vaultSecretService;
+
     @Override
     public SoftwarePackageDto createSoftwarePackage(CreateSoftwarePackageRequest request) {
         Company company = companyRepository.findById(request.getCompanyId())
@@ -54,6 +58,13 @@ public class SoftwarePackageServiceImpl implements SoftwarePackageService{
         softwarePackage.setIncludedSoftware(includedSoftware);
         softwarePackage.setModels(models);
         softwarePackage.setStatus(PackageStatus.AVAILABLE);
+
+        SoftwarePackageDto softwarePackageDto = softwarePackageMapper.modelToDto(softwarePackage);
+        String dataToSign = softwarePackageDto.toString();
+        String signature = vaultSecretService.signData("software-signing-key", dataToSign.getBytes(StandardCharsets.UTF_8));
+        vaultSecretService.storeSignature(softwarePackage.getSoftwarePackageId(), signature);
+
+
         company.addSoftwarePackage(softwarePackage);
         companyRepository.save(company);
         softwarePackageRepository.save(softwarePackage);
