@@ -1,7 +1,7 @@
 package hr.fer.kdsuf.service.Impl;
 
-import hr.fer.kdsuf.exception.exceptions.DeviceNotFoundException;
-import hr.fer.kdsuf.exception.exceptions.SoftwarePackageNotFoundException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import hr.fer.kdsuf.exception.exceptions.*;
 import hr.fer.kdsuf.mapper.SoftwarePackageMapper;
 import hr.fer.kdsuf.model.domain.*;
 import hr.fer.kdsuf.model.dto.SoftwarePackageDto;
@@ -9,15 +9,16 @@ import hr.fer.kdsuf.model.dto.UpdateHistoryDto;
 import hr.fer.kdsuf.model.request.CreateUpdateHistoryRequest;
 import hr.fer.kdsuf.model.request.FlashingSuccess;
 import hr.fer.kdsuf.model.request.UpdateDeviceRequest;
-import hr.fer.kdsuf.repository.DeviceRepository;
-import hr.fer.kdsuf.repository.ModelRepository;
-import hr.fer.kdsuf.repository.SoftwarePackageRepository;
+import hr.fer.kdsuf.model.request.VerifyUpdateRequest;
+import hr.fer.kdsuf.repository.*;
 import hr.fer.kdsuf.service.UpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,10 +30,22 @@ public class UpdateServiceImpl implements UpdateService {
     private SoftwarePackageRepository softwarePackageRepository;
 
     @Autowired
+    private SoftwareRepository softwareRepository;
+
+    @Autowired
+    private ModelRepository modelRepository;
+
+    @Autowired
+    private CompanyRepository companyRepository;
+
+    @Autowired
     private SoftwarePackageMapper softwarePackageMapper;
 
     @Autowired
     private UpdateHistoryServiceImpl updateHistoryService;
+
+    @Autowired
+    private VaultSecretServiceImpl vaultSecretService;
 
     @Override
     public UpdateInfo checkForUpdates(String deviceId) {
@@ -66,8 +79,26 @@ public class UpdateServiceImpl implements UpdateService {
         deviceRepository.save(device);
         String softwarePackageId = updateDeviceRequest.getSoftwarePackageId();
         SoftwarePackage softwarePackage = softwarePackageRepository.findById(softwarePackageId).orElseThrow(() -> new SoftwarePackageNotFoundException(softwarePackageId));
-        return softwarePackageMapper.modelToDto(softwarePackage);
+
+        String signature = vaultSecretService.retrieveSignature(softwarePackageId);
+        SoftwarePackageDto softwarePackageDto = softwarePackageMapper.modelToDto(softwarePackage);
+        softwarePackageDto.setSignature(signature);
+        return softwarePackageDto;
     }
+
+    @Override
+    public Map<String, Boolean> verifyUpdate(VerifyUpdateRequest payload) {
+        SoftwarePackageDto softwarePackageDto = payload.getSoftwarePackageDto();
+        softwarePackageDto.setSignature(null);
+        String signature = payload.getSignature();
+
+        byte[] dataBytes = softwarePackageDto.toString().getBytes(StandardCharsets.UTF_8);
+
+        boolean valid = vaultSecretService.verifyData("software-signing-key", dataBytes, signature);
+
+        return Map.of("valid", valid);
+    }
+
 
     @Override
     public String flashing(FlashingSuccess flashingSuccess) {
