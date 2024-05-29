@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -109,6 +110,7 @@ public class UpdateServiceImpl implements UpdateService {
 
         if(flashingSuccess.isSuccess()){
             device.setStatus(DeviceStatus.ACTIVE);
+            device.setLastUpdated(LocalDateTime.now());
             status = DeviceStatus.ACTIVE.toString();
             updateStatus = UpdateStatus.SUCCESS;
         }else {
