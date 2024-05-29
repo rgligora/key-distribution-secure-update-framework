@@ -6,6 +6,9 @@ import { fetchDataWithRequestParams, createData } from '../api.js';
 const SoftwarePackages = ({ companyId }) => {
   const [softwarePackagesData, setsoftwarePackagesData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSoftwarePackage, setSelectedSoftwarePackage] = useState(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
 
   useEffect(() => {
     const getSoftwarePackages = async () => {
@@ -58,21 +61,23 @@ const SoftwarePackages = ({ companyId }) => {
     );
   };
 
+  const handleRowSelected = (args) => {
+    setSelectedSoftwarePackage(args.data);
+    setIsDetailModalOpen(true);
+  };
+  
+
   const softwarePackagesGrid = [
-    { field: 'softwarePackageId', headerText: 'SoftwarePackage ID', width: 'auto', textAlign: 'Center' },
-    { field: 'name', headerText: 'Name', width: '150', textAlign: 'Center' },
-    { field: 'creationDate', headerText: 'Creation Date', format: 'd.M.y', textAlign: 'Center', editType: 'datepicker', width: '120' },
-    { field: 'description', headerText: 'Description', width: '150', textAlign: 'Center' },
-    { field: 'status', headerText: 'Status', template: gridSWPackageStatus, textAlign: 'Center', width: '120' },
-  ];
+    { field: 'softwarePackageId', headerText: 'SoftwarePackage ID', textAlign: 'Center', width: 'auto'},
+    { field: 'name', headerText: 'Name', textAlign: 'Center' },
+    { field: 'creationDate', headerText: 'Creation Date', format: 'd.M.y', textAlign: 'Center', editType: 'datepicker'},
+    { field: 'status', headerText: 'Status', template: gridSWPackageStatus, textAlign: 'Center'},
+  ];  
 
   return (
     <div className='m-2 md:m-10 p-2 md:p-10 bg-white rounded-3xl'>
       <Header category="Page" title="Software Packages" />
-      <Button
-        className="mb-5 p-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
-        onClick={() => setIsModalOpen(true)}
-      >
+      <Button className="mb-5 p-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700" onClick={() => setIsModalOpen(true)}>
         Create SW Package
       </Button>
 
@@ -80,7 +85,17 @@ const SoftwarePackages = ({ companyId }) => {
         <NewSoftwarePackageForm onSubmit={handleNewSoftwarePackageSubmit} onClose={() => setIsModalOpen(false)} companyId={companyId} />
       </Modal>
 
-      <GridComponent dataSource={softwarePackagesData} allowPaging allowSorting>
+      <Modal isOpen={isDetailModalOpen} onClose={() => setIsDetailModalOpen(false)} title={`Details for: ${selectedSoftwarePackage?.name}`}>
+        <div>
+          <p><strong>Software Package ID:</strong> {selectedSoftwarePackage?.softwarePackageId}</p>
+          <p><strong>Name:</strong> {selectedSoftwarePackage?.name}</p>
+          <p><strong>Creation Date:</strong> {selectedSoftwarePackage?.creationDate}</p>
+          <p><strong>Description:</strong> {selectedSoftwarePackage?.description}</p>
+          <p><strong>Status:</strong> {selectedSoftwarePackage?.status}</p>
+        </div>
+      </Modal>
+
+      <GridComponent dataSource={softwarePackagesData} allowPaging allowSorting style={{ width: '100%', minHeight: '400px', overflow: 'auto' }} rowSelected={handleRowSelected}>
         <ColumnsDirective>
           {softwarePackagesGrid.map((item, index) => (
             <ColumnDirective key={index} {...item} />
