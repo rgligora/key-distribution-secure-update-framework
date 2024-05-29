@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class VerifyUpdateRequest {
 
+    String deviceId;
+
     SoftwarePackageDto softwarePackageDto;
 
     String signature;

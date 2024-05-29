@@ -93,10 +93,15 @@ public class UpdateServiceImpl implements UpdateService {
         softwarePackageDto.setSignature(null);
         String signature = payload.getSignature();
 
+        Device device = deviceRepository.findById(payload.getDeviceId()).orElseThrow(() -> new DeviceNotFoundException(payload.getDeviceId()));
+
         byte[] dataBytes = softwarePackageDto.toString().getBytes(StandardCharsets.UTF_8);
 
         boolean valid = vaultSecretService.verifyData("software-signing-key", dataBytes, signature);
 
+        if (!valid){
+            device.setStatus(DeviceStatus.UPDATE_PENDING);
+        }
         return Map.of("valid", valid);
     }
 

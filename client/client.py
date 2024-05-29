@@ -139,10 +139,11 @@ def downloadUpdate(deviceId, softwarePackageId):
         print("Software Package download failed: " + response.text)
         exit()
 
-def verifySignature(softwarePackage, signature):
+def verifySignature(deviceId, softwarePackage, signature):
     print(softwarePackage)
     url = f"{backend}/api/updates/verify"
     payload = {
+        "deviceId" : deviceId,
         "softwarePackageDto": softwarePackage,
         "signature": signature
     }
@@ -215,7 +216,7 @@ def main():
                 for softwarePackageId in updateInfo["softwarePackageIds"]:
                     softwarePackage = downloadUpdate(deviceId, softwarePackageId)
 
-                    if not verifySignature(softwarePackage, softwarePackage["signature"]):
+                    if not verifySignature(deviceId, softwarePackage, softwarePackage["signature"]):
                         print(f"Signature verification failed for package: {softwarePackageId}")
                         exit()
 
