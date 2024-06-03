@@ -1,6 +1,7 @@
 package hr.fer.kdsuf.service;
 
 import java.util.List;
+import java.util.Map;
 
 public interface VaultSecretService {
     void storeSerialNos(String modelId, List<String> serialNos);
@@ -14,4 +15,7 @@ public interface VaultSecretService {
     void storeSignature(String packageId, String signature);
 
     String retrieveSignature(String packageId);
+
+    void deleteSignature(String packageId);
+
 }

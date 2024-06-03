@@ -31,6 +31,31 @@ public class VaultSecretServiceImpl implements VaultSecretService {
         }
         throw new IllegalArgumentException("Serial numbers not found in Vault for modelId: " + modelId);
     }
+    public boolean isKeyPresent(String keyName) {
+        VaultResponse response = vaultTemplate.read(String.format("transit/keys/%s", keyName));
+        return response != null && response.getData() != null;
+    }
+
+    public String retrievePublicKey(String keyName) {
+        VaultResponse response = vaultTemplate.read(String.format("transit/keys/%s", keyName));
+        if (response != null && response.getData() != null) {
+            Map<String, Object> data = (Map<String, Object>) response.getData().get("keys");
+            if (data != null && data.containsKey("1")) {
+                Map<String, Object> keyVersion = (Map<String, Object>) data.get("1");
+                if (keyVersion != null) {
+                    return (String) keyVersion.get("public_key");
+                }
+            }
+        }
+        throw new IllegalStateException("Failed to retrieve public key from Vault");
+    }
+
+    public void generateRSAKeyPair(String keyName) {
+        Map<String, String> request = new HashMap<>();
+        request.put("type", "rsa-2048");
+        vaultTemplate.write(String.format("transit/keys/%s", keyName), request);
+    }
+
 
     public String signData(String keyName, byte[] data) {
         String encodedData = Base64.getEncoder().encodeToString(data);

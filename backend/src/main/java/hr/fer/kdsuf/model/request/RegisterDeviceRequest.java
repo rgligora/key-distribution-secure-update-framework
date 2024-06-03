@@ -10,4 +10,6 @@ import lombok.NoArgsConstructor;
 public class RegisterDeviceRequest {
 
     private String serialNo;
+
+    private String publicKey;
 }

@@ -19,6 +19,9 @@ public class Device {
 
     private String serialNo;
 
+    @Column(name = "public_key", columnDefinition = "TEXT")
+    private String publicKey;
+
     private String name;
 
     private LocalDate registrationDate;

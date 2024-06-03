@@ -1,24 +1,23 @@
-import requests
-import time
-import psutil
-from collections import deque
+import base64
 import os
 import json
 import random
+import time
+import psutil
+import requests
+from collections import deque
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.backends import default_backend
-import base64
 
-backend = "http://localhost:8080"
-client_cert = ("path/to/client.crt", "path/to/client.key")
-ca_cert = "path/to/CA_cert.pem"
+backend = "http://127.0.0.1:8080"
 
-SERIAL_NO = "dbf92a61-6f7c-41b9-9a1a-cbf3c19f3b62"
+SERIAL_NO = "a966d08b-7f3e-4ece-9d31-b4e08251d2e1"
 
 HSM_DEVICE_ID_FILE = 'hsm_deviceId.json'
+HSM_BACKEND_PUBKEY_FILE = 'hsm_backendPubKey.json'
 HSM_KEY_FILE = 'hsm_key.key'
-
 
 LOAD_HISTORY_WINDOW = 20
 PREDICT_WINDOW = 10
@@ -30,6 +29,13 @@ class MockHSM:
     def __init__(self):
         self.key = self.startUpHSM()
         self.deviceId = self.deviceIdHSM()
+        self.backendPubKey = self.backendPublicKey()
+        self.privKey = rsa.generate_private_key(
+            public_exponent=65537,
+            key_size=2048,
+        )
+        self.public_key = self.privKey.public_key()
+        self.session_key = None
 
     def startUpHSM(self):
         if os.path.exists(HSM_KEY_FILE):
@@ -41,14 +47,20 @@ class MockHSM:
                 keyFile.write(key)
             return key
 
-    def encrypt(self, plaintext):
+    def getDevicePubKeyPem(self):
+        return self.public_key.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+        ).decode('utf-8')
+
+    def encryptHSM(self, plaintext):
         iv = os.urandom(12)
         cipher = Cipher(algorithms.AES(self.key), modes.GCM(iv), backend=default_backend())
         encryptor = cipher.encryptor()
         encrypted = encryptor.update(plaintext.encode()) + encryptor.finalize()
         return base64.urlsafe_b64encode(iv + encryptor.tag + encrypted).decode()
 
-    def decrypt(self, ciphertext):
+    def decryptHSM(self, ciphertext):
         raw = base64.urlsafe_b64decode(ciphertext)
         iv = raw[:12]
         tag = raw[12:28]
@@ -68,20 +80,48 @@ class MockHSM:
         return None
 
     def storeDeviceId(self, deviceId):
-        self.deviceId = self.encrypt(deviceId)
+        self.deviceId = self.encryptHSM(deviceId)
         with open(HSM_DEVICE_ID_FILE, 'w') as f:
             json.dump({'deviceId': self.deviceId}, f)
     
     def retrieveDeviceId(self):
         if self.deviceId:
-            return self.decrypt(self.deviceId)
+            return self.decryptHSM(self.deviceId)
         return None
+
+    def storeBackendPubKey(self, backendPubKey):
+        self.backendPubKey = backendPubKey
+        with open(HSM_BACKEND_PUBKEY_FILE, 'w') as f:
+            json.dump({'backendPubKey': self.backendPubKey}, f)
+    
+    def retrieveBackendPubKey(self):
+        if self.backendPubKey:
+            return self.backendPubKey
+        return None
+
+    def backendPublicKey(self):
+        if os.path.exists(HSM_BACKEND_PUBKEY_FILE):
+            with open(HSM_BACKEND_PUBKEY_FILE, 'r') as f:
+                data = json.load(f)
+                encrypted_backend_pub_key = data.get('backendPubKey')
+                if encrypted_backend_pub_key:
+                    return self.decryptHSM(encrypted_backend_pub_key)
+        url = f"{backend}/api/keys/backend"
+        response = requests.get(url)
+        if response.status_code == 200:
+            backendPubKey = response.text
+            print(backendPubKey)
+            self.storeBackendPubKey(backendPubKey)
+            return backendPubKey
+        else:
+            print("Backend public key retrieval failed: " + response.text)
+            exit()
 
 
 cpuLoadHistory = deque(maxlen=LOAD_HISTORY_WINDOW)
 memoryLoadHistory = deque(maxlen=LOAD_HISTORY_WINDOW)
 
-def deviceLoadSnaphot():
+def deviceLoadSnapshot():
     cpuUsage = psutil.cpu_percent(interval=1)
     memoryUsage = psutil.virtual_memory().percent
     print(f"CPU usage: {cpuUsage}, MEMORY usage: {memoryUsage}")
@@ -100,11 +140,11 @@ def predictDeviceLoad(predictWindow=PREDICT_WINDOW):
     predictedMemoryUsage = sum(memoryLoadList[-predictWindow:]) / len(memoryLoadList[-predictWindow:])
     return predictedCpuUsage, predictedMemoryUsage
 
-
-def registerDevice():
+def registerDevice(publicKey):
     url = f"{backend}/api/devices/register"
     payload = {
-        "serialNo": SERIAL_NO
+        "serialNo": SERIAL_NO,
+        "publicKey": publicKey
     }
     response = requests.post(url, json=payload)
     if response.status_code == 200:
@@ -112,7 +152,6 @@ def registerDevice():
     else:
         print("Device registration failed: " + response.text)
         exit()
-
 
 def checkForUpdates(deviceId):
     url = f"{backend}/api/updates/check/{deviceId}"
@@ -123,7 +162,6 @@ def checkForUpdates(deviceId):
     else:
         print("Update check failed: " + response.text)
         exit()
-
 
 def downloadUpdate(deviceId, softwarePackageId):
     url = f"{backend}/api/updates/download"
@@ -140,7 +178,6 @@ def downloadUpdate(deviceId, softwarePackageId):
         exit()
 
 def verifySignature(deviceId, softwarePackage, signature):
-    print(softwarePackage)
     url = f"{backend}/api/updates/verify"
     payload = {
         "deviceId" : deviceId,
@@ -148,7 +185,6 @@ def verifySignature(deviceId, softwarePackage, signature):
         "signature": signature
     }
     response = requests.post(url, json=payload)
-    print(response.json())
     if response.status_code == 200:
         return response.json()["valid"]
     else:
@@ -179,35 +215,35 @@ def flashSoftwarePackages(deviceId, flashingSoftwarePackages, softwarePackageIds
     
     return success
 
-
-
 hsm = MockHSM()
 
 def loadDeviceIdHSM():
     return hsm.retrieveDeviceId()
 
-def saveDeviceIdHSM(device_id):
-    hsm.storeDeviceId(device_id)
+def saveDeviceIdHSM(deviceId):
+    hsm.storeDeviceId(deviceId)
+
+def loadBackendPubKeyHSM():
+    return hsm.retrieveBackendPubKey()
 
 def main():
-
     deviceId = loadDeviceIdHSM()
+    backendPubKey = loadBackendPubKeyHSM()
     
     if deviceId is None:
-        deviceInfo = registerDevice()
+        deviceInfo = registerDevice(hsm.getDevicePubKeyPem())
         deviceId = deviceInfo["deviceId"]
         saveDeviceIdHSM(deviceId)
         print(f'Registered new device with deviceId: {deviceId}')
     else:
         print(f'Device already registered with deviceId: {deviceId}')
 
-
     for snapshot in range(LOAD_HISTORY_WINDOW):
-            deviceLoadSnaphot()
+            deviceLoadSnapshot()
             time.sleep(SNAPSHOT_INTERVAL)
 
     while True:
-        deviceLoadSnaphot()
+        deviceLoadSnapshot()
 
         if isOptimalDeviceLoad():
             updateInfo = checkForUpdates(deviceId)
@@ -229,11 +265,8 @@ def main():
             else:
                 print(f"No updates found for device: {deviceId}...")
         else:
-            print("Waiting for optimal sytem load")
+            print("Waiting for optimal system load")
         time.sleep(SNAPSHOT_INTERVAL)
-
 
 if __name__ == "__main__":
     main()
-
-

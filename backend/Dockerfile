@@ -13,7 +13,6 @@ RUN apk update && apk add --no-cache \
 
 COPY vault/vault-config.hcl /vault/config/
 COPY vault_setup.sh /usr/local/bin/
-COPY terraform /terraform
 
 RUN chmod +x /usr/local/bin/vault_setup.sh
 

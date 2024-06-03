@@ -1,7 +1,6 @@
 package hr.fer.kdsuf.service.Impl;
 
 import hr.fer.kdsuf.exception.exceptions.DeviceNotFoundException;
-import hr.fer.kdsuf.exception.exceptions.ModelNotFoundException;
 import hr.fer.kdsuf.mapper.DeviceMapper;
 import hr.fer.kdsuf.model.domain.Company;
 import hr.fer.kdsuf.model.domain.Device;
@@ -72,6 +71,7 @@ public class DeviceServiceImpl implements DeviceService {
         device.setStatus(DeviceStatus.REGISTERED);
         device.setRegistrationDate(LocalDate.now());
         device.setLastUpdated(LocalDateTime.now());
+        device.setPublicKey(request.getPublicKey());
         device.setModel(foundModel);
 
         Model finalFoundModel = foundModel;
