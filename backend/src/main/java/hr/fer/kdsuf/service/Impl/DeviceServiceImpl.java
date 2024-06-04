@@ -1,5 +1,6 @@
 package hr.fer.kdsuf.service.Impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hr.fer.kdsuf.exception.exceptions.DeviceNotFoundException;
 import hr.fer.kdsuf.mapper.DeviceMapper;
 import hr.fer.kdsuf.model.domain.Company;
@@ -7,6 +8,7 @@ import hr.fer.kdsuf.model.domain.Device;
 import hr.fer.kdsuf.model.domain.DeviceStatus;
 import hr.fer.kdsuf.model.domain.Model;
 import hr.fer.kdsuf.model.dto.DeviceDto;
+import hr.fer.kdsuf.model.dto.EncryptedDto;
 import hr.fer.kdsuf.model.request.CreateDeviceRequest;
 import hr.fer.kdsuf.model.request.RegisterDeviceRequest;
 import hr.fer.kdsuf.repository.CompanyRepository;
@@ -17,9 +19,12 @@ import hr.fer.kdsuf.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -44,34 +49,47 @@ public class DeviceServiceImpl implements DeviceService {
     private VaultSecretServiceImpl vaultService;
 
     @Override
-    public DeviceDto registerDevice(RegisterDeviceRequest request) {
-        Optional<Device> existingDevice = deviceRepository.findDeviceBySerialNo(request.getSerialNo());
+    public EncryptedDto registerDevice(EncryptedDto request) {
+        String devicePublicKeyBase64 = request.getDevicePublicKey();
+        String keyNameSuffix = devicePublicKeyBase64.length() > 20 ? devicePublicKeyBase64.substring(10, 20) : devicePublicKeyBase64;
+        System.out.println(request.getEncryptedData());
+        String decryptedRegisterDeviceRequest = vaultService.decryptData("aes-key-" + keyNameSuffix, request.getEncryptedData());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        RegisterDeviceRequest registerDeviceRequest;
+        try {
+            registerDeviceRequest = objectMapper.readValue(decryptedRegisterDeviceRequest, RegisterDeviceRequest.class);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to parse decrypted RegisterDeviceRequest", e);
+        }
+
+        Optional<Device> existingDevice = deviceRepository.findDeviceBySerialNo(registerDeviceRequest.getSerialNo());
         if (existingDevice.isPresent()) {
-            throw new IllegalArgumentException("Device with serial number: '" + request.getSerialNo() + "' is already registered!");
+            throw new IllegalArgumentException("Device with serial number: '" + registerDeviceRequest.getSerialNo() + "' is already registered!");
         }
 
         Model foundModel = null;
         List<Model> allModels = modelRepository.findAll();
         for (Model model : allModels) {
             List<String> serialNos = vaultService.retrieveSerialNos(model.getModelId());
-            if (serialNos.contains(request.getSerialNo())) {
+            if (serialNos.contains(registerDeviceRequest.getSerialNo())) {
                 foundModel = model;
                 break;
             }
         }
 
         if (foundModel == null) {
-            throw new IllegalArgumentException("Device with serial number: '" + request.getSerialNo() + "' cannot be registered!");
+            throw new IllegalArgumentException("Device with serial number: '" + registerDeviceRequest.getSerialNo() + "' cannot be registered!");
         }
 
         Device device = new Device();
         device.setDeviceId(java.util.UUID.randomUUID().toString());
-        device.setSerialNo(request.getSerialNo());
+        device.setSerialNo(registerDeviceRequest.getSerialNo());
         device.setName(foundModel.getName());
         device.setStatus(DeviceStatus.REGISTERED);
         device.setRegistrationDate(LocalDate.now());
         device.setLastUpdated(LocalDateTime.now());
-        device.setPublicKey(request.getPublicKey());
+        device.setPublicKey(registerDeviceRequest.getPublicKey());
         device.setModel(foundModel);
 
         Model finalFoundModel = foundModel;
@@ -82,7 +100,27 @@ public class DeviceServiceImpl implements DeviceService {
         device.setCompany(company);
         company.addDevice(device);
         companyRepository.save(company);
-        return deviceMapper.modelToDto(device);
+
+        DeviceDto deviceDto = deviceMapper.modelToDto(device);
+        String deviceDtoJson;
+        try {
+            Map<String, Object> deviceDtoMap = new HashMap<>();
+            deviceDtoMap.put("deviceId", deviceDto.getDeviceId());
+            deviceDtoMap.put("name", deviceDto.getName());
+            deviceDtoMap.put("registrationDate", deviceDto.getRegistrationDate().toString());
+            deviceDtoMap.put("lastUpdated", deviceDto.getLastUpdated().toString());
+            deviceDtoMap.put("companyId", deviceDto.getCompanyId());
+            deviceDtoMap.put("modelId", deviceDto.getModelId());
+            deviceDtoMap.put("status", deviceDto.getStatus());
+
+            deviceDtoJson = objectMapper.writeValueAsString(deviceDtoMap);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to convert DeviceDto to JSON", e);
+        }
+        String encryptedDeviceDtoJson = vaultService.encryptData("aes-key-" + keyNameSuffix, deviceDtoJson);
+
+        EncryptedDto response = new EncryptedDto(request.getDevicePublicKey(), encryptedDeviceDtoJson);
+        return response;
     }
 
     @Override

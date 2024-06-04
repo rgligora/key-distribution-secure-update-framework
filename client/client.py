@@ -10,6 +10,8 @@ from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES, PKCS1_OAEP
 from Crypto.Random import get_random_bytes
 from Crypto.Hash import SHA256
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 backend = "http://127.0.0.1:8080"
 
@@ -131,6 +133,20 @@ class MockHSM:
             print(f"Failed to decrypt session key: {str(e)}")
             raise
 
+    def encryptWithSessionKey(self, plaintext):
+        nonce = os.urandom(12)
+        aesgcm = AESGCM(self.session_key)
+        ciphertext = aesgcm.encrypt(nonce, plaintext.encode(), None)
+       
+        encrypted_data = nonce + ciphertext
+        return f"vault:v1:{base64.b64encode(encrypted_data).decode()}"
+    
+    def decryptWithSessionKey(self, ciphertext):
+        encodedData = ciphertext[len("vault:v1:"):]
+        data = base64.b64decode(encodedData)
+        nonce, ciphertext = data[:12], data[12:]
+        aesgcm = AESGCM(self.session_key)
+        return aesgcm.decrypt(nonce, ciphertext, None).decode()
 
 cpuLoadHistory = deque(maxlen=LOAD_HISTORY_WINDOW)
 memoryLoadHistory = deque(maxlen=LOAD_HISTORY_WINDOW)
@@ -160,9 +176,11 @@ def registerDevice():
         "serialNo": SERIAL_NO,
         "publicKey": base64.b64encode(hsm.getDevicePubKeyBytes()).decode('utf-8')
     }
-    response = requests.post(url, json=payload)
+    response = requests.post(url, json={"devicePublicKey": base64.b64encode(hsm.getDevicePubKeyBytes()).decode('utf-8'), "encryptedData": hsm.encryptWithSessionKey(json.dumps(payload))})
     if response.status_code == 200:
-        return response.json()
+        EncryptedDto = response.json()
+        decryptedData = hsm.decryptWithSessionKey(EncryptedDto["encryptedData"])
+        return json.loads(decryptedData)
     else:
         print("Device registration failed: " + response.text)
         exit()
