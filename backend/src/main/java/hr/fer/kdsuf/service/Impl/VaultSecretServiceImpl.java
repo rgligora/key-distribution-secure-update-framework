@@ -43,11 +43,21 @@ public class VaultSecretServiceImpl implements VaultSecretService {
             if (data != null && data.containsKey("1")) {
                 Map<String, Object> keyVersion = (Map<String, Object>) data.get("1");
                 if (keyVersion != null) {
-                    return (String) keyVersion.get("public_key");
+                    String publicKeyPem = (String) keyVersion.get("public_key");
+                    String publicKeyDer = convertPemToDer(publicKeyPem);
+                    return publicKeyDer;
                 }
             }
         }
         throw new IllegalStateException("Failed to retrieve public key from Vault");
+    }
+
+    private String convertPemToDer(String pem) {
+        String base64Encoded = pem.replace("-----BEGIN PUBLIC KEY-----", "")
+                .replace("-----END PUBLIC KEY-----", "")
+                .replaceAll("\\s", "");
+        byte[] der = Base64.getDecoder().decode(base64Encoded);
+        return Base64.getEncoder().encodeToString(der);
     }
 
     public void generateRSAKeyPair(String keyName) {
@@ -56,6 +66,50 @@ public class VaultSecretServiceImpl implements VaultSecretService {
         vaultTemplate.write(String.format("transit/keys/%s", keyName), request);
     }
 
+    public byte[] generateAESKey(String keyName) {
+        Map<String, String> request = new HashMap<>();
+        request.put("type", "aes256-gcm96");
+        request.put("exportable", "true");
+        vaultTemplate.write(String.format("transit/keys/%s", keyName), request);
+        String path = String.format("transit/export/encryption-key/%s", keyName);
+        VaultResponse response = vaultTemplate.read(path);
+
+        if (response != null && response.getData() != null) {
+            Map<String, Object> data = response.getData();
+            if (data.containsKey("keys")) {
+                Map<String, Object> keys = (Map<String, Object>) data.get("keys");
+                String keyVersion = keys.keySet().iterator().next();
+                String aesKeyBase64 = (String) keys.get(keyVersion);
+                return Base64.getDecoder().decode(aesKeyBase64);
+            }
+        }
+
+        throw new RuntimeException("Failed to generate AES key");
+    }
+
+    public String encryptData(String keyName, String plaintext) {
+        String encodedData = Base64.getEncoder().encodeToString(plaintext.getBytes());
+        Map<String, String> request = new HashMap<>();
+        request.put("plaintext", encodedData);
+
+        VaultResponse response = vaultTemplate.write(String.format("transit/encrypt/%s", keyName), request);
+        if (response != null && response.getData() != null) {
+            return (String) response.getData().get("ciphertext");
+        }
+        throw new IllegalStateException("Failed to encrypt data with Vault");
+    }
+
+    public String decryptData(String keyName, String ciphertext) {
+        Map<String, String> request = new HashMap<>();
+        request.put("ciphertext", ciphertext);
+
+        VaultResponse response = vaultTemplate.write(String.format("transit/decrypt/%s", keyName), request);
+        if (response != null && response.getData() != null) {
+            String decryptedBase64 = (String) response.getData().get("plaintext");
+            return new String(Base64.getDecoder().decode(decryptedBase64));
+        }
+        throw new IllegalStateException("Failed to decrypt data with Vault");
+    }
 
     public String signData(String keyName, byte[] data) {
         String encodedData = Base64.getEncoder().encodeToString(data);
@@ -103,5 +157,4 @@ public class VaultSecretServiceImpl implements VaultSecretService {
     public void deleteSignature(String packageId) {
         vaultTemplate.delete("secret/data/signatures/" + packageId);
     }
-
 }

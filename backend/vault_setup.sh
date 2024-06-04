@@ -28,7 +28,7 @@ curl --silent --header "X-Vault-Token: $VAULT_TOKEN" --request POST --data '{"ty
 curl --silent --header "X-Vault-Token: $VAULT_TOKEN" --request POST --data '{"type": "rsa-2048"}' $VAULT_ADDR/v1/transit/keys/software-signing-key
 
 curl --silent --header "X-Vault-Token: $VAULT_TOKEN" --request PUT --data '{
-  "policy": "path \"secret/data/*\" {\n  capabilities = [\"create\", \"read\", \"update\", \"delete\", \"list\"]\n}\npath \"transit/keys/*\" {\n  capabilities = [\"create\", \"read\", \"update\"]\n}\npath \"transit/sign/*\" {\n  capabilities = [\"create\", \"read\", \"update\"]\n}\npath \"transit/verify/*\" {\n  capabilities = [\"create\", \"read\", \"update\"]\n}\n"
+  "policy": "path \"secret/data/*\" {\n  capabilities = [\"create\", \"read\", \"update\", \"delete\", \"list\"]\n}\npath \"transit/keys/*\" {\n  capabilities = [\"create\", \"read\", \"update\"]\n}\npath \"transit/encrypt/*\" {\n  capabilities = [\"create\", \"read\", \"update\"]\n}\npath \"transit/decrypt/*\" {\n  capabilities = [\"create\", \"read\", \"update\"]\n}\npath \"transit/sign/*\" {\n  capabilities = [\"create\", \"read\", \"update\"]\n}\npath \"transit/verify/*\" {\n  capabilities = [\"create\", \"read\", \"update\"]\n}\npath \"transit/export/encryption-key/*\" {\n  capabilities = [\"read\", \"update\"]\n}\n"
 }' $VAULT_ADDR/v1/sys/policies/acl/my-policy
 
 curl --silent --header "X-Vault-Token: $VAULT_TOKEN" --request POST --data '{

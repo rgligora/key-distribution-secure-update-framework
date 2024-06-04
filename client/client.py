@@ -6,10 +6,10 @@ import time
 import psutil
 import requests
 from collections import deque
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.backends import default_backend
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import AES, PKCS1_OAEP
+from Crypto.Random import get_random_bytes
+from Crypto.Hash import SHA256
 
 backend = "http://127.0.0.1:8080"
 
@@ -30,11 +30,8 @@ class MockHSM:
         self.key = self.startUpHSM()
         self.deviceId = self.deviceIdHSM()
         self.backendPubKey = self.backendPublicKey()
-        self.privKey = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=2048,
-        )
-        self.public_key = self.privKey.public_key()
+        self.privKey = RSA.generate(2048)
+        self.public_key = self.privKey.publickey()
         self.session_key = None
 
     def startUpHSM(self):
@@ -42,32 +39,27 @@ class MockHSM:
             with open(HSM_KEY_FILE, 'rb') as keyFile:
                 return keyFile.read()
         else:
-            key = os.urandom(32)
+            key = get_random_bytes(32)
             with open(HSM_KEY_FILE, 'wb') as keyFile:
                 keyFile.write(key)
             return key
 
-    def getDevicePubKeyPem(self):
-        return self.public_key.public_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PublicFormat.SubjectPublicKeyInfo
-        ).decode('utf-8')
+    def getDevicePubKeyBytes(self):
+        return self.public_key.export_key(format='DER')
 
     def encryptHSM(self, plaintext):
-        iv = os.urandom(12)
-        cipher = Cipher(algorithms.AES(self.key), modes.GCM(iv), backend=default_backend())
-        encryptor = cipher.encryptor()
-        encrypted = encryptor.update(plaintext.encode()) + encryptor.finalize()
-        return base64.urlsafe_b64encode(iv + encryptor.tag + encrypted).decode()
+        iv = get_random_bytes(12)
+        cipher = AES.new(self.key, AES.MODE_GCM, iv)
+        encrypted, tag = cipher.encrypt_and_digest(plaintext.encode())
+        return base64.urlsafe_b64encode(iv + tag + encrypted).decode()
 
     def decryptHSM(self, ciphertext):
         raw = base64.urlsafe_b64decode(ciphertext)
         iv = raw[:12]
         tag = raw[12:28]
         encrypted_data = raw[28:]
-        cipher = Cipher(algorithms.AES(self.key), modes.GCM(iv, tag), backend=default_backend())
-        decryptor = cipher.decryptor()
-        decrypted = decryptor.update(encrypted_data) + decryptor.finalize()
+        cipher = AES.new(self.key, AES.MODE_GCM, iv)
+        decrypted = cipher.decrypt_and_verify(encrypted_data, tag)
         return decrypted.decode()
 
     def deviceIdHSM(self):
@@ -92,7 +84,7 @@ class MockHSM:
     def storeBackendPubKey(self, backendPubKey):
         self.backendPubKey = backendPubKey
         with open(HSM_BACKEND_PUBKEY_FILE, 'w') as f:
-            json.dump({'backendPubKey': self.backendPubKey}, f)
+            json.dump({'backendPubKey': self.encryptHSM(backendPubKey)}, f)
     
     def retrieveBackendPubKey(self):
         if self.backendPubKey:
@@ -110,12 +102,34 @@ class MockHSM:
         response = requests.get(url)
         if response.status_code == 200:
             backendPubKey = response.text
-            print(backendPubKey)
             self.storeBackendPubKey(backendPubKey)
             return backendPubKey
         else:
             print("Backend public key retrieval failed: " + response.text)
             exit()
+
+    def establishSession(self):
+        url = f"{backend}/api/keys/sessionKey"
+        devicePublicKeyBytes = self.getDevicePubKeyBytes()
+        devicePublicKeyBase64 = base64.b64encode(devicePublicKeyBytes).decode('utf-8')
+        response = requests.post(url, json={"devicePublicKey": devicePublicKeyBase64})
+        if response.status_code == 200:
+            response_data = response.text
+            self.session_key = self.decryptSessionKey(response_data)
+            return self.session_key
+        else:
+            print("Session key creation failed: " + response.text)
+            exit()
+
+    def decryptSessionKey(self, encrypted_key_base64):
+        try:
+            encrypted_key = base64.b64decode(encrypted_key_base64)
+            cipher_rsa = PKCS1_OAEP.new(self.privKey)
+            decrypted_key = cipher_rsa.decrypt(encrypted_key)
+            return decrypted_key
+        except Exception as e:
+            print(f"Failed to decrypt session key: {str(e)}")
+            raise
 
 
 cpuLoadHistory = deque(maxlen=LOAD_HISTORY_WINDOW)
@@ -140,11 +154,11 @@ def predictDeviceLoad(predictWindow=PREDICT_WINDOW):
     predictedMemoryUsage = sum(memoryLoadList[-predictWindow:]) / len(memoryLoadList[-predictWindow:])
     return predictedCpuUsage, predictedMemoryUsage
 
-def registerDevice(publicKey):
+def registerDevice():
     url = f"{backend}/api/devices/register"
     payload = {
         "serialNo": SERIAL_NO,
-        "publicKey": publicKey
+        "publicKey": base64.b64encode(hsm.getDevicePubKeyBytes()).decode('utf-8')
     }
     response = requests.post(url, json=payload)
     if response.status_code == 200:
@@ -226,12 +240,16 @@ def saveDeviceIdHSM(deviceId):
 def loadBackendPubKeyHSM():
     return hsm.retrieveBackendPubKey()
 
+def establishSessionHSM():
+    return hsm.establishSession()
+
 def main():
     deviceId = loadDeviceIdHSM()
     backendPubKey = loadBackendPubKeyHSM()
+    sessionKey = establishSessionHSM()
     
     if deviceId is None:
-        deviceInfo = registerDevice(hsm.getDevicePubKeyPem())
+        deviceInfo = registerDevice()
         deviceId = deviceInfo["deviceId"]
         saveDeviceIdHSM(deviceId)
         print(f'Registered new device with deviceId: {deviceId}')
