@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "Spring")
+@Mapper(componentModel = "Spring", uses = {SoftwareMapper.class})
 public interface SoftwarePackageMapper {
 
     @Mapping(target = "softwarePackageId", expression = "java(java.util.UUID.randomUUID().toString())")
