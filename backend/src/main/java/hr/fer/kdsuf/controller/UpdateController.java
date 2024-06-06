@@ -36,7 +36,7 @@ public class UpdateController {
     }
 
     @PostMapping("/flashing")
-    public ResponseEntity flashing(@RequestBody FlashingSuccess flashingSuccess) {
+    public ResponseEntity<EncryptedDto> flashing(@RequestBody EncryptedDto flashingSuccess) {
         return ResponseEntity.ok(updateService.flashing(flashingSuccess));
     }
 }

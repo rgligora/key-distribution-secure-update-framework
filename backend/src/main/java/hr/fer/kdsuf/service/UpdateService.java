@@ -15,5 +15,5 @@ public interface UpdateService {
     EncryptedDto downloadUpdate(EncryptedDto updateDeviceRequest);
 
     EncryptedDto verifyUpdate(EncryptedDto payload);
-    String flashing(FlashingSuccess flashingSuccess);
+    EncryptedDto flashing(EncryptedDto flashingSuccess);
 }

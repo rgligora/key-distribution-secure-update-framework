@@ -250,7 +250,7 @@ def flashSoftwarePackages(deviceId, flashingSoftwarePackages, softwarePackageIds
         "softwarePackageIds": softwarePackageIds,
         "success": success
     }
-    response = requests.post(url, json=payload)
+    response = requests.post(url, json={"devicePublicKey": base64.b64encode(hsm.getDevicePubKeyBytes()).decode('utf-8'), "encryptedData": hsm.encryptWithSessionKey(json.dumps(payload))})
     
     return success
 

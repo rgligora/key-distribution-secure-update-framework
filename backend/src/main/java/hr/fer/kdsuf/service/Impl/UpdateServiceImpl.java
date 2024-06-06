@@ -145,7 +145,13 @@ public class UpdateServiceImpl implements UpdateService {
 
 
     @Override
-    public String flashing(FlashingSuccess flashingSuccess) {
+    public EncryptedDto flashing(EncryptedDto encryptedFlashingSuccess) {
+        String devicePublicKeyBase64 = encryptedFlashingSuccess.getDevicePublicKey();
+        String keyNameSuffix = getKeyNameSuffix(devicePublicKeyBase64);
+        String decryptedFlashingSuccess = vaultSecretService.decryptData("aes-key-" + keyNameSuffix, encryptedFlashingSuccess.getEncryptedData());
+
+        FlashingSuccess flashingSuccess = parseDecryptedFlashingSuccess(decryptedFlashingSuccess);
+
         Device device = deviceRepository.findById(flashingSuccess.getDeviceId()).orElseThrow(() -> new DeviceNotFoundException(flashingSuccess.getDeviceId()));
 
         String status;
@@ -169,7 +175,8 @@ public class UpdateServiceImpl implements UpdateService {
         );
 
         deviceRepository.save(device);
-        return status;
+
+        return new EncryptedDto(encryptedFlashingSuccess.getDevicePublicKey(), vaultSecretService.encryptData("aes-key-" + keyNameSuffix, status));
     }
 
     private String getKeyNameSuffix(String devicePublicKeyBase64) {
@@ -199,6 +206,16 @@ public class UpdateServiceImpl implements UpdateService {
             return objectMapper.readValue(decryptedRequest, VerifyUpdateRequest.class);
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to parse decrypted VerifyUpdateRequest", e);
+        }
+    }
+
+    private FlashingSuccess parseDecryptedFlashingSuccess(String decryptedRequest) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        try {
+            return objectMapper.readValue(decryptedRequest, FlashingSuccess.class);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to parse decrypted FlashingSuccess", e);
         }
     }
 
