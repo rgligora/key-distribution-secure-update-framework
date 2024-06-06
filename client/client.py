@@ -154,7 +154,7 @@ memoryLoadHistory = deque(maxlen=LOAD_HISTORY_WINDOW)
 def deviceLoadSnapshot():
     cpuUsage = psutil.cpu_percent(interval=1)
     memoryUsage = psutil.virtual_memory().percent
-    print(f"CPU usage: {cpuUsage}, MEMORY usage: {memoryUsage}")
+    print(f"CPU usage: {cpuUsage}%, MEMORY usage: {memoryUsage}%")
     cpuLoadHistory.append(cpuUsage)
     memoryLoadHistory.append(memoryUsage)
 
@@ -221,15 +221,17 @@ def verifySignature(deviceId, softwarePackage, signature):
         "softwarePackageDto": softwarePackage,
         "signature": signature
     }
-    response = requests.post(url, json=payload)
+    response = requests.post(url, json={"devicePublicKey": base64.b64encode(hsm.getDevicePubKeyBytes()).decode('utf-8'), "encryptedData": hsm.encryptWithSessionKey(json.dumps(payload))})
     if response.status_code == 200:
-        return response.json()["valid"]
+        EncryptedDto = response.json()
+        decryptedSignatureCheck = json.loads(hsm.decryptWithSessionKey(EncryptedDto["encryptedData"]))
+        return decryptedSignatureCheck["valid"]
     else:
         print("Signature verification failed: " + response.text)
         exit()
 
 def flashSoftwarePackages(deviceId, flashingSoftwarePackages, softwarePackageIds):
-    print(f"Flashing device: {deviceId}...")
+    print(f"Flashing device: {deviceId}")
     for softwarePackage in flashingSoftwarePackages:
         print(f"Software package ID: {softwarePackage['softwarePackageId']}")
         for sw in softwarePackage['includedSoftware']:
@@ -238,9 +240,9 @@ def flashSoftwarePackages(deviceId, flashingSoftwarePackages, softwarePackageIds
     time.sleep(15)
     success = random.choice([True, False])
     if success:
-        print("Flashing successful!")
+        print("Flashing successful!", end="\n\n")
     else:
-        print("Flashing failed!")
+        print("Flashing failed!", end="\n\n")
 
     url = f"{backend}/api/updates/flashing"
     payload = {
@@ -303,7 +305,7 @@ def main():
                     success = flashSoftwarePackages(deviceId, flashingSoftwarePackages, updateInfo["softwarePackageIds"])
                 
             else:
-                print(f"No updates found for device: {deviceId}...")
+                print(f"No updates found for device: {deviceId}" , end="\n\n")
         else:
             print("Waiting for optimal system load")
         time.sleep(SNAPSHOT_INTERVAL)

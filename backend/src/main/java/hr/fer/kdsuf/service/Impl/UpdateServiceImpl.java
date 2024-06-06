@@ -107,12 +107,18 @@ public class UpdateServiceImpl implements UpdateService {
     }
 
     @Override
-    public Map<String, Boolean> verifyUpdate(VerifyUpdateRequest payload) {
-        SoftwarePackageDto softwarePackageDto = payload.getSoftwarePackageDto();
-        softwarePackageDto.setSignature(null);
-        String signature = payload.getSignature();
+    public EncryptedDto verifyUpdate(EncryptedDto encryptedVerifyUpdateRequest) {
+        String devicePublicKeyBase64 = encryptedVerifyUpdateRequest.getDevicePublicKey();
+        String keyNameSuffix = getKeyNameSuffix(devicePublicKeyBase64);
+        String decryptedVerifyUpdateRequest = vaultSecretService.decryptData("aes-key-" + keyNameSuffix, encryptedVerifyUpdateRequest.getEncryptedData());
 
-        Device device = deviceRepository.findById(payload.getDeviceId()).orElseThrow(() -> new DeviceNotFoundException(payload.getDeviceId()));
+        VerifyUpdateRequest verifyUpdateRequest = parseDecryptedVerifyUpdateRequest(decryptedVerifyUpdateRequest);
+
+        SoftwarePackageDto softwarePackageDto = verifyUpdateRequest.getSoftwarePackageDto();
+        softwarePackageDto.setSignature(null);
+        String signature = verifyUpdateRequest.getSignature();
+
+        Device device = deviceRepository.findById(verifyUpdateRequest.getDeviceId()).orElseThrow(() -> new DeviceNotFoundException(verifyUpdateRequest.getDeviceId()));
 
         byte[] dataBytes = softwarePackageDto.toString().getBytes(StandardCharsets.UTF_8);
 
@@ -121,7 +127,20 @@ public class UpdateServiceImpl implements UpdateService {
         if (!valid){
             device.setStatus(DeviceStatus.UPDATE_PENDING);
         }
-        return Map.of("valid", valid);
+
+        String validInfoJson;
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            Map<String, Object> validInfoMap = new HashMap<>();
+            validInfoMap.put("valid", valid);
+            validInfoJson = objectMapper.writeValueAsString(validInfoMap);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to convert UpdateInfo to JSON", e);
+        }
+
+        String encryptedValidInfoJson = vaultSecretService.encryptData("aes-key-" + keyNameSuffix, validInfoJson);
+
+        return new EncryptedDto(encryptedVerifyUpdateRequest.getDevicePublicKey(), encryptedValidInfoJson);
     }
 
 
@@ -170,7 +189,16 @@ public class UpdateServiceImpl implements UpdateService {
         try {
             return objectMapper.readValue(decryptedRequest, UpdateDeviceRequest.class);
         } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to parse decrypted CheckUpdateRequest", e);
+            throw new IllegalArgumentException("Failed to parse decrypted UpdateDeviceRequest", e);
+        }
+    }
+    private VerifyUpdateRequest parseDecryptedVerifyUpdateRequest(String decryptedRequest) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        try {
+            return objectMapper.readValue(decryptedRequest, VerifyUpdateRequest.class);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to parse decrypted VerifyUpdateRequest", e);
         }
     }
 

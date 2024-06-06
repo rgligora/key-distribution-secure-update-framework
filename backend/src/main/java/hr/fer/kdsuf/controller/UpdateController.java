@@ -31,8 +31,8 @@ public class UpdateController {
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<Map<String, Boolean>> verifyUpdate(@RequestBody VerifyUpdateRequest payload){
-        return ResponseEntity.ok(updateService.verifyUpdate(payload));
+    public ResponseEntity<EncryptedDto> verifyUpdate(@RequestBody EncryptedDto request){
+        return ResponseEntity.ok(updateService.verifyUpdate(request));
     }
 
     @PostMapping("/flashing")
