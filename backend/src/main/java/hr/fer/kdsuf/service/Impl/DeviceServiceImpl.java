@@ -3,18 +3,12 @@ package hr.fer.kdsuf.service.Impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hr.fer.kdsuf.exception.exceptions.DeviceNotFoundException;
 import hr.fer.kdsuf.mapper.DeviceMapper;
-import hr.fer.kdsuf.model.domain.Company;
-import hr.fer.kdsuf.model.domain.Device;
-import hr.fer.kdsuf.model.domain.DeviceStatus;
-import hr.fer.kdsuf.model.domain.Model;
+import hr.fer.kdsuf.model.domain.*;
 import hr.fer.kdsuf.model.dto.DeviceDto;
 import hr.fer.kdsuf.model.dto.EncryptedDto;
 import hr.fer.kdsuf.model.request.CreateDeviceRequest;
 import hr.fer.kdsuf.model.request.RegisterDeviceRequest;
-import hr.fer.kdsuf.repository.CompanyRepository;
-import hr.fer.kdsuf.repository.DeviceRepository;
-import hr.fer.kdsuf.repository.ModelRepository;
-import hr.fer.kdsuf.repository.SoftwarePackageRepository;
+import hr.fer.kdsuf.repository.*;
 import hr.fer.kdsuf.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,13 +40,15 @@ public class DeviceServiceImpl implements DeviceService {
     private ModelRepository modelRepository;
 
     @Autowired
+    private UpdateHistoryRepository updateHistoryRepository;
+
+    @Autowired
     private VaultSecretServiceImpl vaultService;
 
     @Override
     public EncryptedDto registerDevice(EncryptedDto request) {
         String devicePublicKeyBase64 = request.getDevicePublicKey();
         String keyNameSuffix = devicePublicKeyBase64.length() > 20 ? devicePublicKeyBase64.substring(10, 20) : devicePublicKeyBase64;
-        System.out.println(request.getEncryptedData());
         String decryptedRegisterDeviceRequest = vaultService.decryptData("aes-key-" + keyNameSuffix, request.getEncryptedData());
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -174,6 +170,8 @@ public class DeviceServiceImpl implements DeviceService {
         if (!deviceExists) {
             throw new DeviceNotFoundException(id);
         }
+        List<UpdateHistory> updateHistories = updateHistoryRepository.findByDeviceDeviceId(id);
+        updateHistories.stream().forEach(updateHistory -> updateHistoryRepository.deleteById(updateHistory.getHistoryId()));
         deviceRepository.deleteById(id);
     }
 }
