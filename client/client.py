@@ -179,18 +179,22 @@ def registerDevice():
     response = requests.post(url, json={"devicePublicKey": base64.b64encode(hsm.getDevicePubKeyBytes()).decode('utf-8'), "encryptedData": hsm.encryptWithSessionKey(json.dumps(payload))})
     if response.status_code == 200:
         EncryptedDto = response.json()
-        decryptedData = hsm.decryptWithSessionKey(EncryptedDto["encryptedData"])
-        return json.loads(decryptedData)
+        decryptedDeviceInfo = hsm.decryptWithSessionKey(EncryptedDto["encryptedData"])
+        return json.loads(decryptedDeviceInfo)
     else:
         print("Device registration failed: " + response.text)
         exit()
 
 def checkForUpdates(deviceId):
-    url = f"{backend}/api/updates/check/{deviceId}"
-    response = requests.get(url)
+    url = f"{backend}/api/updates/check"
+    payload = {
+        "deviceId": deviceId
+    }
+    response = requests.post(url, json={"devicePublicKey": base64.b64encode(hsm.getDevicePubKeyBytes()).decode('utf-8'), "encryptedData": hsm.encryptWithSessionKey(json.dumps(payload))})
     if response.status_code == 200:
-        updateInfo = response.json()
-        return updateInfo
+        EncryptedDto = response.json()
+        decryptedUpdateInfo = hsm.decryptWithSessionKey(EncryptedDto["encryptedData"])
+        return json.loads(decryptedUpdateInfo)
     else:
         print("Update check failed: " + response.text)
         exit()
@@ -256,15 +260,15 @@ def saveDeviceIdHSM(deviceId):
     hsm.storeDeviceId(deviceId)
 
 def loadBackendPubKeyHSM():
-    return hsm.retrieveBackendPubKey()
+    hsm.retrieveBackendPubKey()
 
 def establishSessionHSM():
-    return hsm.establishSession()
+    hsm.establishSession()
 
 def main():
     deviceId = loadDeviceIdHSM()
-    backendPubKey = loadBackendPubKeyHSM()
-    sessionKey = establishSessionHSM()
+    loadBackendPubKeyHSM()
+    establishSessionHSM()
     
     if deviceId is None:
         deviceInfo = registerDevice()

@@ -1,6 +1,7 @@
 package hr.fer.kdsuf.controller;
 
 import hr.fer.kdsuf.model.domain.UpdateInfo;
+import hr.fer.kdsuf.model.dto.EncryptedDto;
 import hr.fer.kdsuf.model.dto.SoftwarePackageDto;
 import hr.fer.kdsuf.model.request.FlashingSuccess;
 import hr.fer.kdsuf.model.request.UpdateDeviceRequest;
@@ -19,9 +20,9 @@ public class UpdateController {
     @Autowired
     private UpdateServiceImpl updateService;
 
-    @GetMapping("/check/{deviceId}")
-    public ResponseEntity<UpdateInfo> checkForUpdates(@PathVariable String deviceId) {
-        return ResponseEntity.ok(updateService.checkForUpdates(deviceId));
+    @PostMapping("/check")
+    public ResponseEntity<EncryptedDto> checkForUpdates(@RequestBody EncryptedDto request) {
+        return ResponseEntity.ok(updateService.checkForUpdates(request));
     }
 
     @PostMapping("/download")
