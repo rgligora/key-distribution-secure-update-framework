@@ -12,7 +12,7 @@ import java.util.Map;
 public interface UpdateService {
     EncryptedDto checkForUpdates(EncryptedDto request);
 
-    SoftwarePackageDto downloadUpdate(UpdateDeviceRequest updateDeviceRequest);
+    EncryptedDto downloadUpdate(EncryptedDto updateDeviceRequest);
 
     Map<String, Boolean> verifyUpdate(VerifyUpdateRequest payload);
     String flashing(FlashingSuccess flashingSuccess);

@@ -1,6 +1,7 @@
 package hr.fer.kdsuf.service.Impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import hr.fer.kdsuf.exception.exceptions.DeviceNotFoundException;
 import hr.fer.kdsuf.mapper.DeviceMapper;
 import hr.fer.kdsuf.model.domain.*;
@@ -101,10 +102,11 @@ public class DeviceServiceImpl implements DeviceService {
         String deviceDtoJson;
         try {
             Map<String, Object> deviceDtoMap = new HashMap<>();
+            objectMapper.registerModule(new JavaTimeModule());
             deviceDtoMap.put("deviceId", deviceDto.getDeviceId());
             deviceDtoMap.put("name", deviceDto.getName());
-            deviceDtoMap.put("registrationDate", deviceDto.getRegistrationDate().toString());
-            deviceDtoMap.put("lastUpdated", deviceDto.getLastUpdated().toString());
+            deviceDtoMap.put("registrationDate", deviceDto.getRegistrationDate());
+            deviceDtoMap.put("lastUpdated", deviceDto.getLastUpdated());
             deviceDtoMap.put("companyId", deviceDto.getCompanyId());
             deviceDtoMap.put("modelId", deviceDto.getModelId());
             deviceDtoMap.put("status", deviceDto.getStatus());

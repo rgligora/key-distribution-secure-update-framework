@@ -205,10 +205,11 @@ def downloadUpdate(deviceId, softwarePackageId):
         "deviceId": deviceId,
         "softwarePackageId": softwarePackageId
     }
-    response = requests.post(url, json=payload)
+    response = requests.post(url, json={"devicePublicKey": base64.b64encode(hsm.getDevicePubKeyBytes()).decode('utf-8'), "encryptedData": hsm.encryptWithSessionKey(json.dumps(payload))})
     if response.status_code == 200:
-        softwarePackageDto = response.json()
-        return softwarePackageDto
+        EncryptedDto = response.json()
+        decryptedSoftwarePackageDto = hsm.decryptWithSessionKey(EncryptedDto["encryptedData"])
+        return json.loads(decryptedSoftwarePackageDto)
     else:
         print("Software Package download failed: " + response.text)
         exit()
@@ -291,7 +292,6 @@ def main():
                 flashingSoftwarePackages = []
                 for softwarePackageId in updateInfo["softwarePackageIds"]:
                     softwarePackage = downloadUpdate(deviceId, softwarePackageId)
-
                     if not verifySignature(deviceId, softwarePackage, softwarePackage["signature"]):
                         print(f"Signature verification failed for package: {softwarePackageId}")
                         exit()

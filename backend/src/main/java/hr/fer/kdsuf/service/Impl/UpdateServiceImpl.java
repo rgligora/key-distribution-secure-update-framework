@@ -1,10 +1,12 @@
 package hr.fer.kdsuf.service.Impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import hr.fer.kdsuf.exception.exceptions.*;
 import hr.fer.kdsuf.mapper.SoftwarePackageMapper;
 import hr.fer.kdsuf.model.domain.*;
 import hr.fer.kdsuf.model.dto.EncryptedDto;
+import hr.fer.kdsuf.model.dto.SoftwareDto;
 import hr.fer.kdsuf.model.dto.SoftwarePackageDto;
 import hr.fer.kdsuf.model.dto.UpdateHistoryDto;
 import hr.fer.kdsuf.model.request.*;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +56,7 @@ public class UpdateServiceImpl implements UpdateService {
         String keyNameSuffix = getKeyNameSuffix(devicePublicKeyBase64);
         String decryptedCheckUpdateRequest = vaultSecretService.decryptData("aes-key-" + keyNameSuffix, request.getEncryptedData());
 
-        CheckUpdateRequest checkUpdateRequest = parseDecryptedRequest(decryptedCheckUpdateRequest);
+        CheckUpdateRequest checkUpdateRequest = parseDecryptedCheckUpdateRequest(decryptedCheckUpdateRequest);
 
         String deviceId = checkUpdateRequest.getDeviceId();
 
@@ -81,7 +84,13 @@ public class UpdateServiceImpl implements UpdateService {
     }
 
     @Override
-    public SoftwarePackageDto downloadUpdate(UpdateDeviceRequest updateDeviceRequest) {
+    public EncryptedDto downloadUpdate(EncryptedDto request) {
+        String devicePublicKeyBase64 = request.getDevicePublicKey();
+        String keyNameSuffix = getKeyNameSuffix(devicePublicKeyBase64);
+        String decryptedUpdateDeviceRequest = vaultSecretService.decryptData("aes-key-" + keyNameSuffix, request.getEncryptedData());
+
+        UpdateDeviceRequest updateDeviceRequest = parseDecryptedUpdateDeviceRequest(decryptedUpdateDeviceRequest);
+
         String deviceId = updateDeviceRequest.getDeviceId();
         Device device = deviceRepository.findById(deviceId).orElseThrow(() -> new DeviceNotFoundException(deviceId));
         device.setStatus(DeviceStatus.UPDATING);
@@ -92,7 +101,9 @@ public class UpdateServiceImpl implements UpdateService {
         String signature = vaultSecretService.retrieveSignature(softwarePackageId);
         SoftwarePackageDto softwarePackageDto = softwarePackageMapper.modelToDto(softwarePackage);
         softwarePackageDto.setSignature(signature);
-        return softwarePackageDto;
+
+
+        return createEncryptedSoftwarePackageResponse(keyNameSuffix, request.getDevicePublicKey(), softwarePackageDto);
     }
 
     @Override
@@ -146,10 +157,18 @@ public class UpdateServiceImpl implements UpdateService {
         return devicePublicKeyBase64.length() > 20 ? devicePublicKeyBase64.substring(10, 20) : devicePublicKeyBase64;
     }
 
-    private CheckUpdateRequest parseDecryptedRequest(String decryptedRequest) {
+    private CheckUpdateRequest parseDecryptedCheckUpdateRequest(String decryptedRequest) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             return objectMapper.readValue(decryptedRequest, CheckUpdateRequest.class);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to parse decrypted CheckUpdateRequest", e);
+        }
+    }
+    private UpdateDeviceRequest parseDecryptedUpdateDeviceRequest(String decryptedRequest) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(decryptedRequest, UpdateDeviceRequest.class);
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to parse decrypted CheckUpdateRequest", e);
         }
@@ -163,6 +182,12 @@ public class UpdateServiceImpl implements UpdateService {
         return new EncryptedDto(devicePublicKey, encryptedUpdateInfoJson);
     }
 
+    private EncryptedDto createEncryptedSoftwarePackageResponse(String keyNameSuffix, String devicePublicKey, SoftwarePackageDto softwarePackageDto) {
+        String softwarePackageJson = convertSoftwarePackageToJson(softwarePackageDto);
+        String encryptedUpdateInfoJson = vaultSecretService.encryptData("aes-key-" + keyNameSuffix, softwarePackageJson);
+        return new EncryptedDto(devicePublicKey, encryptedUpdateInfoJson);
+    }
+
     private String convertUpdateInfoToJson(UpdateInfo updateInfo) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -172,6 +197,27 @@ public class UpdateServiceImpl implements UpdateService {
             return objectMapper.writeValueAsString(updateInfoMap);
         } catch (IOException e) {
             throw new RuntimeException("Failed to convert UpdateInfo to JSON", e);
+        }
+    }
+
+    private String convertSoftwarePackageToJson(SoftwarePackageDto softwarePackageDto) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        try {
+            Map<String, Object> softwarePackageMap = new HashMap<>();
+            softwarePackageMap.put("softwarePackageId", softwarePackageDto.getSoftwarePackageId());
+            softwarePackageMap.put("name", softwarePackageDto.getName());
+            softwarePackageMap.put("creationDate", softwarePackageDto.getCreationDate());
+            softwarePackageMap.put("description", softwarePackageDto.getDescription());
+            softwarePackageMap.put("status", softwarePackageDto.getStatus());
+            softwarePackageMap.put("signature", softwarePackageDto.getSignature());
+            softwarePackageMap.put("includedSoftware", softwarePackageDto.getIncludedSoftware());
+            softwarePackageMap.put("modelIds", softwarePackageDto.getModelIds());
+            softwarePackageMap.put("companyId", softwarePackageDto.getCompanyId());
+
+            return objectMapper.writeValueAsString(softwarePackageMap);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to convert SoftwarePackageDto to JSON", e);
         }
     }
 }

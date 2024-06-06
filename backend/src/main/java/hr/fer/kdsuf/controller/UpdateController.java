@@ -26,7 +26,7 @@ public class UpdateController {
     }
 
     @PostMapping("/download")
-    public ResponseEntity<SoftwarePackageDto> downloadUpdate(@RequestBody UpdateDeviceRequest updateDeviceRequest) {
+    public ResponseEntity<EncryptedDto> downloadUpdate(@RequestBody EncryptedDto updateDeviceRequest) {
         return ResponseEntity.ok(updateService.downloadUpdate(updateDeviceRequest));
     }
 
