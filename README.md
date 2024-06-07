@@ -78,6 +78,12 @@ The system consists of three main components:
     docker run -it --name vault-container -p 8200:8200 vault-setup
     ```
 
+### PostgreSQL
+1. Build and run PostgreSQL using Docker Compose:
+    ```sh
+    docker-compose up -d
+    ```
+
 ### Backend Service
 1. Navigate to the `backend` directory:
     ```sh
@@ -129,4 +135,4 @@ The system consists of three main components:
     ```
 
 ## Usage
-Once all components are running, you can access the frontend at `http://localhost:3000` to interact with the system. The backend service runs on `http://localhost:8080`, and the IoT device client communicates with this backend service for registration and updates.
+Once all components are running, you can access the frontend at `http://localhost:3000` to interact with the system. The backend service runs on `http://0.0.0.0:8080`, and the IoT device client communicates with this backend service for registration and updates.
