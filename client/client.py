@@ -12,8 +12,14 @@ from Crypto.Random import get_random_bytes
 from Crypto.Hash import SHA256
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+import sys
 
-backend = "http://127.0.0.1:8080"
+if len(sys.argv) != 2:
+    print("Usage: python script.py <IPaddress>")
+    exit(1)
+
+IPaddress = sys.argv[1]
+backend = f"http://{IPaddress}:8080"
 
 SERIAL_NO = "a966d08b-7f3e-4ece-9d31-b4e08251d2e1"
 
