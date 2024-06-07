@@ -8,8 +8,6 @@
 # Project specific
 HELP.md
 
-# Ignore application.properties file specifically in the backend project
-backend/src/main/resources/application.properties
 
 #Ignore frontend README.md unit finished
 frontend/README.md
