@@ -119,7 +119,7 @@ The system consists of three main components:
 ### IoT Device Client
 1. Create and activate a virtual environment:
     ```sh
-    cd key-distribution-secure-update-framework/backend
+    cd key-distribution-secure-update-framework/client
     python -m venv venv
     source venv/bin/activate
     ```
@@ -131,7 +131,7 @@ The system consists of three main components:
 
 3. Run the IoT device client:
     ```sh
-    python device_client.py
+    python client.py <backend_IPaddress>
     ```
 
 ## Usage
