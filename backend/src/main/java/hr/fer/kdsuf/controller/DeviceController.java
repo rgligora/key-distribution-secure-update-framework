@@ -3,7 +3,6 @@ package hr.fer.kdsuf.controller;
 import hr.fer.kdsuf.model.dto.DeviceDto;
 import hr.fer.kdsuf.model.dto.EncryptedDto;
 import hr.fer.kdsuf.model.request.CreateDeviceRequest;
-import hr.fer.kdsuf.repository.DeviceRepository;
 import hr.fer.kdsuf.service.Impl.DeviceServiceImpl;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +16,6 @@ import java.util.List;
 @CrossOrigin
 
 public class DeviceController {
-    @Autowired
-    private DeviceRepository deviceRepository;
-
     @Autowired
     private DeviceServiceImpl service;
 

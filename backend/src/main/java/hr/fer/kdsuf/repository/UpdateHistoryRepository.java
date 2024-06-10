@@ -11,5 +11,7 @@ import java.util.List;
 public interface UpdateHistoryRepository extends JpaRepository<UpdateHistory, String>, QuerydslPredicateExecutor<UpdateHistory> {
     List<UpdateHistory> findUpdateHistoriesBySoftwarePackageSoftwarePackageId(String id);
 
+    List<UpdateHistory> findUpdateHistoriesByDeviceDeviceIdAndSoftwarePackageSoftwarePackageId(String deviceId, String softwarePackageId);
+
     List<UpdateHistory> findByDeviceDeviceId(String id);
 }

@@ -2,13 +2,12 @@ package hr.fer.kdsuf.service.Impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import hr.fer.kdsuf.exception.exceptions.*;
+import hr.fer.kdsuf.exception.exceptions.DeviceNotFoundException;
+import hr.fer.kdsuf.exception.exceptions.SoftwarePackageNotFoundException;
 import hr.fer.kdsuf.mapper.SoftwarePackageMapper;
 import hr.fer.kdsuf.model.domain.*;
 import hr.fer.kdsuf.model.dto.EncryptedDto;
-import hr.fer.kdsuf.model.dto.SoftwareDto;
 import hr.fer.kdsuf.model.dto.SoftwarePackageDto;
-import hr.fer.kdsuf.model.dto.UpdateHistoryDto;
 import hr.fer.kdsuf.model.request.*;
 import hr.fer.kdsuf.repository.*;
 import hr.fer.kdsuf.service.UpdateService;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +46,9 @@ public class UpdateServiceImpl implements UpdateService {
     private UpdateHistoryServiceImpl updateHistoryService;
 
     @Autowired
+    private UpdateHistoryRepository updateHistoryRepository;
+
+    @Autowired
     private VaultSecretServiceImpl vaultSecretService;
 
     @Override
@@ -69,7 +70,7 @@ public class UpdateServiceImpl implements UpdateService {
         List<String> availableSoftwarePackageIds = softwarePackages.stream()
                 .filter(softwarePackage -> softwarePackage.getStatus() == PackageStatus.AVAILABLE)
                 .filter(softwarePackage -> {
-                    List<UpdateHistoryDto> updateHistories = updateHistoryService.retrieveUpdateHistories(deviceId, softwarePackage.getSoftwarePackageId());
+                    List<UpdateHistory> updateHistories = updateHistoryRepository.findUpdateHistoriesByDeviceDeviceIdAndSoftwarePackageSoftwarePackageId(deviceId, softwarePackage.getSoftwarePackageId());
                     return updateHistories.stream().noneMatch(updateHistory -> updateHistory.getStatus() == UpdateStatus.SUCCESS);
                 })
                 .map(SoftwarePackage::getSoftwarePackageId)

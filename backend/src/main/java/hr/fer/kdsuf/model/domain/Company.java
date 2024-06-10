@@ -1,10 +1,7 @@
 package hr.fer.kdsuf.model.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +18,7 @@ public class Company {
     private String name;
 
     @ManyToMany(mappedBy = "companies", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<AdminUser> adminUsers;
 
 
