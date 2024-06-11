@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.25)  22 MAY 2024 11:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.25)  11 JUN 2024 18:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -590,58 +590,144 @@ Package: xspace 2014/10/28 v1.13 Space after command names (DPC,MH)
 \c@blind@pangramcount=\count314
 \c@blind@pangrammax=\count315
 )
+(/usr/local/texlive/2023/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count316
+\lst@gtempboxa=\box55
+\lst@token=\toks30
+\lst@length=\count317
+\lst@currlwidth=\dimen180
+\lst@column=\count318
+\lst@pos=\count319
+\lst@lostspace=\dimen181
+\lst@width=\dimen182
+\lst@newlines=\count320
+\lst@lineno=\count321
+\lst@maxwidth=\dimen183
+
+(/usr/local/texlive/2023/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2023/02/27 1.9 (Carsten Heinz)
+\c@lstnumber=\count322
+\lst@skipnumbers=\count323
+\lst@framebox=\box56
+)
+(/usr/local/texlive/2023/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2023/02/27 1.9 listings configuration
+))
+Package: listings 2023/02/27 1.9 (Carsten Heinz)
+
+(/usr/local/texlive/2023/texmf-dist/tex/latex/tools/longtable.sty
+Package: longtable 2021-09-01 v4.17 Multi-page Table package (DPC)
+\LTleft=\skip57
+\LTright=\skip58
+\LTpre=\skip59
+\LTpost=\skip60
+\LTchunksize=\count324
+\LTcapwidth=\dimen184
+\LT@head=\box57
+\LT@firsthead=\box58
+\LT@foot=\box59
+\LT@lastfoot=\box60
+\LT@gbox=\box61
+\LT@cols=\count325
+\LT@rows=\count326
+\c@LT@tables=\count327
+\c@LT@chunks=\count328
+\LT@p@ftn=\toks31
+)
+(/usr/local/texlive/2023/texmf-dist/tex/latex/tools/tabularx.sty
+Package: tabularx 2020/01/15 v2.11c `tabularx' package (DPC)
+
+(/usr/local/texlive/2023/texmf-dist/tex/latex/tools/array.sty
+Package: array 2022/09/04 v2.5g Tabular extension package (FMi)
+\col@sep=\dimen185
+\ar@mcellbox=\box62
+\extrarowheight=\dimen186
+\NC@list=\toks32
+\extratabsurround=\skip61
+\backup@length=\skip62
+\ar@cellbox=\box63
+)
+\TX@col@width=\dimen187
+\TX@old@table=\dimen188
+\TX@old@col=\dimen189
+\TX@target=\dimen190
+\TX@delta=\dimen191
+\TX@cols=\count329
+\TX@ftn=\toks33
+)
+(/usr/local/texlive/2023/texmf-dist/tex/latex/fancybox/fancybox.sty
+Package: fancybox 2010/05/15 1.4
+
+Style option: `fancybox' v1.4 <2010/05/15> (tvz)
+\@fancybox=\box64
+\shadowsize=\dimen192
+\@Sbox=\box65
+\do@VerbBox=\toks34
+\the@fancyput=\toks35
+\this@fancyput=\toks36
+\EndVerbatimTokens=\toks37
+\Verbatim@Outfile=\write3
+\Verbatim@Infile=\read3
+) (/usr/local/texlive/2023/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count330
+\float@exts=\toks38
+\float@box=\box66
+\@float@everytoks=\toks39
+\@floatcapt=\box67
+)
 LaTeX Font Info:    Trying to load font information for T1+stix2 on input line 
-14.
+20.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/stix2-type1/t1stix2.fd
 File: t1stix2.fd 2018/04/02 v2.0.0-latex stix2 T1 font definitions
 )
 (/usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2023-01-16 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count316
-\l__pdf_internal_box=\box55
+\l__color_backend_stack_int=\count331
+\l__pdf_internal_box=\box68
 )
 (./Distribucija ključeva i sigurnosnih ažuriranja na uređajima Interneta s
 tvari.aux)
 \openout1 = `"Distribucija ključeva i sigurnosnih ažuriranja na uređajima 
 Interneta stvari.aux"'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for LS1/stix2/m/n on input line 14.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for LS1/stix2/m/n on input line 20.
 LaTeX Font Info:    Trying to load font information for LS1+stix2 on input line
- 14.
+ 20.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/stix2-type1/ls1stix2.fd
 File: ls1stix2.fd 2018/04/02 v2.0.0-latex stix2 LS1 font definitions
 )
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for LS2/stix2/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for LS2/stix2/m/n on input line 20.
 LaTeX Font Info:    Trying to load font information for LS2+stix2 on input line
- 14.
+ 20.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/stix2-type1/ls2stix2.fd
 File: ls2stix2.fd 2018/04/02 v2.0.0-latex stix2 LS2 font definitions
 )
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-\c@mv@tabular=\count317
-\c@mv@boldtabular=\count318
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+\c@mv@tabular=\count332
+\c@mv@boldtabular=\count333
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -679,17 +765,17 @@ LaTeX Font Info:    ... okay on input line 14.
 
 (/usr/local/texlive/2023/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count319
-\scratchdimen=\dimen180
-\scratchbox=\box56
-\nofMPsegments=\count320
-\nofMParguments=\count321
-\everyMPshowfont=\toks30
-\MPscratchCnt=\count322
-\MPscratchDim=\dimen181
-\MPnumerator=\count323
-\makeMPintoPDFobject=\count324
-\everyMPtoPDFconversion=\toks31
+\scratchcounter=\count334
+\scratchdimen=\dimen193
+\scratchbox=\box69
+\nofMPsegments=\count335
+\nofMParguments=\count336
+\everyMPshowfont=\toks40
+\MPscratchCnt=\count337
+\MPscratchDim=\dimen194
+\MPnumerator=\count338
+\makeMPintoPDFobject=\count339
+\everyMPtoPDFconversion=\toks41
 ) (/usr/local/texlive/2023/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
@@ -712,96 +798,104 @@ Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
 Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
 ))
 Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
+Package caption Info: listings package is loaded.
+Package caption Info: longtable package is loaded.
+
+(/usr/local/texlive/2023/texmf-dist/tex/latex/caption/ltcaption.sty
+Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
+)
 Package caption Info: End \AtBeginDocument code.
-LaTeX Info: Command `\dddot' is already robust on input line 14.
-LaTeX Info: Command `\ddddot' is already robust on input line 14.
-Package hyperref Info: Link coloring OFF on input line 14.
+LaTeX Info: Command `\dddot' is already robust on input line 20.
+LaTeX Info: Command `\ddddot' is already robust on input line 20.
+Package hyperref Info: Link coloring OFF on input line 20.
 
 (./Distribucija ključeva i sigurnosnih ažuriranja na uređajima Interneta s
 tvari.out)
 (./Distribucija ključeva i sigurnosnih ažuriranja na uređajima Interneta s
 tvari.out)
-\@outlinefile=\write3
-\openout3 = `"Distribucija ključeva i sigurnosnih ažuriranja na uređajima 
+\@outlinefile=\write4
+\openout4 = `"Distribucija ključeva i sigurnosnih ažuriranja na uređajima 
 Interneta stvari.out"'.
 
+\c@lstlisting=\count340
 LaTeX Font Info:    Trying to load font information for T1+opensans-TLF on inpu
-t line 15.
+t line 45.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/opensans/T1opensans-TLF.fd
 File: T1opensans-TLF.fd 2019/06/24 Font definitions for T1/opensans-TLF.
 )
 LaTeX Font Info:    Font shape `T1/opensans-TLF/m/n' will be
-(Font)              scaled to size 14.0pt on input line 15.
+(Font)              scaled to size 14.0pt on input line 45.
 LaTeX Font Info:    Font shape `T1/opensans-TLF/bx/n' in size <14> not availabl
 e
 (Font)              Font shape `T1/opensans-TLF/b/n' tried instead on input lin
-e 15.
+e 45.
 LaTeX Font Info:    Font shape `T1/opensans-TLF/b/n' will be
-(Font)              scaled to size 14.0pt on input line 15.
+(Font)              scaled to size 14.0pt on input line 45.
 LaTeX Font Info:    Font shape `T1/opensans-TLF/bx/n' in size <20> not availabl
 e
 (Font)              Font shape `T1/opensans-TLF/b/n' tried instead on input lin
-e 15.
+e 45.
 LaTeX Font Info:    Font shape `T1/opensans-TLF/b/n' will be
-(Font)              scaled to size 20.0pt on input line 15.
-LaTeX Font Info:    Calculating math sizes for size <14> on input line 15.
+(Font)              scaled to size 20.0pt on input line 45.
+LaTeX Font Info:    Calculating math sizes for size <14> on input line 45.
 LaTeX Font Info:    Trying to load font information for LS1+stix2scr on input l
-ine 15.
+ine 45.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/stix2-type1/ls1stix2scr.fd
 File: ls1stix2scr.fd 2018/04/02 v2.0.0-latex stix2 script LS1 font definitions
 )
 LaTeX Font Info:    Trying to load font information for LS2+stix2ex on input li
-ne 15.
+ne 45.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/stix2-type1/ls2stix2ex.fd
 File: ls2stix2ex.fd 2018/04/02 v2.0.0-latex stix2 extentions LS2 font definitio
 ns
 )
 LaTeX Font Info:    Trying to load font information for LS1+stix2frak on input 
-line 15.
+line 45.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/stix2-type1/ls1stix2frak.fd
 File: ls1stix2frak.fd 2018/04/02 v2.0.0-latex stix2 fraktur LS1 font definition
 s
 )
 LaTeX Font Info:    Trying to load font information for LS1+stix2bb on input li
-ne 15.
+ne 45.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/stix2-type1/ls1stix2bb.fd
 File: ls1stix2bb.fd 2018/04/02 v2.0.0-latex stix2 blackboard LS1 font definitio
 ns
 )
 LaTeX Font Info:    Trying to load font information for LS2+stix2cal on input l
-ine 15.
+ine 45.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/stix2-type1/ls2stix2cal.fd
 File: ls2stix2cal.fd 2018/04/02 v2.0.0-latex stix2 calligraphic LS2 font defini
 tions
 )
 LaTeX Font Info:    Trying to load font information for LS1+stix2sf on input li
-ne 15.
+ne 45.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/stix2-type1/ls1stix2sf.fd
 File: ls1stix2sf.fd 2018/04/02 v2.0.0-latex stix2 sans-serif LS1 font definitio
 ns
 )
 LaTeX Font Info:    Trying to load font information for LS2+stix2tt on input li
-ne 15.
+ne 45.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/stix2-type1/ls2stix2tt.fd
 File: ls2stix2tt.fd 2018/04/02 v2.0.0-latex stix2 typewriter LS2 font definitio
 ns
 )
-LaTeX Font Info:    Trying to load font information for U+msa on input line 15.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 45.
 
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 15.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 45.
 
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/amsfonts/umsb.fd
@@ -812,21 +906,21 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 al/texlive/2023/texmf-dist/fonts/enc/dvips/opensans/a_jg4h6q.enc}] [2{/usr/loca
 l/texlive/2023/texmf-dist/fonts/enc/dvips/stix2-type1/stix2-t1.enc}]
 LaTeX Font Info:    Font shape `T1/stix2/m/sl' in size <12> not available
-(Font)              Font shape `T1/stix2/m/it' tried instead on input line 21.
+(Font)              Font shape `T1/stix2/m/it' tried instead on input line 51.
  [3
 
 ]
 LaTeX Font Info:    Font shape `T1/opensans-TLF/bx/n' in size <18> not availabl
 e
 (Font)              Font shape `T1/opensans-TLF/b/n' tried instead on input lin
-e 27.
+e 57.
 LaTeX Font Info:    Font shape `T1/opensans-TLF/b/n' will be
-(Font)              scaled to size 18.0pt on input line 27.
+(Font)              scaled to size 18.0pt on input line 57.
 
 (./Distribucija ključeva i sigurnosnih ažuriranja na uređajima Interneta s
 tvari.toc)
-\tf@toc=\write4
-\openout4 = `"Distribucija ključeva i sigurnosnih ažuriranja na uređajima 
+\tf@toc=\write5
+\openout5 = `"Distribucija ključeva i sigurnosnih ažuriranja na uređajima 
 Interneta stvari.toc"'.
 
 
@@ -834,148 +928,247 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.29 	\chapter
+l.59 	\chapter
               {Uvod} [1
 
 
 ]
 Poglavlje 1..
-<Figures/ER_diagram_KDSUF_v2.pdf, id=65, 1927.2pt x 1084.05pt>
-File: Figures/ER_diagram_KDSUF_v2.pdf Graphic file (type pdf)
-<use Figures/ER_diagram_KDSUF_v2.pdf>
-Package pdftex.def Info: Figures/ER_diagram_KDSUF_v2.pdf  used on input line 37
-.
-(pdftex.def)             Requested size: 167.58888pt x 94.26857pt.
-LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 4
-3.
-(/usr/local/texlive/2023/texmf-dist/tex/latex/base/t1cmtt.fd
-File: t1cmtt.fd 2022/07/10 v2.5l Standard LaTeX font definitions
-)
+
 pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.48 	\chapter
-              {Glavni dio} [2
+l.71 	
+       [2
 
-{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc} <
-./Figures/ER_diagram_KDSUF_v2.pdf>]
-Poglavlje 2..
-
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 52.
-
-
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 52.
-
-
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 52.
-
-
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 52.
-
-
+]
 pdfTeX warning (ext4): destination with the same identifier (name{page.3}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.52 	
-       [3
+l.75 	\chapter
+              {Postojeća rješenja} [3]
+Poglavlje 2..
+[4
 
-]
-
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 52.
-
-
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 52.
-
-[4]
+] [5]
 Poglavlje 3..
-
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 59.
-
-
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 59.
-
-
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 59.
-
-
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 59.
-
-[5
+[6
 
 ]
+Underfull \hbox (badness 3623) in paragraph at lines 121--122
+\T1/stix2/m/n/10 dos-tup-nosti, pre-uzi-ma-nje i ve-ri-fi-ka-ciju a�u-ri-ra-nja
+.
+ []
 
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 59.
-
-
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 59.
-
-[6]
+[7] [8]
 Poglavlje 4..
+<Figures/KDSUF_arhitektura_sustava.png, id=163, 5163.29pt x 1401.235pt>
+File: Figures/KDSUF_arhitektura_sustava.png Graphic file (type png)
+<use Figures/KDSUF_arhitektura_sustava.png>
+Package pdftex.def Info: Figures/KDSUF_arhitektura_sustava.png  used on input l
+ine 142.
+(pdftex.def)             Requested size: 352.81552pt x 95.74455pt.
+LaTeX Font Info:    Font shape `T1/opensans-TLF/bx/n' in size <16> not availabl
+e
+(Font)              Font shape `T1/opensans-TLF/b/n' tried instead on input lin
+e 147.
+LaTeX Font Info:    Font shape `T1/opensans-TLF/b/n' will be
+(Font)              scaled to size 16.0pt on input line 147.
+[9
 
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 66.
+ <./Figures/KDSUF_arhitektura_sustava.png>] [10] [11] [12]
+Poglavlje 5..
+<Figures/KDSUF_dijagram_klasa.png, id=217, 7219.97375pt x 2889.79625pt>
+File: Figures/KDSUF_dijagram_klasa.png Graphic file (type png)
+<use Figures/KDSUF_dijagram_klasa.png>
+Package pdftex.def Info: Figures/KDSUF_dijagram_klasa.png  used on input line 2
+36.
+(pdftex.def)             Requested size: 352.81552pt x 141.19118pt.
+(/usr/local/texlive/2023/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2023/02/27 1.9 listings language file
+) [13
 
+ <./Figures/KDSUF_dijagram_klasa.png>]
+Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
+nput line 244.
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 2
+44.
+
+(/usr/local/texlive/2023/texmf-dist/tex/latex/base/t1cmtt.fd
+File: t1cmtt.fd 2022/07/10 v2.5l Standard LaTeX font definitions
+) [14{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.e
+nc}]
+<Figures/KDSUF_entiteti_dijagram_klasa.png, id=276, 1886.04625pt x 2481.27pt>
+File: Figures/KDSUF_entiteti_dijagram_klasa.png Graphic file (type png)
+<use Figures/KDSUF_entiteti_dijagram_klasa.png>
+Package pdftex.def Info: Figures/KDSUF_entiteti_dijagram_klasa.png  used on inp
+ut line 298.
+(pdftex.def)             Requested size: 220.50887pt x 290.09161pt.
+ [15 <./Figures/KDSUF_entiteti_dijagram_klasa.png>]
+Overfull \hbox (0.43788pt too wide) in paragraph at lines 312--313
+ []\T1/stix2/b/n/12 Implementacija Va-ulta[] \T1/stix2/m/n/12 Za pos-tav-lja-nj
+e \T1/stix2/m/it/12 Va-ult \T1/stix2/m/n/12 pos-lu-�i-te-lja u sus-tavu ko-ris-
+timo skriptu
+ []
+
+(/usr/local/texlive/2023/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2023/02/27 1.9 listings language file
+)
+(/usr/local/texlive/2023/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2023/02/27 1.9 listings language file
+) [16]
+[17]
+<Figures/registracija_uredaja.png, id=341, 620.3175pt x 860.21375pt>
+File: Figures/registracija_uredaja.png Graphic file (type png)
+<use Figures/registracija_uredaja.png>
+Package pdftex.def Info: Figures/registracija_uredaja.png  used on input line 3
+79.
+(pdftex.def)             Requested size: 242.5611pt x 336.36143pt.
+<Figures/provjera_dostupnosti_azuriranja.png, id=342, 541.02126pt x 615.29875pt
+>
+File: Figures/provjera_dostupnosti_azuriranja.png Graphic file (type png)
+<use Figures/provjera_dostupnosti_azuriranja.png>
+Package pdftex.def Info: Figures/provjera_dostupnosti_azuriranja.png  used on i
+nput line 389.
+(pdftex.def)             Requested size: 242.5611pt x 275.8585pt.
+ [18 <./Figures/registracija_uredaja.png>]
+<Figures/preuzimanje_i_instalacija_azuriranja.png, id=356, 602.25pt x 779.91376
+pt>
+File: Figures/preuzimanje_i_instalacija_azuriranja.png Graphic file (type png)
+<use Figures/preuzimanje_i_instalacija_azuriranja.png>
+Package pdftex.def Info: Figures/preuzimanje_i_instalacija_azuriranja.png  used
+ on input line 397.
+(pdftex.def)             Requested size: 242.5611pt x 314.11397pt.
+ [19 <./Figures/provjera_dostupnosti_azuriranja.png> <./Figures/preuzimanje_i_i
+nstalacija_azuriranja.png>]
+Poglavlje 6..
+<Figures/load_predicting4.png, id=365, 722.7pt x 433.62pt>
+File: Figures/load_predicting4.png Graphic file (type png)
+<use Figures/load_predicting4.png>
+Package pdftex.def Info: Figures/load_predicting4.png  used on input line 417.
+(pdftex.def)             Requested size: 352.81552pt x 211.6883pt.
+[20
+
+] (/usr/local/texlive/2023/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2023/02/27 1.9 listings language file
+)
+Overfull \hbox (4.99689pt too wide) in paragraph at lines 438--439
+ []\T1/stix2/b/n/12 Registracija ure-�aja[] \T1/stix2/m/n/12 IoT kli-jent za-po
+-�i-nje re-gis-tra-ciju ge-ne-ri-ra-njem para klju-�eva (pri-
+ []
+
+<Figures/screencaptures/updates_not_found_startup.png, id=373, 986.68625pt x 69
+6.6025pt>
+File: Figures/screencaptures/updates_not_found_startup.png Graphic file (type p
+ng)
+<use Figures/screencaptures/updates_not_found_startup.png>
+Package pdftex.def Info: Figures/screencaptures/updates_not_found_startup.png  
+used on input line 443.
+(pdftex.def)             Requested size: 286.65883pt x 202.38158pt.
+[21 <./Figures/load_predicting4.png>]
+<Figures/rsa_load.png, id=394, 722.7pt x 433.62pt>
+File: Figures/rsa_load.png Graphic file (type png)
+<use Figures/rsa_load.png>
+Package pdftex.def Info: Figures/rsa_load.png  used on input line 451.
+(pdftex.def)             Requested size: 352.81552pt x 211.6883pt.
+<Figures/screencaptures/updates_found_startup.png, id=395, 982.67125pt x 726.71
+5pt>
+File: Figures/screencaptures/updates_found_startup.png Graphic file (type png)
+<use Figures/screencaptures/updates_found_startup.png>
+Package pdftex.def Info: Figures/screencaptures/updates_found_startup.png  used
+ on input line 463.
+(pdftex.def)             Requested size: 286.65883pt x 211.99498pt.
+ [22 <./Figures/screencaptures/updates_not_found_startup.png> <./Figures/rsa_lo
+ad.png>]
+<Figures/screencaptures/repeated_flashing.png, id=406, 983.675pt x 552.0625pt>
+File: Figures/screencaptures/repeated_flashing.png Graphic file (type png)
+<use Figures/screencaptures/repeated_flashing.png>
+Package pdftex.def Info: Figures/screencaptures/repeated_flashing.png  used on 
+input line 472.
+(pdftex.def)             Requested size: 308.71106pt x 173.25197pt.
+ [23 <./Figures/screencaptures/updates_found_startup.png> <./Figures/screencapt
+ures/repeated_flashing.png>]
+Poglavlje 7..
+<Figures/screencaptures/add_new_model.png, id=416, 511.9125pt x 432.61626pt>
+File: Figures/screencaptures/add_new_model.png Graphic file (type png)
+<use Figures/screencaptures/add_new_model.png>
+Package pdftex.def Info: Figures/screencaptures/add_new_model.png  used on inpu
+t line 490.
+(pdftex.def)             Requested size: 154.35889pt x 130.446pt.
+[24
+
+ <./Figures/screencaptures/add_new_model.png>]
+<Figures/uspostava_okoline.png, id=424, 868.24374pt x 943.525pt>
+File: Figures/uspostava_okoline.png Graphic file (type png)
+<use Figures/uspostava_okoline.png>
+Package pdftex.def Info: Figures/uspostava_okoline.png  used on input line 500.
+
+(pdftex.def)             Requested size: 286.65883pt x 311.50818pt.
+<Figures/screencaptures/main_dashboard.png, id=427, 1445.4pt x 789.95125pt>
+File: Figures/screencaptures/main_dashboard.png Graphic file (type png)
+<use Figures/screencaptures/main_dashboard.png>
+Package pdftex.def Info: Figures/screencaptures/main_dashboard.png  used on inp
+ut line 510.
+(pdftex.def)             Requested size: 308.71106pt x 168.71521pt.
+<Figures/screencaptures/company_dashboard.png, id=428, 1444.39626pt x 789.95125
+pt>
+File: Figures/screencaptures/company_dashboard.png Graphic file (type png)
+<use Figures/screencaptures/company_dashboard.png>
+Package pdftex.def Info: Figures/screencaptures/company_dashboard.png  used on 
+input line 516.
+(pdftex.def)             Requested size: 308.71106pt x 168.83574pt.
+ [25 <./Figures/uspostava_okoline.png>]
+<Figures/screencaptures/devices_page.png, id=439, 1445.4pt x 790.45313pt>
+File: Figures/screencaptures/devices_page.png Graphic file (type png)
+<use Figures/screencaptures/devices_page.png>
+Package pdftex.def Info: Figures/screencaptures/devices_page.png  used on input
+ line 527.
+(pdftex.def)             Requested size: 308.71106pt x 168.8224pt.
+ [26 <./Figures/screencaptures/main_dashboard.png> <./Figures/screencaptures/co
+mpany_dashboard.png>]
+<Figures/screencaptures/models_page.png, id=449, 1445.4pt x 790.955pt>
+File: Figures/screencaptures/models_page.png Graphic file (type png)
+<use Figures/screencaptures/models_page.png>
+Package pdftex.def Info: Figures/screencaptures/models_page.png  used on input 
+line 536.
+(pdftex.def)             Requested size: 308.71106pt x 168.9296pt.
+<Figures/screencaptures/software_page.png, id=451, 1445.4pt x 878.28125pt>
+File: Figures/screencaptures/software_page.png Graphic file (type png)
+<use Figures/screencaptures/software_page.png>
+Package pdftex.def Info: Figures/screencaptures/software_page.png  used on inpu
+t line 545.
+(pdftex.def)             Requested size: 308.71106pt x 187.58044pt.
+ [27 <./Figures/screencaptures/devices_page.png> <./Figures/screencaptures/mode
+ls_page.png>]
+<Figures/screencaptures/software_package_page.png, id=461, 1445.4pt x 790.955pt
+>
+File: Figures/screencaptures/software_package_page.png Graphic file (type png)
+<use Figures/screencaptures/software_package_page.png>
+Package pdftex.def Info: Figures/screencaptures/software_package_page.png  used
+ on input line 554.
+(pdftex.def)             Requested size: 308.71106pt x 168.9296pt.
+ [28 <./Figures/screencaptures/software_page.png> <./Figures/screencaptures/sof
+tware_package_page.png>]
+Poglavlje 8..
 
 (./Distribucija ključeva i sigurnosnih ažuriranja na uređajima Interneta s
-tvari.bbl [7
+tvari.bbl [29
 
-]) [8
+]) [30
 
-] [9
-
-] [10
+] [31
 
 ]
-pdfTeX warning (ext4): destination with the same identifier (name{chapter.1}) h
-as been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.88 	\chapter{The Code}
-                        
-Privitak A.
+Overfull \hbox (3.84178pt too wide) in paragraph at lines 582--584
+[]\T1/stix2/m/n/12 Managing cryp-to-graphic keys and up-dates on In-ter-net of 
+Things (IoT) de-vices presents
+ []
 
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 91.
-
-
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 91.
-
-
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 91.
-
-
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 91.
-
-[11
-
+[32
 
 ]
-
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 91.
-
-
-Package blindtext Warning: croatian not defined, using English instead.
-(blindtext)                 on input line 91.
-
-[12]
 (./Distribucija ključeva i sigurnosnih ažuriranja na uređajima Interneta s
 tvari.aux)
 
@@ -1059,6 +1252,14 @@ rerunfilecheck.sty    2022-07-10 v1.10 Rerun checks for auxiliary files (HO)
 uniquecounter.sty    2019/12/15 v1.4 Provide unlimited unique counter (HO)
 blindtext.sty    2012/01/06 V2.0 blindtext-Package
   xspace.sty    2014/10/28 v1.13 Space after command names (DPC,MH)
+listings.sty    2023/02/27 1.9 (Carsten Heinz)
+ lstmisc.sty    2023/02/27 1.9 (Carsten Heinz)
+listings.cfg    2023/02/27 1.9 listings configuration
+longtable.sty    2021-09-01 v4.17 Multi-page Table package (DPC)
+tabularx.sty    2020/01/15 v2.11c `tabularx' package (DPC)
+   array.sty    2022/09/04 v2.5g Tabular extension package (FMi)
+fancybox.sty    2010/05/15 1.4
+   float.sty    2001/11/08 v1.3d Float enhancements (AL)
  t1stix2.fd    2018/04/02 v2.0.0-latex stix2 T1 font definitions
 l3backend-pdftex.def    2023-01-16 L3 backend support: PDF output (pdfTeX)
 ls1stix2.fd    2018/04/02 v2.0.0-latex stix2 LS1 font definitions
@@ -1070,6 +1271,7 @@ pdflscape.sty    2022-10-27 v0.13 Display of landscape pages in PDF
 pdflscape-nometadata.sty    2022-10-28 v0.13 Display of landscape pages in PDF 
 (HO)
   lscape.sty    2020/05/28 v3.02 Landscape Pages (DPC)
+ltcaption.sty    2021/01/08 v1.4c longtable captions (AR)
 Distribucija ključeva i sigurnosnih ažuriranja na uređajima Interneta stva
 ri.out
 Distribucija ključeva i sigurnosnih ažuriranja na uređajima Interneta stva
@@ -1085,36 +1287,58 @@ ls1stix2sf.fd    2018/04/02 v2.0.0-latex stix2 sans-serif LS1 font definitions
 ls2stix2tt.fd    2018/04/02 v2.0.0-latex stix2 typewriter LS2 font definitions
     umsa.fd    2013/01/14 v3.01 AMS symbols A
     umsb.fd    2013/01/14 v3.01 AMS symbols B
-Figures/ER_diagram_KDSUF_v2.pdf
+Figures/KDSUF_arhitektura_sustava.png
+Figures/KDSUF_dijagram_klasa.png
+lstlang1.sty    2023/02/27 1.9 listings language file
   t1cmtt.fd    2022/07/10 v2.5l Standard LaTeX font definitions
+Figures/KDSUF_entiteti_dijagram_klasa.png
+lstlang1.sty    2023/02/27 1.9 listings language file
+lstlang1.sty    2023/02/27 1.9 listings language file
+Figures/registracija_uredaja.png
+Figures/provjera_dostupnosti_azuriranja.png
+Figures/preuzimanje_i_instalacija_azuriranja.png
+Figures/load_predicting4.png
+lstlang1.sty    2023/02/27 1.9 listings language file
+Figures/screencaptures/updates_not_found_startup.png
+Figures/rsa_load.png
+Figures/screencaptures/updates_found_startup.png
+Figures/screencaptures/repeated_flashing.png
+Figures/screencaptures/add_new_model.png
+Figures/uspostava_okoline.png
+Figures/screencaptures/main_dashboard.png
+Figures/screencaptures/company_dashboard.png
+Figures/screencaptures/devices_page.png
+Figures/screencaptures/models_page.png
+Figures/screencaptures/software_page.png
+Figures/screencaptures/software_package_page.png
 Distribucija ključeva i sigurnosnih ažuriranja na uređajima Interneta stva
 ri.bbl
  ***********
 
 Package rerunfilecheck Info: File `"Distribucija ključeva i sigurnosnih ažu
 riranja na uređajima Interneta stvari".out' has not changed.
-(rerunfilecheck)             Checksum: F64CA0B185096B347789EE964136D58C;745.
+(rerunfilecheck)             Checksum: D2813C21593CB95B09C941A25DFF5F6E;2507.
  ) 
 Here is how much of TeX's memory you used:
- 17965 strings out of 476025
- 284674 string characters out of 5790016
- 1855388 words of memory out of 5000000
- 38089 multiletter control sequences out of 15000+600000
- 591633 words of font info for 132 fonts, out of 8000000 for 9000
+ 20950 strings out of 476025
+ 330185 string characters out of 5790016
+ 2245388 words of memory out of 5000000
+ 40803 multiletter control sequences out of 15000+600000
+ 621785 words of font info for 139 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 87i,6n,131p,577b,623s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 87i,8n,131p,1729b,2117s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/ascender/opensans/OpenSans-Bo
 ld.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/ascender/opensans/OpenSa
 ns-Regular.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/stix2-typ
 e1/STIX2Text-Bold.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/st
 ix2-type1/STIX2Text-Italic.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/
 public/stix2-type1/STIX2Text-Regular.pfb></usr/local/texlive/2023/texmf-dist/fo
-nts/type1/public/cm-super/sftt1200.pfb>
+nts/type1/public/cm-super/sftt0800.pfb>
 Output written on "Distribucija ključeva i sigurnosnih ažuriranja na uređa
-jima Interneta stvari.pdf" (15 pages, 635128 bytes).
+jima Interneta stvari.pdf" (35 pages, 6035612 bytes).
 PDF statistics:
- 166 PDF objects out of 1000 (max. 8388607)
- 130 compressed objects within 2 object streams
- 23 named destinations out of 1000 (max. 500000)
- 70 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 578 PDF objects out of 1000 (max. 8388607)
+ 486 compressed objects within 5 object streams
+ 231 named destinations out of 1000 (max. 500000)
+ 248 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -1,6 +1,12 @@
 \documentclass[zavrsnirad]{fer}
 
 \usepackage{blindtext}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{fancybox}
+\usepackage{float}
 
 \title{Key distribution and secure updates on Internet of things devices}
 \naslov{Distribucija ključeva i sigurnosnih ažuriranja na uređajima Interneta stvari}
@@ -12,14 +18,38 @@
 
 
 \begin{document}
+	\lstdefinestyle{mystyle}{
+		backgroundcolor=\color{gray!10},   % Set the background color
+		commentstyle=\color{green},
+		keywordstyle=\color{blue},
+		numberstyle=\tiny\color{gray},
+		stringstyle=\color{red},
+		basicstyle=\ttfamily\tiny,   % Set the font size to scriptsize
+		breakatwhitespace=false,          
+		breaklines=true,                 
+		captionpos=b,                    
+		keepspaces=true,                
+		numbers=left,                    
+		numbersep=5pt,                  
+		showspaces=false,                
+		showstringspaces=false,
+		showtabs=false,                  
+		tabsize=2,
+		frame=single,                    % Add a frame around the code
+		framerule=0.5pt,                 % Set the thickness of the frame
+		xleftmargin=2pt,                 % Set left margin
+		xrightmargin=2pt                 % Set right margin
+	} 
+	\lstset{style=mystyle}
+	
 	\maketitle
 	
 	Uređaji Interneta stvari zbog tipično lošije povezivosti, slabije memorijske i procesorske snage, kao i ograničenog napajanja često zaostaju za tradicionalnim uređajima u smislu sigurnih ažuriranja i sigurnosti općenito. Jedan od ključnih aspekata bilo kojeg uređaja koji komunicira jest razmjena kriptografskih ključeva te provođenje ažuriranja na siguran način.
 	
-	Vaš je zadatak analizirati postojeća rješenja za navedene izazove u domeni Interneta stvari. Na temelju analize osmislite i implementirajte sustav za upravljanje ključevima te efikasno i sigurno ažuriranje. Obratite pozornost na procjenu opterećenja uređaja prilikom ažuriranja i postavljanja ključeva kako se ne bi narušile osnovne funkcionalnosti uređaja prilikom navedenih radnji.
+	Vaš je zadatak analizirati postojeća rješenja za navedene izazove u domeni Interneta stvari. Na temelju analize osmislite i implementirajte sustav za upravljanje ključevima te efikasno i sigurno ažuriranje. Obratite pozornost na procjenu opterećenja uređaja prilikom ažuriranja i postavljanja ključeva kako se ne bi narušile osnovne funkcionalnosti uređaja prilikom navedenih radnji.
 	
 	\begin{zahvale}
-		acknowledgment
+		Zahvaljujem se mentoru izv. prof. dr. sc. Marinu Vukoviću na stručnom vodstvu pri izradi ovog završnog rada.
 	\end{zahvale}
 	
 	\mainmatter
@@ -29,65 +59,535 @@
 	\chapter{Uvod}
 	\label{pog:uvod}
 	
-	Neki od radova koje ćemo citirati su \cite{maurer1993secret}.
-	Trebaju nam samo radi testiranja kako izgleda referenciranje rada s konferencije, rada iz časopisa, knjige i Internetske stranice.
+	Sigurnost funkcionalnosti i sigurnost podataka ključni su aspekti za siguran rad uređaja u sustavima Interneta stvari (\textit{Internet of Things, IoT}). IoT uređaji susreću se s mnogim izazovima, uključujući lošu povezanost, ograničenu memorijsku i procesorsku snagu. Ove limitacije značajno utječu na sposobnost uređaja da na siguran način upravljaju kriptografskim ključevima i provode sigurnosna ažuriranja. Dodatno, zbog svoje izloženosti okolini, sigurnost kriptografskih ključeva i podataka na IoT uređajima predstavlja značajan izazov.
+	Pristup zloćudnog korisnika kriptografskim ključevima može u potpunosti kompromitirati uređaj i time omogućiti napadaču da se lažno predstavlja kao legitimni IoT uređaj te dobije direktan pristup povjerljivim podacima. U takvim scenarijima, sigurnost cijelog sustava može biti ugrožena, što može imati posljedice po korisnike i integritet podataka.
+	
+	Cilj ovog završnog rada je implementirati sustav za upravljanje IoT uređajima, distribuciju ključeva te sigurno ažuriranje IoT uređaja. S obzirom na ograničenja IoT uređaja, ovaj sustav mora osigurati da upravljanje ključevima i ažuriranje ne narušavaju osnovne funkcionalnosti uređaja. Kako bi se ostvarili ovi ciljevi, sustav će se sastojati od četiri glavne komponente: sustava backenda, \textit{HashiCorp Vault} poslužitelja, IoT klijenta i sustava frontenda.
+	
+	U okviru ovog završnog rada, bit će implementiran sustav backenda koji će biti odgovoran za upravljanje ključevima i njihovu distribuciju. Sustav backenda će upravljati cijelim sustavom, uključujući upravljanje administrativnim korisnicima, kompanijama, modelima uređaja, samim uređajima, softverom i softverskim paketima. Jedna od ključnih funkcionalnosti backend servisa bit će omogućavanje registracije uređaja. Za registrirane uređaje bit će moguća provjera dostupnosti ažuriranja. Osim toga, backend će biti odgovoran za posluživanje ažuriranja te stvaranje i čuvanje digitalnih potpisa. Potpisivanjem softverskih paketa osigurava se integritet i autentičnost preuzetih softverskih paketa.
+	\textit{Vault} poslužitelj, kao ključna komponenta sustava, bit će korišten za pohranu sigurnosnih podataka i generiranje kriptografskih ključeva. \textit{Vault} će također biti korišten za enkripciju i dekripciju dolaznog i odlaznog prometa između sustava backenda i IoT uređaja. Na ovaj način, osigurava se da svi osjetljivi podaci budu zaštićeni tijekom prijenosa. \textit{Vault} će također pohranjivati digitalne potpise softverskih paketa.
+	Uz backend servis i \textit{Vault}, bit će implementiran i IoT klijent koji će imati simulirani hardverski sigurnosni modul (\textit{HSM}) za pohranu kriptografskih ključeva i drugih sigurnosno važnih podataka. IoT klijent će koristiti serijski broj uređaja za jedinstvenu identifikaciju. Jedna od ključnih funkcionalnosti IoT klijenta bit će aktivno praćenje opterećenja uređaja te izvođenje operacija ažuriranja samo u uvjetima koji ne narušavaju osnovnu funkcionalnost uređaja. Tako se osigurava da sigurnosna ažuriranja ne ometaju normalan rad uređaja.
+	Za vizualizaciju sustava i njegovih akcija, bit će implementiran frontend koji će služiti kao upravljačka ploča za administrativne korisnike. Kroz ovu upravljačku ploču, korisnici će moći upravljati cijelim sustavom, nadzirati svoje IoT uređaje, te provoditi potrebne akcije poput potvrde registracije uređaja, stvaranja ažuriranja i pregleda statusa uređaja.
+	
+	Ovaj sustav pružit će sveobuhvatno rješenje za sigurnosne izazove s kojima se suočavaju IoT uređaji, osiguravajući upravljanje ključevima i sigurno ažuriranje softvera bez narušavanja osnovnih funkcionalnosti uređaja. U nastavku rada detaljno će biti opisane sve komponente sustava, metode implementacije, te sigurnosne mjere koje su poduzete kako bi se osigurala maksimalna sigurnost.
+	
+	
+	\chapter{Postojeća rješenja}
+	\label{pog:postojeca_rjesenja}
+	
+	Zbog velike važnosti sigurnosti IoT infrastrukture, razvijena su brojna rješenja koja se fokusiraju na distribuciju ključeva i upravljanje ažuriranjima. Ova rješenja imaju za cilj osigurati integritet, povjerljivost i autentičnost podataka, što je ključno za zaštitu IoT uređaja od različitih prijetnji. 
+	Jedno od najpoznatijih rješenja je \textit{The Update Framework (TUF)}. \textit{TUF} je open-source rješenje dizajnirano za osiguravanje sigurnih softverskih ažuriranja. TUF poboljšava sigurnost dodavanjem provjerljivih zapisa o stanju repozitorija ili aplikacije. Ovo se postiže dodavanjem metapodataka koji sadrže informacije o pouzdanim potpisnim ključevima, kriptografskim hash vrijednostima datoteka, potpisima na metapodacima, brojevima verzija metapodataka i datumima nakon kojih se metapodaci smatraju isteklima. Ovi zapisi omogućuju provjeru autentičnosti datoteka za ažuriranje. Sustav za ažuriranje softvera koji je zaštićen \textit{TUF-om} ne mora izravno raditi s ovim metapodacima niti razumjeti procese u pozadini. \textit{TUF} identificira ažuriranja, preuzima ih i provjerava u odnosu na metapodatke koje također preuzima iz repozitorija. Ako su preuzete ciljne datoteke pouzdane, \textit{TUF} ih predaje sustavu za ažuriranje softvera \cite{tuf2024}. Osim \textit{TUF-a}, postoji open-source projekt \textit{Hawkbit} koji je razvio \textit{Eclipse Foundation} za implementaciju i distribuciju softverskih ažuriranja. \textit{Hawkbit} omogućuje centralizirano upravljanje ažuriranjima za različite vrste uređaja i pruža mehanizme za autentifikaciju i autorizaciju ažuriranja, osiguravajući da samo odobreni uređaji mogu primiti i instalirati nova ažuriranja \cite{hawkbit}.
+	
+	Što se tiče sigurnosti kriptografskih ključeva i podataka na IoT uređajima, najsigurnije rješenje je korištenje \textit{Hardware Security Module, (HSM)}. \textit{HSM} je fizički odvojena i samostalna hardverska komponenta koja sadrži vlastitu procesorsku jedinicu i memoriju. Ovo ne samo da omogućuje zaštitu od fizičkih napada, već postavlja ograničenja pristupa osjetljivim podacima pohranjenim unutar \textit{HSM-a} \cite{thalesdocs}. Ovakvo ograničenje sprječava napadača koji je preuzeo kontrolu nad aplikacijom da pristupi podacima jer kompromitirana aplikacija nema pristup resursima \textit{HSM-a} Kao što je objašnjeno, ako su kriptografski ključevi pohranjeni, sve kriptografske operacije koje zahtijevaju ključeve trebale bi biti izvršene samo u sigurnom hardverskom modulu (s posvećenom računalnom jedinicom i posvećenom radnom memorijom). Korištenjem \textit{HSM-a}, broj napada se smanjuje, no cijena \textit{HSM-a} može biti nedostatak. \textit{HashiCorp Vault} je još jedno ključno rješenje u kontekstu sigurnog upravljanja ključevima i podacima. \textit{Vault} je alat za upravljanje tajnama i zaštitu osjetljivih podataka. Pruža centralizirano upravljanje kriptografskim ključevima i omogućuje sigurno pohranjivanje, enkripciju, dekripciju i digitalno potpisivanje podataka \cite{hashicorp_vault}. \textit{Vault} podržava različite metode autentifikacije, što omogućuje sigurnu distribuciju ključeva i tajni. Također, Vault koristi stroge pristupe kontroli pristupa, osiguravajući da samo autorizirani korisnici i aplikacije imaju pristup osjetljivim podacima.
+	
+	Pri dizajniranju i implementaciji sustava za upravljanje ključevima i sigurno ažuriranje IoT uređaja, pažljivo su razmotrena postojeća rješenja kako bi se odabrale najprikladnije tehnologije.
+	\textit{The Update Framework (TUF)} je imao značajan utjecaj na odabir metode za provjeru integriteta i autentičnosti softverskih paketa. Korištenjem \textit{TUF-ovog} pristupa metapodacima, odlučeno je koristiti digitalne potpise za verificiranje preuzetih ažuriranja. Ovaj pristup je implementiran pomoću \textit{HashiCorp Vaulta} koji pohranjuje ključeve i potpise te omogućuje sigurno preuzimanje i verifikaciju ažuriranja.  Inspirirani Hawkbitom, sustav koristi backend servis koji upravlja cijelim procesom ažuriranja i osigurava da samo ovlašteni uređaji mogu primiti i instalirati ažuriranja. \textit{Hawkbitov Management UI} ima svoje nedostatke u okviru \textit{UX/UI} te je u sklopu projekta donesena odluka da se bolje implementira. Time se poboljšava korisničko iskustvo prilikom upravljanja IoT uređajima i ažuriranjima.
+	Korištenje \textit{HSM-a} u praksi utjecalo je na odluku da se implementira simulirani \textit{HSM} u IoT klijentu. Iako pravi \textit{HSM} nije korišten zbog kompleksnosti i troškova, simulirani \textit{HSM} pruža sličnu funkcionalnost u smislu sigurnog pohranjivanja ključeva. Ovaj pristup omogućuje sigurno upravljanje ključevima i zaštitu osjetljivih podataka na uređaju. 
+	
+	
+	\chapter{Opseg i zahtjevi sustava}
+	\label{pog:opseg_i_zahtjevi}
+	Prije razvoj sustava za distribuciju ključeva i sigurnosnih ažuriranja za IoT uređaje jasno ćemo definirati opseg sustava u skladu s \textit{ISO 27003} s naglaskom na ključne aspekte poput sigurnosnih ciljeva, pretpostavki i zahtjeva. \cite{iso27003}
+	
+	\paragraph{Opseg sustava} obuhvaća sve komponente koje sudjeluju u procesu distribucije ključeva i sigurnosnih ažuriranja za IoT uređaje. To uključuje:
+	\textbf{IoT uređaji}: uređaji koji se registriraju i koriste distribuirane kriptografske ključeve za sigurno komuniciranje i primanje sigurnosnih ažuriranja.
+	\textbf{Sustav backenda}: Aplikacija razvijena u \textit{Spring Bootu}, koja pruža funkcionalnosti za upravljanje uređajima, kompanijama, modelima, softverom i softverskim paketima.
+	\textbf{PostgreSQL Baza Podataka}: Relacijska baza podataka koja čuva sve podatke koji nisu sigurnosno osjetljivi i ne trebaju biti pohranjeni u \textit{Vaultu}.
+	\textbf{HashiCorp Vault}: Sigurnosni sustav za pohranu i upravljanje kriptografskim ključevima, koji osigurava enkripciju i dekripciju podataka i digitalne potpise.
+	\textbf{Frontend Aplikacija}: Korisničko sučelje koje omogućuje administratorima upravljanje cijelim sustavom putem intuitivnih nadzornih ploča i stranica za upravljanje.
+	
+	\paragraph{Sigurnosni Ciljevi}
+	
+	sustava su osigurati povjerljivost tako da su svi osjetljivi podaci, poput kriptografskih ključeva, serijskih brojeva i podataka koji se prenose mrežom, zaštićeni od neovlaštenog pristupa. Također je ključno osigurati da podaci nisu izmijenjeni ili oštećeni tijekom prijenosa ili pohrane. Moramo osigurati i dostupnost, odnosno da su svi dijelovi sustava dostupni ovlaštenim korisnicima kada su im potrebni. Zadnji sigurnosni cilj je osigurati neporecivost aktora u sustavu.
+	
+	\paragraph{Pretpostavke}
+	Sustav ima tri pretpostavke: pretpostavlja se da IoT uređaj posjeduje \textit{HSM}, pretpostavlja se da je kompanija koja će upravljati uređajem u \textit{HSM} uređaja upisala serijski broj prije puštanja u rad, pretpostavlja se da su serijski brojevi uređaja koji su pušteni u rad dostupni kompaniji i njihovim administratorima.
+	
+	\paragraph{Zahtjevi}
+	
+	\footnotesize
+	\begin{longtable}{|c|p{4cm}|p{8cm}|}
+		\hline
+		\textbf{Oznaka} & \textbf{Zahtjev} & \textbf{Opis} \\
+		\hline
+		REQ-01 & Registracija uređaja & Sustav mora omogućiti IoT uređajima registraciju s jedinstvenim identifikatorom (serijski broj) i javnim ključem.  \\
+		\hline
+		REQ-02 & Sigurno upravljanje ključevima & Sustav mora sigurno upravljati kriptografskim ključevima koristeći \textit{HashiCorp Vault}. \textit{Vault} treba generirati i pohraniti ključeve specifične za uređaje, pristup ključevima mora biti omogućen samo autoriziranim komponentama sustava. \\
+		\hline
+		REQ-03 & Sigurna komunikacija & Sve komunikacije između IoT uređaja i sustava backenda moraju biti kriptirane. Korištenje RSA za uspostavljanje zajedničkog simetričnog ključa između uređaja i backenda te korištenje \textit{AES-GCM} za kriptiranje podataka koji se šalju između uređaja i backendaa. \\
+		\hline
+		REQ-04 & Praćenje opterećenja & IoT klijent mora pratiti opterećenje procesorske jedinice i memorije kako bi osigurao da ažuriranja ne ugroze performanse uređaja. Klijent treba periodički prikupljati i analizirati metrike sustava te započeti ažuriranja samo kada je opterećenje sustava unutar prihvatljivih granica. \\
+		\hline
+		REQ-05 & Upravljanje ažuriranjima & Sustav mora pružati sigurne mehanizme za provjeru dostupnosti, preuzimanje i verifikaciju ažuriranja. Uređaji trebaju periodički provjeravati dostupnost ažuriranja, backend treba služiti kao poslužitelj za pakete ažuriranja i metapodatke. \\
+		\hline
+		REQ-06 & Instaliranje ažuriranja & IoT klijent mora podržavati sigurno instaliranje novih softverskih paketa. Klijent treba preuzeti i verificirati pakete ažuriranja prije instaliranja, rukovati greškama tijekom instaliranja te podržavati ponovne pokušaje ako je potrebno. Status i povijest instaliranja trebaju biti zabilježeni i prijavljeni natrag backendu. \\
+		\hline
+		REQ-07 & Upravljanje korisnicima & Sustav mora podržavati upravljanje administratorskim korisnicima. Administratorski korisnici trebaju moći upravljati kompanijama, modelima, uređajima, softverom i softverskim paketima. \\
+		\hline
+		REQ-08 & Pohrana podataka & Sustav mora pohranjivati podatke koji nisu sigurnosno osjetljivi u \textit{PostgreSQL} i podatke koji jesu sigurnosno osjetljivi u \textit{HashiCorp Vault}. Metapodaci uređaja, informacije o korisnicima i detalji o softverskim paketima trebaju biti pohranjeni u \textit{PostgreSQL}, dok kriptografski ključevi, digitalni potpisi i drugi osjetljivi podaci trebaju biti pohranjeni u \textit{Vaultu}. \\
+		\hline
+		REQ-09 & Aplikacija frontenda & Sustav mora pružati frontend za administratorske korisnike za upravljanje i nadzor sustava. Frontend treba pružati nadzorne ploče i stranice za upravljanje uređajima, modelima, softverom i softverskim paketima. Korisničko sučelje treba biti intuitivno i responzivno, pružajući real-time ažuriranja i upozorenja. \\
+		\hline
+	\end{longtable}
+	\normalsize
+	
+	
+	\chapter{Arhitektura sustava}
+	\label{pog:arhitektura_sustava}
+	
+	Arhitektura sustava za upravljanje ključevima i sigurno ažuriranje IoT uređaja osmišljena je kako bi osigurala integritet, povjerljivost i autentičnost podataka uz minimalno narušavanje osnovnih funkcionalnosti uređaja. Sustav se sastoji od sljedećih komponenti: sustava backenda, \textit{HashiCorp Vault} poslužitelja, \textit{PostgreSQL} baze podataka, sustava frontenda i IoT klijenta. Svaka dio sustava igra ključnu ulogu u osiguravanju sigurnosti i učinkovitosti sustava.
 	
 	\begin{figure}[htb]
 		\centering
-		\includegraphics[width=0.38\linewidth]{Figures/ER_diagram_KDSUF_v2.pdf} 
-		\caption{Moja prva slika}
-		\label{slk:prvaslika}
+		\includegraphics[width=0.8\linewidth]{Figures/KDSUF_arhitektura_sustava.png} 
+		\caption{Arhitektura sustava}
+		\label{slk:arhitektura_sustava}
 	\end{figure}
 	
-	Referenciramo se na sliku \ref{slk:prvaslika} u sredini rečenice, zatim prije zareza \ref{slk:prvaslika}, te zatim na kraju rečenice \ref{slk:prvaslika}.
-	Upravo smo testirali radi li naredba \verb|\ref| ispravno u slučaju kada nakon nje slijedi točka.
+	\section{Komponente}
+	\label{arh_sus:komponente}
+	
+	\paragraph{Sustav backenda}
+	\label{arh_sus:backend_servis}
+	 Sustav backenda čini središnji dio sustava, odgovoran je za upravljanje svim ključnim funkcionalnostima kao što su \textit{CRUD} operacija nad svim entitetima sustava, registracija uređaja, provjera dostupnosti ažuriranja, distribucija ažuriranja i verifikacija digitalnih potpisa ažuriranja. Sustav backenda implementiran je pomoću \textit{Spring Boota}. 
+	
+	\paragraph{Vault poslužitelj}
+	\label{arh_sus:vault_server}
+	\textit{HashiCorp Vault} je implementiran unutar \textit{Docker} kontejnera kako bi se osigurala sigurnost i upravljanje kriptografskim ključevima i digitalnim potpisima. Omogućuje generiranje, pohranu i upravljanje ključevima te pruža funkcionalnosti za enkripciju, dekripciju i digitalno potpisivanje podataka. Vault koristi dva glavna \textit{enginea}: \textit{KV (Key-Value) engine} i \textit{Transit engine}. Backend komunicira s \textit{HashiCorp Vaultom} putem \textit{Vault API-ja} koji je konfiguriran s potrebnim politikama i pristupnim dozvolama, čime se osigurava da samo autorizirani korisnici i aplikacije imaju pristup osjetljivim podacima i kriptografskim operacijama.
+	
+	\paragraph{Iot klijent}
+	\label{arh_sus:iot_klijent}
+	IoT klijent je implementiran u \textit{Pythonu} i uključuje simulirani \textit{HSM} za pohranu kriptografskih ključeva i osjetljivih podataka. Klijent je dizajniran za rad na ograničenim uređajima s niskim resursima, osiguravajući da sve operacije budu izvedene na siguran i učinkovit način. U svrhu testiranja \textit{Python} skripta pokreće se na \textit{Raspberry Pi 4} koji predstavlja uređaj slabih memorijskih i procesorskih mogućnosti.
+	
+	\paragraph{Sustav frontenda}
+	\label{arh_sus:frontend}
+	Korisničko sučelje je izgrađeno s pomoću \textit{Reacta} i pruža intuitivnu kontrolnu ploču za upravljanje cijelim sustavom. Omogućuje pregled i upravljanje kompanijama, uređajima, modelima, softverom i softverskim paketima.
+	
+	\paragraph{PostgreSQL}
+	\label{arh_sus:psql}
+	\textit{PostgreSQL} baza podataka služi za pohranu različitih vrsta podataka koji su potrebni za funkcionalnost sustava. Podaci koji se čuvaju su informacije o korisnicima, uređajima, softverskim paketima, povijesti ažuriranja i ostalim entitetima potrebnim za rad sustava. Time se omogućava efikasno upravljanje velikim količinama podataka te jednostavan pristup i manipulacija tim podacima. Baza podataka implementirana je unutar \textit{Docker} kontejnera, što omogućuje jednostavnu skalabilnost i upravljanje.
+	
+	
+	\section{Komunikacija između komponenti}
+	\label{arh_sus:komunikacija}
+	
+	Komunikacija u sustavu odgovorna za IoT uređaje ostvarena je između sustava backenda, IoT uređaja i \textit{Vault} poslužitelja. Druga vrsta komunikacije odgovorna je za kreiranje i konfiguraciju okoline u kojoj se uređaji mogu registrirati, a uspostavlja se između frontend i sustava backenda. Vrste komunikacija na razini sustava opisane su u nastavku. Detaljni opisi i koraci koji se provode bit će opisani u poglavljima koji opisuju komponentu koja je zadužena za dotičnu vrstu komunikacije.
+	
+	\paragraph{Uspostava okoline}
+	
+	\begin{enumerate}
+		\item \textbf{Kreiranje modela uređaja}: administratorski korisnik pomoću korisničkog sučelja stvara model uređaja i definira serijske brojeve IoT uređaja koji će pripadati tom modelu
+		\item \textbf{Dodavanje softvera}: administratorski korisnik u sustav unosi softver
+		\item \textbf{Kreiranje softverskih paketa}: administratorski korisnik stvara softverski paket koji sadrži jedan ili više softver, a namijenjen je za određene modele uređaja
+	\end{enumerate}
+	
+	Detaljan opis uspostave okoline nalazi se na sekvencijskom dijagramu \ref{slk:upostava_okoline}.
+	
+	
+	\paragraph{Registracija uređaja}
+	
+	\begin{enumerate}
+		\item \textbf{Inicijalizacija uređaja}: IoT uređaj generira par ključeva (privatni i javni ključ)
+		\item \textbf{Inicijalizacija sesije}: IoT uređaj s sustavom backenda dijeli svoj javni ključ 
+		\item \textbf{Uspostava sesije}: sustav backenda generira jedinstveni \textit{AES} simetrični ključ sesije koji je u transitu enkriptiran asimetričnom kriptografijom
+		\item \textbf{Registracija uređaja}: nakon uspostava sesije, uređaj šalje enkriptirani paket koji sadrži serijski broj. Backend verificira postoji li model uređaja s tim serijskim brojem  
+		\item \textbf{Potvrda registracije}: ovisno o ishodu verifikacije backend pohranjuje podatke u \textit{Vault} ili odbija registraciju. U slučaju uspješne verifikacije serijskog broja uređaja klijentu se dodjeljuje unikatni identifikator koji mu se šalje i koje IoT uređaj sprema u svoj \textit{HSM}. Ovime je završena registracija i za svu buduću komunikaciju identifikator mora biti uključen u zahtjeve kako bi se mogla utvrditi vjerodostojnost zahtjeva
+	\end{enumerate}
+	
+	Detaljan opis registracije uređaja nalazi se na sekvencijskom dijagramu \ref{slk:registracija_uređaja}.
+	
+	
+	\paragraph{Provjera dostupnosti ažuriranja}
+	
+	\begin{enumerate}
+		\item \textbf{Zahtjev za provjeru}: IoT uređaj šalje zahtjev za provjeru dostupnosti ažuriranja na sustavu backenda
+		\item \textbf{Provjera na sustavu backenda}: sustav backenda provjerava postoje li nova ažuriranja za uređaj
+		\item \textbf{Povratna informacija}: Ako postoje dostupna ažuriranja backend vraća enkriptiranu listu dostupnih ažuriranja
+	\end{enumerate}
+	
+	Detaljan opis provjere dostupnosti ažuriranja nalazi se na sekvencijskom dijagramu \ref{slk:provjera_dostupnosti_azuriranja}.
+	
+	
+	\paragraph{Preuzimanje i instalacija ažuriranja}
+	
+	\begin{enumerate}
+		\item \textbf{Preuzimanje}: IoT uređaj preuzima enkriptirana ažuriranja sa sustava backenda.
+		\item \textbf{Dekripcija ažuriranja}: IoT uređaj dekriptira ažuriranja koristeći ključeve pohranjene u simuliranom HSM-u.
+		\item \textbf {Verifikacija potpisa}: IoT uređaj verificira digitalni potpis kako bi se osigurala autentičnost i integritet ažuriranja
+		\label{uspjeh_instalacije}
+		\item \textbf {Instalacija ažuriranja}:  Ažuriranja se instaliraju na uređaj
+		\label{instalacija}
+		\item \textbf {Status uspješnosti instalacije}: IoT uređaj na backend šalje status uspješnosti instalacije ažuriranja na uređaj (Koraci \textit{Instalacija ažuriranja} i \textit{Status uspješnosti} instalacije ponavljaju se dok se ažuriranje uspješno ne instalira)
+	\end{enumerate}
+	
+	Detaljan opis preuzimanja i instalacije ažuriranja nalazi se na sekvencijskom dijagramu \ref{slk:preuzimanje_i_instalacija_azuriranja}.
 	
 	
 	
-	%-------------------------------------------------------------------------------
-	\chapter{Glavni dio}
-	\label{pog:glavni_dio}
 	
-	\Blindtext
+	\chapter{Sustav backenda}
+	\label{pog:backend}
+	\section{Spring Boot aplikacija}
+	\label{backend:spring_boot}
+	Spring Boot aplikacija čini središnji dio sustava backenda. Aplikacija je dizajnirana da povezuje sve komponente sustava. Pruža \textit{API} za interakciju s IoT uređajima, upravlja Vaultom i komunicira s bazom podataka i pruža \textit{RESTful API} za korisničko sučelje na sustavu frontenda. \textit{Spring Boot} aplikacija je strukturirana prema slojevitom pristupu i koristi troslojnu arhitekturu koja uključuje prezentacijski, servisni i sloj pristupa podacima. 
+	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.8\linewidth]{Figures/KDSUF_dijagram_klasa.png} 
+		\caption{Dijagram klasa}
+		\label{slk:dijagram_klasa}
+	\end{figure}
+	
+	\paragraph{Prezentacijski sloj} prima \textit{HTTP} zahtjeve i vraća odgovore. \textit{Spring Boot} aplikacija za potrebe sustava definira \textit{RESTful API endpointe} za interakciju s klijentima i IoT uređajima. Na ovom sloju koriste se \textit{Controllers} i označeni su anotacijom @RestController. Za prijenos podataka prema servisnom sloju koriste se  \textit{Data Transfer Object (DTO)} .
+	
+	\paragraph{Servisni sloj} sadrži poslovnu logiku i upravlja tokom podataka između prezentacijskog sloja i sloja pristupa podacima. Servisni sloj procesuira zahtjeve primljene od kontrolera i vraća rezultate u obliku \textit{DTO} objekata. Klase servisnog sloja su servisi i označeni su anotacijom @Service. 
+	\begin{lstlisting}[language=Java, caption=Device Service]
+		@Service
+		public class DeviceServiceImpl implements DeviceService {
+			@Autowired
+			private DeviceRepository deviceRepository;
+			@Autowired
+			private CompanyRepository companyRepository;
+			@Autowired
+			private DeviceMapper deviceMapper;
+			
+			@Override
+			public DeviceDto createDevice(CreateDeviceRequest request) {
+				Company company = companyRepository.findById(request.getCompanyId())
+				.orElseThrow(() -> new IllegalArgumentException("Company with id: '" + request.getCompanyId() + "' does not exist!"));
+				Device device = deviceMapper.requestToModel(request);
+				device.setCompany(company);
+				company.addDevice(device);
+				companyRepository.save(company);
+				return deviceMapper.modelToDto(device);
+			}
+			@Override
+			public DeviceDto retrieveDevice(String id) {
+				Device device = deviceRepository.findById(id).orElseThrow(() -> new DeviceNotFoundException(id));
+				return deviceMapper.modelToDto(device);
+			}
+		}
+	\end{lstlisting}
+	
+	\paragraph{Sloj pristupa podacima} koristi \textit{Spring Data JPA} za interakciju s bazom podataka. Sučelja odgovorna za upravljanje slojem pristupa podacima zovu se  \textit{Repository}  i anotirana su s @Repository. Sva \textit{Repository} sučelja u sustavu proširuju \textit{JpaRepository} i \textit{QuerrydslPredicateExecutor} Implementacijom sučelja \textit{JpaRepository} pružaju se \textit{CRUD} operacije koje omogućuju jednostavno kreiranje, dohvaćanje, ažuriranje i brisanje za sve entitete , a implementacija \textit{QuerrydslPredicateExecutor} pruža prilagođene statički pisane upite za efikasnu interakciju s bazom podataka pomoću \textit{Querrydsla}. Primjer \textit{Repository} sučelja za entitet \textit{Device} koji predstavlja IoT uređaj: 
+	\begin{lstlisting}[language=Java, caption=Device Repository]
+		package hr.fer.kdsuf.repository;
+		
+		import hr.fer.kdsuf.model.domain.Device;
+		import org.springframework.data.jpa.repository.JpaRepository;
+		import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+		import org.springframework.stereotype.Repository;
+		
+		import java.util.List;
+		import java.util.Optional;
+		
+		@Repository
+		public interface DeviceRepository extends JpaRepository, QuerydslPredicateExecutor {
+			
+			List findDevicesByCompanyCompanyId(String id);
+			
+			Optional findDeviceBySerialNo(String serialNo);
+		}
+	\end{lstlisting}
+	
+	\paragraph{Entiteti} u našem sustavu su temeljni elementi domenskog modela aplikacije. Svaka klasa entitet mapira se na tablicu u bazi podataka, a atributi unutar klasa postaju stupci u tim tablicama. 
+	Radi olakšanja razvoja i jednostavnosti implementacije, koristimo \textit{Java Persistence API} anotacije i \textit{Lombok} biblioteku kako bismo smanjili količinu \textit{boilerplate} koda. Svaka entitetska klasa označena je s @Entity i ima primarni ključ koji jedinstveno identificira svaki zapis u tablici. Atribut koji predstavlja primarni ključ označen je anotacijom @Id. Relacije između entiteta definirane su pomoću anotacija @ManyToMany, @OneToMany, @ManyToOne, @OneToOne. Ove anotacije omogućuju uspostavljanje odnosa između različitih tablica u bazi. Entitetske klase koriste anotacije @Data, @NoArgsConstructor i @AllArgsConstructor koje smanjuju uobičajeni kod poput gettera, settera i konstruktora.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.5\linewidth]{Figures/KDSUF_entiteti_dijagram_klasa.png} 
+		\caption{Dijagram klasa - Entiteti}
+		\label{slk:entiteti_dijagram_klasa}
+	\end{figure}
 	
 	
-	%-------------------------------------------------------------------------------
-	\chapter{Rezultati i rasprava}
-	\label{pog:rezultati_i_rasprava}
+	\section{Vault poslužitelj}
+	\label{backend:funkcionalnosti}
+	Sustav koristi \textit{HashiCorp Vault} za sigurno pohranjivanje tajni, upravljanje ključevima i izvršavanje kriptografskih operacija. 
 	
-	\Blindtext
+	\paragraph{Pohranjivanje tajni} Vault koristi \textit{KV (Key-Value) secrets engine} za pohranjivanje tajni kao što su serijski brojevi uređaja i digitalni potpisi softverskih paketa. \textit{KV engine} omogućuje generiranje, pohranu i upravljanje tajnim podacima u obliku ključ-vrijednost parova.
+	
+	\paragraph{Kriptografske operacije} \textit{Vaultov Transit engine} pruža funkcionalnosti za enkripciju, dekripciju i digitalno potpisivanje podataka bez pohrane samih podataka. Omogućuje generiranje, upravljanje i korištenje kriptografskih ključeva za razne kriptografske operacije, uključujući generiranje \textit{RSA} i \textit{AES} ključeva te operacije potpisivanja i verifikacije. 
+	
+	\paragraph{Implementacija Vaulta} Za postavljanje \textit{Vault} poslužitelja u sustavu koristimo skriptu koja uključuje nekoliko koraka za pokretanje i konfiguriranje sigurnosnih postavki. Izostavljeni su pojedini dijelovi i uključeni su najbitnije naredbe.
+	
+	\begin{lstlisting}[language=bash, caption=Vault Setup]
+		//INICIJALIZACIJA
+		vault_init=$(curl --silent --request POST --data '{"secret_shares":1, "secret_threshold":1}' $VAULT_ADDR/v1/sys/init)
+		VAULT_UNSEAL_KEY=$(echo $vault_init | jq -r ".keys_base64[0]")
+		VAULT_ROOT_TOKEN=$(echo $vault_init | jq -r ".root_token")
+		
+		//ENABLE SECRETS ENGINE
+		curl --silent --header "X-Vault-Token: $VAULT_TOKEN" --request POST --data '{"type":"kv-v2"}' $VAULT_ADDR/v1/sys/mounts/secret
+		//ENABLE TRANSIT ENGINE
+		curl --silent --header "X-Vault-Token: $VAULT_TOKEN" --request POST --data '{"type":"transit"}' $VAULT_ADDR/v1/sys/mounts/transit
+		//BACKEND RSA KEY
+		curl --silent --header "X-Vault-Token: $VAULT_TOKEN" --request POST --data '{"type": "rsa-2048"}' $VAULT_ADDR/v1/transit/keys/backend
+		//SOFTWARE SIGNING KEY
+		curl --silent --header "X-Vault-Token: $VAULT_TOKEN" --request POST --data '{"type": "rsa-2048"}' $VAULT_ADDR/v1/transit/keys/software-signing-key
+		
+		//POLICIES
+		curl --silent --header "X-Vault-Token: $VAULT_TOKEN" --request PUT --data '{
+			"policy": "path \"secret/data/*\" {\n  capabilities = [\"create\", \"read\", \"update\", \"delete\", \"list\"]\n}\npath \"transit/keys/*\" {\n  capabilities = [\"create\", \"read\", \"update\"]\n}\npath \"transit/encrypt/*\" {\n  capabilities = [\"create\", \"read\", \"update\"]\n}\npath \"transit/decrypt/*\" {\n  capabilities = [\"create\", \"read\", \"update\"]\n}\npath \"transit/sign/*\" {\n  capabilities = [\"create\", \"read\", \"update\"]\n}\npath \"transit/verify/*\" {\n  capabilities = [\"create\", \"read\", \"update\"]\n}\npath \"transit/export/encryption-key/*\" {\n  capabilities = [\"read\", \"update\"]\n}\n"
+		}' $VAULT_ADDR/v1/sys/policies/acl/my-policy
+	\end{lstlisting}
+	
+	
+	
+	
+	\section{Ključne funkcionalnosti}
+	\label{backend:vault}
+	
+	\textit{Spring Boot} aplikacija podržava razne funkcionalnosti koje omogućuju učinkovito upravljanje IoT uređajima i njihovim ažuriranjima:
+	
+	\paragraph{Registracija uređaja}
+	
+	Novi IoT uređaji mogu se registrirati putem \textit{REST API-ja}.
+	Registracija uključuje pohranjivanje serijskog broja, javnog ključa i osnovnih informacija o uređaju. Proces registracije uređaja iz perspektive backenda započinje razmjenom javnih RSA ključeva između backenda i IoT klijenta. \textit{RSA} je asimetrični kriptografski algoritam koji koristi dva različita ključa: javni ključ, koji se može slobodno distribuirati, i privatni ključ, koji se mora čuvati tajnim. Na klijentov zahtjev za otvaranjem sesije backend će kreirati simetrični \textit{AES} ključ u \textit{GCM} načinu rada. \textit{AES} algoritam se koristi za ovu svrhu zbog svoje brzine i sigurnosti. Ovaj simetrični ključ se zatim enkriptira pomoću javnog ključa IoT uređaja i šalje natrag uređaju. IoT uređaj dekriptira simetrični ključ koristeći svoj privatni ključ. Na ovaj način backend i IoT klijent su razmijenili simetričan ključ kojeg ćemo od sada zvati \textit{ključ sesije}. Backend zatim prima serijski broj uređaja i provjera u \textit{Vaultu} postoji li taj serijski broj. U slučaju da serijski broj uređaja ne postoji u nekom od modela, uređaj se odbija i ključ sesije briše. Inače, proces registracije se nastavlja i stvara se novi uređaj kojem se dodjeljuje jedinstveni identifikator \textit{deviceId}. Jedinstveni identifikator se kriptira ključem sesije i vraća IoT klijentu čime završava proces registracije. Backend i IoT klijent od sada će svu komunikaciju kriptirati ključem sesije, a za identifikaciju koristiti \textit{deviceId}.
+	
+	\begin{lstlisting}[language=Java, caption=Register Device]
+		@Override
+		public EncryptedDto registerDevice(EncryptedDto request) {
+			String devicePublicKeyBase64 = request.getDevicePublicKey();
+			String keyNameSuffix = getKeyNameSuffix(devicePublicKeyBase64);
+			String decryptedRegisterDeviceRequest = vaultService.decryptData("aes-key-" + keyNameSuffix, request.getEncryptedData());
+			
+			RegisterDeviceRequest registerDeviceRequest = parseRequest(decryptedRegisterDeviceRequest);
+			validateDeviceNotRegistered(registerDeviceRequest);
+			
+			Model foundModel = findModelBySerialNo(registerDeviceRequest.getSerialNo());
+			if (foundModel == null) {
+				throw new IllegalArgumentException("Device with serial number: '" + registerDeviceRequest.getSerialNo() + "' cannot be registered!");
+			}
+			
+			Device device = createDevice(registerDeviceRequest, foundModel);
+			DeviceDto deviceDto = saveDeviceAndMapToDto(device, foundModel);
+			
+			String deviceDtoJson = convertDtoToJson(deviceDto);
+			String encryptedDeviceDtoJson = vaultService.encryptData("aes-key-" + keyNameSuffix, deviceDtoJson);
+			
+			return new EncryptedDto(request.getDevicePublicKey(), encryptedDeviceDtoJson);
+		}
+		
+		private String getKeyNameSuffix(String devicePublicKeyBase64) {
+			return devicePublicKeyBase64.length() > 20 ? devicePublicKeyBase64.substring(10, 20) : devicePublicKeyBase64;
+		}
+	\end{lstlisting}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.55\linewidth]{Figures/registracija_uredaja.png} 
+		\caption{Registracija uređaja}
+		\label{slk:registracija_uređaja}
+	\end{figure}
+	
+	\paragraph{Upravljanje ažuriranjima} 
+	Aplikacija pruža \textit{API} za provjeru dostupnosti ažuriranja za određeni uređaj. Uređaji mogu preuzeti dostupna ažuriranja i verificirati njihovu autentičnost putem digitalnih potpisa. Sustav backenda od uređaja prima status uspješnosti instalacije ažuriranja.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.55\linewidth]{Figures/provjera_dostupnosti_azuriranja.png} 
+		\caption{Provjera dostupnosti ažuriranja}
+		\label{slk:provjera_dostupnosti_azuriranja}
+	\end{figure}
+	
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.55\linewidth]{Figures/preuzimanje_i_instalacija_azuriranja.png} 
+		\caption{Preuzimanje i instalacija ažuriranja}
+		\label{slk:preuzimanje_i_instalacija_azuriranja}
+	\end{figure}
+	
+	
+	\chapter{IoT klijent}
+	\label{pog:iot_klijent}
+	
+	U okviru ovog rada simuliran je IoT uređaj korištenjem \textit{Raspberry Pi 4} i \textit{Python} skripte IoT klijent koju ćemo kroz ovo poglavlje detaljno opisati. IoT klijent ima zadatak osigurati sigurnu komunikaciju sa sustavom backenda, inicirati registraciju, nadzirati opterećenje sustava, provjeravati dostupnost ažuriranja, preuzimati, verificirati te instalirati ažuriranja. 
+	
+	\section{Dizajn Mock HSM-a}
+	\textit{Mock HSM} je dio IoT klijenta koji simulira funkcionalnosti pravog \textit{HSM-a} u našem simuliranom IoT uređaju. Pravi \textit{HSM-ovi} koriste se za sigurno pohranjivanje kriptografskih ključeva i izvršavanje kriptografskih operacija. Ove funkcije postiže i naš simulirani \textit{HSM} na sličnoj razinu sigurnosti. \textit{Mock HSM} enkriptira serijski broj uređaja s pomoću \textit{AES} u \textit{GCM} načinu rada i sprema u trenutni repozitoriji. \textit{AES-GCM} način rada koristi kombinaciju brojila i \textit{Galois polja} za šifriranje i autentifikaciju podataka. Korištenjem \textit{GCM} načina rada koji kombinira šifriranje s autentifikacijom, osigurava se tajnost serijskog broja, ali i integritet.  \cite{nist_sp800-38d}
+	
+	
+	\section{Nadzor opterećenja}
+	IoT klijent kontinuirano prati opterećenje procesorske jedinice i memorije kako bi osigurao da se kriptografske operacije i instalacija ažuriranja odvijaju samo kada je sustav u optimalnom stanju. Opterećenje se mjeri u redovitim intervalima, a predviđanje budućeg opterećenja koristi se za odlučivanje o tome kada pokrenuti ažuriranja. Za dohvaćanje podataka o opterećenju koristi se biblioteka \textit{psutil} \cite{psutil}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.8\linewidth]{Figures/load_predicting4.png} 
+		\caption{Inicijalno prikupljanje opterećenja i predviđanje}
+		\label{slk:device_snapshot}
+	\end{figure}
+	
+	\begin{lstlisting}[language=Python, caption=Nadzor opterećenja]
+		cpuLoadHistory = deque(maxlen=LOAD_HISTORY_WINDOW)
+		memoryLoadHistory = deque(maxlen=LOAD_HISTORY_WINDOW)
+		
+		def deviceLoadSnapshot():
+		cpuUsage = psutil.cpu_percent(interval=1)
+		memoryUsage = psutil.virtual_memory().percent
+		print(f"CPU usage: {cpuUsage}%, MEMORY usage: {memoryUsage}%")
+		cpuLoadHistory.append(cpuUsage)
+		memoryLoadHistory.append(memoryUsage)
+	\end{lstlisting}
+	
+	
+	
+	\section{Ključne funkcionalnosti}
+	
+	\paragraph{Registracija uređaja} IoT klijent započinje registraciju generiranjem para ključeva (privatni i javni ključ). Generiranje RSA ključeva stvara značajno opterećenje na CPU uređaja, kao što je prikazano na slici \ref{slk:rsa_load}. Vidljivo je da CPU opterećenje raste pri generiranju ključa, dok memorija ostaje stabilna. Usporedno, algoritmi s nižom sigurnošću, poput simetričnih algoritama, imaju manji utjecaj na CPU. Generiranje simetričnih ključeva pogodnije je za uređaje s ograničenim resursima poput IoT uređaja, ali u trenutnoj implementaciji asimetrična kriptografija je bila nužna. Javni RSA ključ šalje se sustavu backenda, koji generira jedinstveni \textit{AES} simetrični ključ sesije i enkriptira ga javnim ključem uređaja. Uređaj dekriptira simetrični ključ koristeći svoj privatni ključ, čime se uspostavlja sigurna komunikacija između uređaja i sustava backenda. Registracija se dovršava slanjem serijskog broja uređaja sustavu backenda, koji provjerava valjanost serijskog broja i dodjeljuje jedinstveni identifikator uređaju.
+	
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.65\linewidth]{Figures/screencaptures/updates_not_found_startup.png} 
+		\caption{Registracija}
+		\label{slk:device_registration}
+	\end{figure}
+	
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.8\linewidth]{Figures/rsa_load.png} 
+		\caption{Opterećenje pri generiranju RSA ključa}
+		\label{slk:rsa_load}
+	\end{figure}
+	
+	
+	\paragraph{Provjera dostupnosti ažuriranja} IoT klijent povremeno provjerava kod sustava backenda dostupnost novih softverskih ažuriranja. Ovaj proces uključuje slanje zahtjeva za provjeru dostupnosti ažuriranja i primanje enkriptirane liste dostupnih ažuriranja ako su dostupna
+	
+	\paragraph{Preuzimanje i verifikacija ažuriranja} Nakon što su identificirana dostupna ažuriranja, klijent preuzima softverske pakete i verificira njihov digitalni potpis kako bi osigurao da su ažuriranja autentična i netaknuta.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.65\linewidth]{Figures/screencaptures/updates_found_startup.png} 
+		\caption{Pronađeno i preuzeto ažuriranje}
+		\label{slk:device_updates_found}
+	\end{figure}
+	
+	\paragraph{Instalacija ažuriranja}	Nakon što su ažuriranja verificirana, klijent pokreće proces instalacije softverskih paketa. Zbog mogućnosti neuspjele instalacije, u tom slučaju instalacija se ponavlja dok god nije uspješno instalirano ažuriranje. Klijent također šalje podatke o uspješnosti ažuriranja backendu kako bi omogućio praćenje uspjeha ili neuspjeha instalacija.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\linewidth]{Figures/screencaptures/repeated_flashing.png} 
+		\caption{Ponovljeno instaliranje ažuriranja}
+		\label{slk:device_registered_startup}
+	\end{figure}
+	
+	
+	\chapter{Sustav frontenda}
+	\label{pog:frontend}
+	
+	Frontend je realiziran kao React aplikacija koja pruža korisničko sučelje za administratore. Aplikacija omogućuje jednostavno i intuitivno upravljanje uređajima, modelima uređaja, softverom i softverskim paketima. U ovom poglavlju opisan je dizajn korisničkog sučelja te implementacija glavnih komponenti kao što su nadzorne ploče i stranice za upravljanje.
+	
+	
+	\paragraph{Dizajn korisničkog sučelja (UI)} osmišljen je kako bi bio jednostavan za korištenje. Prilikom dizajna težilo se da sučelje bude intuitivno i vizualno privlačno. Glavni ciljevi dizajna su omogućiti korisnicima brz i jednostavan pristup svim funkcionalnostima sustava. Informacije kojima se pristupa moraju biti jasno i pregledno prikazane.
+	Za izradu UI komponenti korištene su \textit{Syncfusion React UI} komponente. Syncfusion nudi niz komponenti koje uključuju grafove, tablice, kalendare i mnoge druge elemente. U kontekstu ove frontend aplikacije korišteni su \textbf{Grid}: komponenta za prikazivanje tablica s podacima. Koristi se za prikaz detaljnih informacija o uređajima, modelima, softverima i softverskim paketima. \textbf{Form}: komponente za izradu formi koje omogućuju korisnicima unos i uređivanje podataka. Koriste se za dodavanje novih modela, softvera i softverskih paketa.
+	
+	\begin{figure}[htb]
+		\centering
+		\shadowbox{
+			\includegraphics[width=0.35\linewidth]{Figures/screencaptures/add_new_model.png}
+		}
+		\caption{Dodavanje novog modela}
+		\label{slk:add_new_model}
+	\end{figure}
+	
+	\paragraph{Uspostava okoline} početni je korak u postavljanju okruženja za upravljanje IoT uređajima, a obuhvaća kreiranje kompanije i njenih administratorskih korisnika. Nakon kreiranja kompanija i njima pripadajućih administratora, administratori s pomoću korisničkog sučelja mogu stvoriti modele uređaja i definirati serijske brojeve uređaja koje kompanija posjeduje i pušta u rad. Ovaj korak pretpostavlja da je kompanija koja će upravljati uređajima u \textit{HSM} uređaja pri njegovoj izradi upisala serijski broj. Serijski broj ključan je u registraciji uređaja u sustavu. Administratorski korisnik može u sustav unijeti proizvoljan broj softvera. Softveri se stavljaju u softverski paket koji namijenjen za određene modele uređaja.
+	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.65\linewidth]{Figures/uspostava_okoline.png} 
+		\caption{Uspostava okoline}
+		\label{slk:upostava_okoline}
+	\end{figure}
+	
+	
+	\paragraph{Nadzorne ploče} pružaju korisnicima pregled ključnih informacija o sustavu. Glavna nadzorna ploča \ref{slk:main_dashboard} prikazuje status uređaja, softvera i softverskih paketa za sve kompanije kojima je trenutni korisnik administrator, dok nadzorna ploča kompanije \ref{slk:company_dashboard} prikazuje podatke samo za odabranu tvrtku. 
+	
+	\begin{figure}[H]
+		\centering
+		\shadowbox{\includegraphics[width=0.7\linewidth]{Figures/screencaptures/main_dashboard.png} }
+		\caption{Glavna nadzorna ploča}
+		\label{slk:main_dashboard}
+	\end{figure}
+	\begin{figure}[htb]
+		\centering
+		\shadowbox{\includegraphics[width=0.7\linewidth]{Figures/screencaptures/company_dashboard.png} }
+		\caption{Nadzorna ploča kompanije}
+		\label{slk:company_dashboard}
+	\end{figure}
+	
+	\paragraph{Stranice} za upravljanje omogućuju korisnicima detaljno upravljanje različitim entitetima u sustavu. Ključne stranice za upravljanje uključuju:
+	
+	\textbf{Stranica za upravljanje uređajima} omogućuje administratorima upravljanje IoT uređajima, uključujući pregled stanja registracije novih uređaja, stanja ažuriranja uređaja i povijest ažuriranja. \ref{slk:device_page}
+	
+	\begin{figure}[H]
+		\centering
+		\shadowbox{\includegraphics[width=0.7\linewidth]{Figures/screencaptures/devices_page.png} }
+		\caption{Stranica za upravljanje uređajima}
+		\label{slk:device_page}
+	\end{figure}
+	
+	\textbf{Stranica za upravljanje modelima} omogućuje administratorima dodavanje različitih modela uređaja. Pri dodavanju modela moguć je unos serijskih brojeva jedan po jedan ili prijenos \textit{CSV} datoteke sa serijskim brojevima uređaja. Pritiskom na jedan od modela u tablici otvara se pregled serijskih brojeva koji su povezani s modelom. \ref{slk:model_page}
+	
+	\begin{figure}[H]
+		\centering
+		\shadowbox{\includegraphics[width=0.7\linewidth]{Figures/screencaptures/models_page.png} }
+		\caption{Stranica za upravljanje modelima}
+		\label{slk:model_page}
+	\end{figure}
+	
+	\textbf{Stranica za upravljanje softverom} omogućuje administratorima dodavanje novih softvera. Tablica za pregled softvera sadrži njegov identifikator, ime, verziju i datum kada je dodan. \ref{slk:software_page}
+	
+	\begin{figure}[H]
+		\centering
+		\shadowbox{\includegraphics[width=0.7\linewidth]{Figures/screencaptures/software_page.png} }
+		\caption{Stranica za upravljanje softverom}
+		\label{slk:software_page}
+	\end{figure}
+	
+	\textbf{Stranica za upravljanje softverskim paketima} omogućuje administratorima pakiranje softvera za određene modele uređaja u softverski paket. \ref{slk:software_package_page}
+	
+	\begin{figure}[H]
+		\centering
+		\shadowbox{\includegraphics[width=0.7\linewidth]{Figures/screencaptures/software_package_page.png} }
+		\caption{Stranica za upravljanje softverskim paketima}
+		\label{slk:software_package_page}
+	\end{figure}
+	
 	
 	
 	%--- ZAKLJUČAK / CONCLUSION ----------------------------------------------------
 	\chapter{Zaključak}
 	\label{pog:zakljucak}
+	U ovom radu analizirali smo problematiku distribucije ključeva i sigurnosnih ažuriranja na uređajima Interneta stvari (IoT). Implementirali smo sustav koji koristi moderne kriptografske tehnike i napredne alate kako bi osigurao integritet, povjerljivost i autentičnost podataka. Sustav je sastavljen od backend aplikacije razvijene u \textit{Spring Boot frameworku}, \textit{HashiCorp Vaulta} za upravljanje kriptografskim ključevima i sigurnim pohranom tajni, IoT klijenta koji simulira IoT uređaj te upravljačkog sučelja u \textit{React} aplikaciji. IoT klijent sadrži simulirani hardverski sigurni modul (\textit{HSM}) za sigurno pohranjivanje ključeva i osjetljivih podataka te osigurava sigurnu komunikaciju s sustavom backenda.
 	
-	\blindtext
+	Jedna od ključnih funkcionalnosti sustava je upravljanje ažuriranjima softvera na IoT uređajima. Kroz proces registracije uređaja, provjere dostupnosti ažuriranja, preuzimanja, verifikacije i instalacije ažuriranja, sustav osigurava da IoT uređaji uvijek imaju najnoviji i najsigurniji softver. Također, kontinuirano praćenje opterećenja uređaja omogućuje izvršavanje kriptografskih operacija i instalacija ažuriranja samo kada su sustavi u optimalnom stanju.
+	
+	Kroz ovaj rad demonstrirali smo kako korištenje modernih tehnologija kao što su \textit{Spring Boot}, \textit{PostgreSQL} i \textit{HashiCorp Vault} može značajno unaprijediti sigurnost i efikasnost upravljanja IoT uređajima. Naša implementacija pokazuje kako je moguće osigurati sigurnu distribuciju ključeva i ažuriranja, što je ključno za zaštitu IoT uređaja od raznih prijetnji.
 	
 	
 	\bibliography{references}
 	
-		\begin{sazetak}
-		sažetak na hrvatskom
+	\begin{sazetak}
+		Upravljanje kriptografskim ključevima i ažuriranjima na uređajima Interneta stvari (IoT) predstavlja značajne izazove zbog ograničenih resursa i potrebe za visokom sigurnošću. Ovo istraživanje rješava problem osiguravanja pouzdanog upravljanja ključevima i ažuriranjima unatoč lošoj povezanosti, ograničenoj memoriji i procesorskoj snazi. Glavni cilj bio je dizajnirati i implementirati sustav koji sigurno upravlja kriptografskim ključevima i provodi softverska ažuriranja na IoT uređajima bez kompromitiranja osnovne funkcionalnosti. Metodologija je uključivala razvoj sustava sustava za registraciju uređaja, provjeru ažuriranja, preuzimanje, verifikaciju i instalaciju. Zbog ograničenih resursa IoT uređaja sustav prati opterećenje uređaja radi očuvanja osnovnih funkcionalnosti. Rezultati pokazuju da sustav može učinkovito upravljati kriptografskim ključevima i softverskim ažuriranjima. Sustav uspješno poboljšava sigurnost i učinkovitost upravljanja IoT uređajima, što je ključno za njihovu pouzdanost.
 	\end{sazetak}
 	
 	\begin{kljucnerijeci}
-		ključne riječi na hrvatskom
+		Kriptografski ključevi, Internet stvari (IoT), IoT uređaji, Upravljanje ključevima, Sigurna ažuriranja, Ograničeni resursi
 	\end{kljucnerijeci}    
 	
 	\begin{abstract}
-		abstract in English
+		Managing cryptographic keys and updates on Internet of Things (IoT) devices presents significant challenges due to limited resources and the need for high security. This research addresses the problem of ensuring reliable key management and updates despite poor connectivity, limited memory, and processing power. The main objective was to design and implement a system that securely manages cryptographic keys and performs software updates on IoT devices without compromising core functionality. The methodology involved developing a system for device registration, updates checking, downloading, verification, and installation. Due to the limited resources of IoT devices, the system monitors device load to preserve core functionalities. Results demonstrate that the system can effectively manage cryptographic keys and software updates. The system successfully enhances the security and efficiency of IoT device management, which is crucial for their reliability.
 	\end{abstract}
 	
 	\begin{keywords}
-		keywords in English
+		Cryptographic keys, Internet of Things (IoT), IoT devices, Key management, Secure updates, Limited resources
 	\end{keywords}
 	
 	\backmatter
 	
-	\chapter{The Code}
 	
-	\Blindtext
 	
-
 \end{document}

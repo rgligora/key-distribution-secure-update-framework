@@ -24,9 +24,51 @@
 \providecommand{\BIBdecl}{\relax}
 \BIBdecl
 
-\bibitem{maurer1993secret}
-U.~M. Maurer, ``Secret key agreement by public discussion from common
-  information'', \emph{IEEE transactions on information theory}, sv.~39, br.~3,
-  str. 733--742, 1993.
+\bibitem{tuf2024}
+\BIBentryALTinterwordspacing
+{The Update Framework}, ``The update framework (tuf) specification'', 2024.
+  [Mre\v zno]. Adresa:
+  \url{https://theupdateframework.github.io/specification/latest/}
+\BIBentrySTDinterwordspacing
+
+\bibitem{hawkbit}
+\BIBentryALTinterwordspacing
+E.~Foundation, ``Eclipse hawkbit'', 2024. [Mre\v zno]. Adresa:
+  \url{https://eclipse.dev/hawkbit/}
+\BIBentrySTDinterwordspacing
+
+\bibitem{thalesdocs}
+\BIBentryALTinterwordspacing
+T.~Group, ``Hardware security modules (hsms)'', 2024. [Mre\v zno]. Adresa:
+  \url{https://thalesdocs.com/hsm/overview/}
+\BIBentrySTDinterwordspacing
+
+\bibitem{hashicorp_vault}
+\BIBentryALTinterwordspacing
+HashiCorp, ``Hashicorp vault - manage secrets and protect sensitive data'',
+  2024. [Mre\v zno]. Adresa: \url{https://developer.hashicorp.com/vault}
+\BIBentrySTDinterwordspacing
+
+\bibitem{iso27003}
+\BIBentryALTinterwordspacing
+{International Organization for Standardization}, ``Iso/iec 27003:2017 -
+  information technology — security techniques — information security
+  management systems — guidance'', 2017. [Mre\v zno]. Adresa:
+  \url{https://www.iso.org/standard/63412.html}
+\BIBentrySTDinterwordspacing
+
+\bibitem{nist_sp800-38d}
+\BIBentryALTinterwordspacing
+M.~Dworkin, ``Recommendation for block cipher modes of operation:
+  Galois/counter mode (gcm) and gmac'', 2007. [Mre\v zno]. Adresa:
+  \url{https://doi.org/10.6028/NIST.SP.800-38D}
+\BIBentrySTDinterwordspacing
+
+\bibitem{psutil}
+\BIBentryALTinterwordspacing
+psutil, ``psutil - cross-platform library for retrieving information on running
+  processes and system utilization for python'', 2024. [Mre\v zno]. Adresa:
+  \url{https://psutil.readthedocs.io/en/latest/}
+\BIBentrySTDinterwordspacing
 
 \end{thebibliography}

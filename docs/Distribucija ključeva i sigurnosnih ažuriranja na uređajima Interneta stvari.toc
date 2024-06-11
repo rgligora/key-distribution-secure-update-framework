@@ -2,18 +2,59 @@
 \babel@toc {croatian}{}\relax 
 \babel@toc {croatian}{}\relax 
 \contentsline {chapter}{\numberline {1.}Uvod}{2}{chapter.1}%
-\contentsline {chapter}{\numberline {2.}Glavni dio}{3}{chapter.2}%
-\contentsline {chapter}{\numberline {3.}Rezultati i rasprava}{5}{chapter.3}%
-\contentsline {chapter}{\numberline {4.}Zaključak}{7}{chapter.4}%
-\contentsline {chapter}{Literatura}{8}{chapter*.3}%
+\contentsline {chapter}{\numberline {2.}Postojeća rješenja}{4}{chapter.2}%
+\contentsline {chapter}{\numberline {3.}Opseg i zahtjevi sustava}{6}{chapter.3}%
+\contentsline {paragraph}{Opseg sustava}{6}{section*.2}%
+\contentsline {paragraph}{Sigurnosni Ciljevi}{6}{section*.3}%
+\contentsline {paragraph}{Pretpostavke}{6}{section*.4}%
+\contentsline {paragraph}{Zahtjevi}{7}{section*.5}%
+\contentsline {chapter}{\numberline {4.}Arhitektura sustava}{9}{chapter.4}%
+\contentsline {section}{\numberline {4.1.}Komponente}{9}{section.4.1}%
+\contentsline {paragraph}{Sustav backenda}{9}{section*.7}%
+\contentsline {paragraph}{Vault poslužitelj}{9}{section*.8}%
+\contentsline {paragraph}{Iot klijent}{10}{section*.9}%
+\contentsline {paragraph}{Sustav frontenda}{10}{section*.10}%
+\contentsline {paragraph}{PostgreSQL}{10}{section*.11}%
+\contentsline {section}{\numberline {4.2.}Komunikacija između komponenti}{10}{section.4.2}%
+\contentsline {paragraph}{Uspostava okoline}{10}{section*.12}%
+\contentsline {paragraph}{Registracija uređaja}{11}{section*.13}%
+\contentsline {paragraph}{Provjera dostupnosti ažuriranja}{11}{section*.14}%
+\contentsline {paragraph}{Preuzimanje i instalacija ažuriranja}{12}{section*.15}%
+\contentsline {chapter}{\numberline {5.}Sustav backenda}{13}{chapter.5}%
+\contentsline {section}{\numberline {5.1.}Spring Boot aplikacija}{13}{section.5.1}%
+\contentsline {paragraph}{Prezentacijski sloj}{13}{section*.17}%
+\contentsline {paragraph}{Servisni sloj}{13}{section*.18}%
+\contentsline {paragraph}{Sloj pristupa podacima}{14}{section*.19}%
+\contentsline {paragraph}{Entiteti}{15}{section*.20}%
+\contentsline {section}{\numberline {5.2.}Vault poslužitelj}{16}{section.5.2}%
+\contentsline {paragraph}{Pohranjivanje tajni}{16}{section*.22}%
+\contentsline {paragraph}{Kriptografske operacije}{16}{section*.23}%
+\contentsline {paragraph}{Implementacija Vaulta}{16}{section*.24}%
+\contentsline {section}{\numberline {5.3.}Ključne funkcionalnosti}{17}{section.5.3}%
+\contentsline {paragraph}{Registracija uređaja}{17}{section*.25}%
+\contentsline {paragraph}{Upravljanje ažuriranjima}{18}{section*.27}%
+\contentsline {chapter}{\numberline {6.}IoT klijent}{20}{chapter.6}%
+\contentsline {section}{\numberline {6.1.}Dizajn Mock HSM-a}{20}{section.6.1}%
+\contentsline {section}{\numberline {6.2.}Nadzor opterećenja}{20}{section.6.2}%
+\contentsline {section}{\numberline {6.3.}Ključne funkcionalnosti}{21}{section.6.3}%
+\contentsline {paragraph}{Registracija uređaja}{21}{section*.31}%
+\contentsline {paragraph}{Provjera dostupnosti ažuriranja}{22}{section*.34}%
+\contentsline {paragraph}{Preuzimanje i verifikacija ažuriranja}{22}{section*.35}%
+\contentsline {paragraph}{Instalacija ažuriranja}{23}{section*.37}%
+\contentsline {chapter}{\numberline {7.}Sustav frontenda}{24}{chapter.7}%
+\contentsline {paragraph}{Dizajn korisničkog sučelja (UI)}{24}{section*.39}%
+\contentsline {paragraph}{Uspostava okoline}{25}{section*.41}%
+\contentsline {paragraph}{Nadzorne ploče}{25}{section*.43}%
+\contentsline {paragraph}{Stranice}{26}{section*.46}%
+\contentsline {chapter}{\numberline {8.}Zaključak}{29}{chapter.8}%
+\contentsline {chapter}{Literatura}{30}{chapter*.51}%
 \babel@toc {croatian}{}\relax 
-\contentsline {chapter}{Sa\v {z}etak}{9}{chapter*.4}%
+\contentsline {chapter}{Sa\v {z}etak}{31}{chapter*.52}%
 \babel@toc {croatian}{}\relax 
 \babel@toc {croatian}{}\relax 
 \babel@toc {croatian}{}\relax 
 \babel@toc {english}{}\relax 
-\contentsline {chapter}{Abstract}{10}{chapter*.5}%
+\contentsline {chapter}{Abstract}{32}{chapter*.53}%
 \babel@toc {croatian}{}\relax 
 \babel@toc {english}{}\relax 
 \babel@toc {croatian}{}\relax 
-\contentsline {chapter}{\numberline {A:}The Code}{11}{chapter.1}%
