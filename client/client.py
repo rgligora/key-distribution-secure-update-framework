@@ -13,6 +13,7 @@ from Crypto.Hash import SHA256
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import sys
+import csv
 
 if len(sys.argv) != 2:
     print("Usage: python script.py <IPaddress>")
@@ -21,7 +22,7 @@ if len(sys.argv) != 2:
 IPaddress = sys.argv[1]
 backend = f"http://{IPaddress}:8080"
 
-SERIAL_NO = "a966d08b-7f3e-4ece-9d31-b4e08251d2e1"
+SERIAL_NO = "7e3f9b5a-8a9b-4b3c-9a4a-6c9835bb2d5e"
 
 HSM_DEVICE_ID_FILE = 'hsm_deviceId.json'
 HSM_BACKEND_PUBKEY_FILE = 'hsm_backendPubKey.json'
@@ -33,12 +34,50 @@ SNAPSHOT_INTERVAL = 0.2
 CPU_THRESHOLD = 40.0
 MEMORY_THRESHOLD = 90.0
 
+INITIAL_DEVICE_LOAD = 'initial_device_load_data.csv'
+PREDICTED_DEVICE_LOAD = 'predicted_device_load_data.csv'
+RSA_LOAD = 'rsa_load_data.csv'
+REGISTRATION_LOAD = 'registration_load_data.csv'
+with open(INITIAL_DEVICE_LOAD, mode='w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(["Time", "CPU Usage", "Memory Usage"])
+    
+with open(PREDICTED_DEVICE_LOAD, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Time", "Predicted CPU Usage", "Predicted Memory Usage"])
+
+with open(RSA_LOAD, mode='w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(["Time", "CPU Usage", "Memory Usage"]) 
+
+with open(REGISTRATION_LOAD, mode='w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(["Time", "CPU Usage", "Memory Usage"])
+
+def measuredRSAGeneration():
+    start_time = time.time()
+    cpu_before = psutil.cpu_percent()
+    mem_before = psutil.virtual_memory().percent
+    
+    privKey = RSA.generate(2048)
+
+    cpu_after = psutil.cpu_percent()
+    mem_after = psutil.virtual_memory().percent
+    end_time = time.time()
+    
+    with open(RSA_LOAD, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([start_time, cpu_before, mem_before])
+        writer.writerow([end_time, cpu_after, mem_after])
+    return privKey
+
+
 class MockHSM:
     def __init__(self):
         self.key = self.startUpHSM()
         self.deviceId = self.deviceIdHSM()
         self.backendPubKey = self.backendPublicKey()
-        self.privKey = RSA.generate(2048)
+        self.privKey = measuredRSAGeneration()
         self.public_key = self.privKey.publickey()
         self.session_key = None
 
@@ -163,7 +202,10 @@ def deviceLoadSnapshot():
     print(f"CPU usage: {cpuUsage}%, MEMORY usage: {memoryUsage}%")
     cpuLoadHistory.append(cpuUsage)
     memoryLoadHistory.append(memoryUsage)
-
+    with open(INITIAL_DEVICE_LOAD, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([time.time(), cpuUsage, memoryUsage])
+    
 def isOptimalDeviceLoad(cpuThreshold=CPU_THRESHOLD, memoryThreshold=MEMORY_THRESHOLD):
     predictedCpuUsage, predictedMemoryUsage = predictDeviceLoad()
     print(f"Predicted CPU Usage: {predictedCpuUsage}%, Predicted Memory Usage: {predictedMemoryUsage}%")
@@ -174,6 +216,10 @@ def predictDeviceLoad(predictWindow=PREDICT_WINDOW):
     memoryLoadList = list(memoryLoadHistory)
     predictedCpuUsage = sum(cpuLoadList[-predictWindow:]) / len(cpuLoadList[-predictWindow:])
     predictedMemoryUsage = sum(memoryLoadList[-predictWindow:]) / len(memoryLoadList[-predictWindow:])
+    with open(PREDICTED_DEVICE_LOAD, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([time.time(), predictedCpuUsage, predictedMemoryUsage])
+        
     return predictedCpuUsage, predictedMemoryUsage
 
 def registerDevice():
@@ -289,6 +335,9 @@ def main():
 
     for snapshot in range(LOAD_HISTORY_WINDOW):
             deviceLoadSnapshot()
+            with open(PREDICTED_DEVICE_LOAD, mode='a', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow([time.time(), 0, 0])
             time.sleep(SNAPSHOT_INTERVAL)
 
     while True:
