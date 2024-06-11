@@ -1,5 +1,10 @@
 # Key Distribution and Secure Updates Framework
 
+<img
+  src="https://github.com/rgligora/rgligora/key-distribution-secure-update-framework/blob/main/images/stat.svg"
+  alt="KDSUF WakaTime Activity"
+/>
+
 ## Overview
 This Key Distribution and Secure Updates Framework is a comprehensive platform designed to manage IoT devices, companies, software, and software packages. The system ensures secure communication and efficient update management between IoT devices and the backend service. It includes a backend service, an IoT device client with device load monitoring, a user-friendly frontend interface, and Vault for secure key management, ensuring that cryptographic keys are securely generated, stored, and distributed.
 
